@@ -1,0 +1,71 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --max_old_space_size=4096
+
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Prepare build
+        run: pnpm run dev:prepare
+
+      - name: Run build (SSR)
+        run: pnpm run build
+
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: |
+            ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add known_hosts
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: 22
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "$SSH_HOST" -p "$SSH_PORT" >> ~/.ssh/known_hosts
+
+      - name: Deploy to server via SSH
+        env:
+          SSH_USER: root
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: 22
+          DEPLOY_DIR: /root/my-nginx/html/www/mhaibaraai.cn
+          PM2_APP_NAME: mhaibaraai.cn
+        run: |
+          bash scripts/deploy.sh
+
+      - name: Deploy build artifacts to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./.output
+          publish_branch: gh-pages
+          force_orphan: true
+          commit_message: 'chore(release): build artifacts'

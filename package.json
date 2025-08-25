@@ -1,0 +1,60 @@
+{
+  "name": "mhaibaraai.cn",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.15.0",
+  "description": "一个专注于技术分享与知识沉淀的个人网站。",
+  "author": "Yixuan <mhaibaraai@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://mhaibaraai.cn",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mhaibaraai/mhaibaraai.cn.git"
+  },
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20 <25"
+  },
+  "scripts": {
+    "build": "nuxi build",
+    "dev:prepare": "nuxi prepare",
+    "dev": "nuxi dev",
+    "preview": "nuxi preview",
+    "start": "node .output/server/index.mjs",
+    "generate": "nuxi generate",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "up": "taze major -wIr",
+    "clean": "tsx scripts/rm.ts"
+  },
+  "dependencies": {
+    "@iconify-json/lucide": "catalog:",
+    "@iconify-json/material-icon-theme": "catalog:",
+    "@iconify-json/mdi": "catalog:",
+    "@iconify-json/simple-icons": "catalog:",
+    "@iconify-json/tabler": "catalog:",
+    "@iconify-json/vscode-icons": "catalog:",
+    "@movk/core": "catalog:",
+    "@nuxt/content": "catalog:",
+    "@nuxt/image": "catalog:",
+    "@nuxt/ui": "catalog:",
+    "@nuxtjs/seo": "catalog:",
+    "@vueuse/core": "catalog:",
+    "@vueuse/nuxt": "catalog:",
+    "better-sqlite3": "catalog:",
+    "motion-v": "catalog:",
+    "nuxt-llms": "catalog:",
+    "ufo": "catalog:"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:",
+    "@nuxt/eslint": "catalog:",
+    "eslint": "catalog:",
+    "nuxt": "catalog:",
+    "taze": "catalog:",
+    "tsx": "catalog:",
+    "typescript": "catalog:",
+    "vue-tsc": "catalog:"
+  }
+}
