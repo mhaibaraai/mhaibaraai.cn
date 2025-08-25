@@ -1,0 +1,35 @@
+---
+alwaysApply: true
+---
+
+# 项目规则
+
+1. 文档不是教程笔记，不要添加任何有关“学习建议”的提示
+2. 文档使用 Iconify 图标库 + [Nuxt UI Pro documentation template 模板](https://docs-template.nuxt.dev/) 撰写
+3. 图标合集优先使用：`i-lucide` 、 `i-simple-icons` 、 `i-material-icon-theme`、`i-mdi`
+4. 强制使用 [Nuxt UI Pro 提供的排版组件和工具](https://ui.nuxt.com/getting-started/typography) 排版
+
+## 文档编写规则
+
+文件使用 Markdown、MDC Syntax 语法，遵循以下规则：
+
+1. 使用 `---` 分割文件头和内容
+2. 文件头中使用 `title` 字段定义标题，`description` 字段定义描述
+4. .yml 文件使用 `icon` 字段定义图标
+5. 在 `index.md` 文件中使用 `navigation` 字段定义导航，`false` 表示不显示导航
+6. 路径不需要添加数字，@nuxt/content 会处理数字前缀，例如 `/1.fundamentalsd/javascript/async` 会自动转换为 `/fundamentals/javascript/async`
+7. `title` 字段作为一级标题，意味着不需要再添加一级标题
+8. `description`作为文件描述，其中的技术术语不需要使用 `` 包裹，正文开头不需要添加描述
+9. 使用 `::code-collapse` 包裹超过 15 行的代码示例（简短的代码不需要），并使用 `[demo.ts]` 标识代码语言和文件名，文件名为英文
+10. 英文左右添加空格
+11. 标题后不要添加锚点，例如：`{#section-name}`
+12. 请使用简短的语言标识符，例如：
+  - ✅ 使用 `ts` 表示 TypeScript
+  - ❌ 不要使用 `typescript`
+14. 你也可以使用 `note`、`tip`、`warning` 和 `caution` 快捷方式，使用预定义的图标和颜色，例如：
+  ```md
+  ::note
+  这是一个提示
+  ::
+  ```
+15. 文件夹必须添加 `.navigation.yml` 作为导航配置文件
