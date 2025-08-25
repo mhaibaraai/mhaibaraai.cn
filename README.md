@@ -3,9 +3,9 @@ title: mhaibaraai.cn
 description: 一个专注于技术分享与知识沉淀的个人网站
 ---
 
-[![Deploy](deploy-src)][deploy-href]
-[![Pnpm](pnpm-src)][pnpm-href]
-[![Node.js](node-src)][node-href]
+[![Deploy][deploy-src]][deploy-href]
+[![Pnpm][pnpm-src]][pnpm-href]
+[![Node.js][node-src]][node-href]
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 
