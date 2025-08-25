@@ -1,0 +1,7 @@
+# START nuxt-robots (indexable)
+User-agent: *
+Disallow: 
+Disallow: /__link-checker__
+
+Sitemap: https://mhaibaraai.cn/sitemap.xml
+# END nuxt-robots

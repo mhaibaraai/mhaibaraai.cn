@@ -1,0 +1,52 @@
+# YiXuan 的开发随笔
+
+> 一个专注于技术分享与知识沉淀的个人网站。
+
+## Documentation Sets
+
+- [YiXuan 的开发随笔](https://mhaibaraai.cn/raw/llms-full.txt.md): 一个专注于技术分享与知识沉淀的个人网站。从代码片段到架构思考，这里是我在成为更优秀全栈工程师路上的所有笔记。
+
+## Landing
+
+- [👋 开发随笔](https://mhaibaraai.cn/raw.md): 从代码片段到架构思考，这里是我在成为更优秀全栈工程师路上的所有笔记。
+
+## Docs
+
+- [异步编程](https://mhaibaraai.cn/raw/ecosystem/javascript/async-await.md): 深入理解 Promise 和 async/await 异步编程模式
+- [网络请求](https://mhaibaraai.cn/raw/ecosystem/javascript/fetch.md): 使用 fetch API 进行网络请求和数据交互
+- [CSS 高级特性](https://mhaibaraai.cn/raw/ecosystem/styles/css.md): CSS 变量、Flexbox 响应式布局等现代 CSS 特性
+- [Sass 预处理器](https://mhaibaraai.cn/raw/ecosystem/styles/sass.md): Sass 模块化、构建工具配置和弃用警告处理
+- [全局变量](https://mhaibaraai.cn/raw/ecosystem/typescript/declare-global.md): 在 TypeScript 中使用全局类型。
+- [踩坑笔记](https://mhaibaraai.cn/raw/ecosystem/vue/issues.md): 记录 Vue 开发过程中遇到的问题和解决方案。
+- [按需自动导入](https://mhaibaraai.cn/raw/ecosystem/vite/auto-import.md): 组件、API 和图标按需自动导入，简化代码并提升开发效率。
+- [Vite 资源导入](https://mhaibaraai.cn/raw/ecosystem/vite/resources-import.md): Vite 提供了多种灵活的静态资源导入方式，无需手动管理文件路径。
+- [Copy Page](https://mhaibaraai.cn/raw/ecosystem/nuxt/copy-page.md): 为用户与 LLM 提供「干净的 Markdown 原文」，可直接复制或在新标签页查看。
+- [踩坑笔记](https://mhaibaraai.cn/raw/ecosystem/nuxt/issues.md): 记录 Nuxt 开发过程中遇到的问题和解决方案。
+- [Nuxt LLMs](https://mhaibaraai.cn/raw/ecosystem/nuxt/llms.md): 使用 nuxt-llms 生成 /llms.txt，并规范化站内链接以便 LLM 抓取。
+- [Nuxt SEO](https://mhaibaraai.cn/raw/ecosystem/nuxt/nuxt-seo.md): Nuxt SEO 实战配置指南
+- [Nuxt SSR + PM2 部署](https://mhaibaraai.cn/raw/ecosystem/nuxt/ssr-pm2-deploy.md): 在 Ubuntu 上使用 PM2 集群模式部署 Nuxt SSR，并通过 Nginx（Docker）反向代理与 Cloudflare 前置加速。
+- [Element Plus](https://mhaibaraai.cn/raw/ecosystem/ui-libraries/element-plus.md): 在使用 Element Plus 组件库时遇到的常见问题及其解决方案。
+- [全局依赖缓存位置](https://mhaibaraai.cn/raw/ecosystem/java/global-cache.md): 说明 Maven 与 Gradle 全局依赖缓存位置
+- [安装 Java 与构建工具](https://mhaibaraai.cn/raw/ecosystem/java/mac-install.md): 如何使用 Homebrew 在 macOS 上安装和管理多个 Java 版本。
+- [DigitalOcean](https://mhaibaraai.cn/raw/guides/deployment/digitalocean.md): DigitalOcean 使用指南
+- [Docker](https://mhaibaraai.cn/raw/guides/deployment/docker.md): Docker 安装和使用指南
+- [PostgreSQL 部署](https://mhaibaraai.cn/raw/guides/deployment/postgresql-guide.md): 使用 Docker Compose 部署 PostgreSQL
+- [Linux](https://mhaibaraai.cn/raw/guides/os/linux.md): Linux 常用命令、服务器管理、开发环境配置等
+- [macOS](https://mhaibaraai.cn/raw/guides/os/macos.md): 记录一次 Mac 环境配置
+- [浙政钉开发](https://mhaibaraai.cn/raw/guides/platforms/dingtalk.md): 浙政钉开发实用技巧
+- [GitLab CI/CD 完全指南](https://mhaibaraai.cn/raw/guides/platforms/gitlab-ci.md): 一份涵盖从入门、配置到问题排查的完整 CI/CD 实践文档，实现快速上手并高效利用自动化流水线。
+- [IServer 踩坑归集](https://mhaibaraai.cn/raw/guides/platforms/iserver.md): 超图服务调用踩坑归集
+- [Node](https://mhaibaraai.cn/raw/guides/runtime/node.md): Node 的配置和使用指南。
+- [Cursor](https://mhaibaraai.cn/raw/tools/editors/.cursor.md): Cursor 的使用、配置和插件指南
+- [IntelliJ IDEA](https://mhaibaraai.cn/raw/tools/editors/idea.md): 在 macOS 上安装和配置 IntelliJ IDEA，优化你的 Java 开发环境。
+- [VS Code](https://mhaibaraai.cn/raw/tools/editors/vscode.md): VS Code 的配置和使用指南。
+- [Homebrew](https://mhaibaraai.cn/raw/tools/package-managers/homebrew.md): Homebrew 的配置和使用指南。
+- [Pnpm](https://mhaibaraai.cn/raw/tools/package-managers/pnpm.md): pnpm 的配置和使用指南。
+- [Fnm](https://mhaibaraai.cn/raw/tools/version-control/fnm.md): fnm 的安装、配置、使用、常见问题等。
+- [Git](https://mhaibaraai.cn/raw/tools/version-control/git.md): Git 的配置、使用、常见问题等。
+
+## Notes
+
+- 技术分享
+- 知识沉淀
+- 开发随笔

@@ -1,0 +1,4482 @@
+# 👋 开发随笔
+
+
+
+# 异步编程
+
+## Promise
+
+`Promise` 是一个对象，代表一个尚未完成但最终会完成（或失败）的异步操作的结果。它有三种状态：
+
+- **Pending (进行中)**: 初始状态，既不是成功，也不是失败。
+- **Fulfilled (已成功)**: 意味着操作成功完成。
+- **Rejected (已失败)**: 意味着操作失败。
+
+::warning
+`Promise` 的状态一旦从 `Pending` 变为 `Fulfilled` 或 `Rejected`，就不可再改变。这确保了异步结果的稳定性和一致性。
+::
+
+```ts [promise-demo.ts]
+// 创建一个 Promise，模拟一个耗时 1 秒的异步操作
+const myPromise = new Promise((resolve, reject) => {
+  console.log('Promise 开始执行')
+  setTimeout(() => {
+    // 模拟成功，并返回结果
+    resolve('操作成功')
+    // 以下调用将被忽略，因为 Promise 状态已确定
+    // reject('操作失败');
+  }, 1000)
+})
+
+// 使用 .then() 处理成功情况，.catch() 处理失败情况
+myPromise
+  .then((result) => {
+    // result 的值是 '操作成功'
+    console.log(`成功: ${result}`)
+  })
+  .catch((error) => {
+    // 如果 Promise 被 reject，这里会执行
+    console.error(`失败: ${error}`)
+  })
+  .finally(() => {
+    // 无论成功还是失败，都会执行
+    console.log('Promise 执行完毕')
+  })
+```
+
+## Async/Await
+
+`async/await` 是基于 `Promise` 的语法糖，它让异步代码看起来和同步代码一样直观易读。
+
+- **`async` 函数**: `async` 关键字用于声明一个异步函数。该函数会隐式地返回一个 `Promise`。
+- **`await` 操作符**: `await` 关键字只能在 `async` 函数内部使用，它会暂停函数的执行，等待一个 `Promise` 被 `resolve`，然后返回 `Promise` 的结果。如果 `Promise` 被 `reject`，它会抛出异常。
+
+```ts [async-await-demo.ts]
+// 定义一个返回 Promise 的函数
+function delayedMessage(message, delay) {
+  return new Promise(resolve => setTimeout(() => resolve(message), delay))
+}
+
+// 使用 async/await 调用
+async function greet() {
+  console.log('开始打招呼...')
+  try {
+    const message = await delayedMessage('你好，世界！', 2000)
+    console.log(message) // 2秒后输出: 你好，世界！
+  }
+  catch (error) {
+    console.error('打招呼时发生错误:', error)
+  }
+  finally {
+    console.log('打招呼流程结束。')
+  }
+}
+
+greet()
+```
+
+::tip
+使用 `try...catch` 结构来处理 `await` 可能抛出的错误，这比 `.catch()` 链式调用更符合传统同步代码的错误处理逻辑。
+::
+
+## 并行与串行执行
+
+借助 `Promise` 的能力，我们可以灵活控制多个异步操作的执行顺序。
+
+### 串行执行
+
+使用 `await` 可以轻松实现异步操作的串行执行，即一个操作完成后再开始下一个。
+
+```ts [serial-execution.ts]
+async function serialTasks() {
+  console.time('serialTasks')
+  console.log('开始执行串行任务')
+
+  const result1 = await delayedMessage('任务1完成', 1000)
+  console.log(result1)
+
+  const result2 = await delayedMessage('任务2完成', 1000)
+  console.log(result2)
+
+  console.log('串行任务全部完成')
+  console.timeEnd('serialTasks') // 大约 2000ms
+}
+
+serialTasks()
+```
+
+### 并行执行
+
+当多个异步操作互不依赖时，使用 `Promise.all()` 可以让它们并行执行，从而提高效率。`Promise.all()` 接收一个 `Promise` 数组，当所有 `Promise` 都成功时，它会返回一个包含所有结果的数组。
+
+```ts [parallel-execution.ts]
+async function parallelTasks() {
+  console.time('parallelTasks')
+  console.log('开始执行并行任务')
+
+  const tasks = [
+    delayedMessage('任务A完成', 1000),
+    delayedMessage('任务B完成', 1500)
+  ]
+
+  try {
+    const results = await Promise.all(tasks)
+    console.log('并行任务全部完成:', results) // ['任务A完成', '任务B完成']
+  }
+  catch (error) {
+    console.error('并行任务中出现错误:', error)
+  }
+
+  console.timeEnd('parallelTasks') // 大约 1500ms
+}
+
+parallelTasks()
+```
+
+
+# 网络请求
+
+## 基本用法
+
+`fetch()` 方法的第一个参数是要请求的资源的 URL。它会返回一个 `Promise`，该 `Promise` 在接收到服务器的响应头后 `resolve` 为一个 `Response` 对象。
+
+```ts [basic-fetch.ts]
+async function fetchData(url) {
+  try {
+    const response = await fetch(url)
+
+    // response.ok 检查 HTTP 状态码是否在 200-299 范围内
+    if (!response.ok) {
+      throw new Error(`HTTP 错误！状态: ${response.status}`)
+    }
+
+    // response.json() 读取响应体并解析为 JSON
+    const data = await response.json()
+    console.log(data)
+    return data
+  }
+  catch (error) {
+    console.error('无法获取数据:', error)
+  }
+}
+
+// 示例：从公共 API 获取用户数据
+fetchData('https://jsonplaceholder.typicode.com/users/1')
+```
+
+## 处理响应
+
+`Response` 对象提供了多种方法来处理不同格式的响应体：
+
+- **`response.json()`**: 解析响应体为 JSON 对象。
+- **`response.text()`**: 将响应体作为纯文本读取。
+- **`response.blob()`**: 将响应体处理为 `Blob` 对象，用于处理图片、音频等二进制文件。
+- **`response.formData()`**: 将响应体处理为 `FormData` 对象。
+- **`response.arrayBuffer()`**: 将响应体处理为 `ArrayBuffer` 对象，用于处理通用的二进制数据。
+
+## 配置请求
+
+`fetch()` 方法可以接受第二个可选参数，一个 `init` 配置对象，用于自定义请求。
+
+```ts [post-request.ts]
+async function postData(url, data) {
+  try {
+    const response = await fetch(url, {
+      // 请求方法
+      method: 'POST',
+      // 请求头
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      // 请求体，必须是字符串
+      body: JSON.stringify(data)
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP 错误！状态: ${response.status}`)
+    }
+
+    const responseData = await response.json()
+    console.log('成功:', responseData)
+    return responseData
+  }
+  catch (error) {
+    console.error('无法发送数据:', error)
+  }
+}
+
+// 示例：向 API 发送一个新的帖子
+const newPost = {
+  title: 'foo',
+  body: 'bar',
+  userId: 1
+}
+
+postData('https://jsonplaceholder.typicode.com/posts', newPost)
+```
+
+### `init` 对象常用选项
+
+- **`method`**: 请求方法，如 `GET`, `POST`, `PUT`, `DELETE`。
+- **`headers`**: 一个包含请求头的 `Headers` 对象或普通对象。
+- **`body`**: 请求体，可以是 `Blob`, `BufferSource`, `FormData`, `URLSearchParams` 或 `ReadableStream` 对象。`GET` 或 `HEAD` 方法不能有请求体。
+- **`mode`**: 请求模式，如 `cors`, `no-cors`, `same-origin`。
+- **`cache`**: 缓存模式，如 `default`, `no-store`, `reload`。
+- **`credentials`**: 是否发送 `cookies`，如 `include`, `same-origin`, `omit`。
+
+## 错误处理
+
+`fetch()` 返回的 `Promise` 只有在遇到网络故障时才会 `reject`。对于服务器返回的 HTTP 错误状态（如 404 或 500），`fetch()` **不会** `reject`。
+
+因此，必须始终检查 `response.ok` 属性来判断请求是否成功。
+
+```ts [error-handling.ts]
+async function checkStatus(url) {
+  try {
+    const response = await fetch(url)
+
+    // 对于 404 等 HTTP 错误，fetch 不会抛出异常
+    // 需要手动检查状态
+    if (!response.ok) {
+      // 创建一个包含状态信息的错误，以便后续处理
+      throw new Error(`服务器响应错误: ${response.status} ${response.statusText}`)
+    }
+
+    console.log('请求成功！')
+    const data = await response.json()
+    return data
+  }
+  catch (error) {
+    // 这里会捕获网络错误和我们手动抛出的 HTTP 状态错误
+    console.error('Fetch 操作失败:', error.message)
+  }
+}
+
+// 示例：请求一个不存在的资源
+checkStatus('https://jsonplaceholder.typicode.com/invalid-url')
+```
+
+
+# CSS 高级特性
+
+## CSS 变量
+
+CSS 自定义属性（CSS 变量）允许我们在样式表中声明可复用的值，极大地增强了代码的灵活性和可维护性，特别是在主题切换和组件化开发中。
+
+### 变量回退
+
+`var()` 函数支持回退值，当主要变量未定义时，浏览器会使用第二个参数作为备用值。
+
+```css [variable-fallback.css]
+:root {
+  --primary-color: red; /* 主要颜色 */
+  --secondary-color: blue; /* 备用颜色 */
+  /* 如果 --primary-color 未定义，则使用 --secondary-color */
+  --chosen-color: var(--primary-color, var(--secondary-color));
+}
+
+.element {
+  background-color: var(--chosen-color);
+}
+```
+
+::tip
+`var()` 函数的第二个参数是回退值，它仅在第一个变量无效或未定义时生效。
+::
+
+### 条件样式
+
+通过属性选择器，我们可以根据 DOM 状态（如 `data-theme`）动态地改变 CSS 变量的值，从而实现主题切换等条件样式。
+
+::code-group
+```css [conditional-selection.css]
+:root {
+  --primary-color: red;
+}
+
+/* 当 body 具有 data-theme="primary" 属性时应用 */
+body[data-theme='primary'] {
+  --chosen-color: var(--primary-color);
+}
+
+.element {
+  background-color: var(--chosen-color);
+}
+```
+
+```html [structure.html]
+<body data-theme="primary">
+  <div class="element">This element has the primary color as background.</div>
+</body>
+```
+::
+
+## Flexbox 响应式布局
+
+Flexbox 提供了一套强大的工具集，用于在不同屏幕尺寸下创建灵活且响应迅速的布局。
+
+### 自适应网格
+
+通过 `flex` 属性可以实现子元素根据容器宽度自适应排列，常用于创建响应式网格布局。
+
+::code-group
+```css [layout.css]
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* 子元素之间的间距 */
+}
+
+.item {
+  flex: 1 1 calc(25% - 10px); /* 基于 4 列布局，自动换行 */
+  box-sizing: border-box; /* 包含 padding 和 border */
+}
+```
+
+```html [structure.html]
+<div class="container">
+  <div class="item">1</div>
+  <div class="item">2</div>
+  <div class="item">3</div>
+  <div class="item">4</div>
+  <div class="item">5</div>
+</div>
+```
+::
+
+::note
+使用 `calc()` 函数可以精确计算包含 `gap` 在内的子元素宽度， `box-sizing: border-box` 能确保 `padding` 和 `border` 被包含在宽度计算之内，简化布局逻辑。
+::
+
+
+# Sass 预处理器
+
+## 模块化与项目结构
+
+### 推荐用法
+
+- `@use`：引入模块，成员默认有命名空间，避免冲突
+- `@forward`：转发模块成员，构建聚合 API
+- `pkg:` 语法：直接从依赖包导入样式
+
+```scss [module-usage-demo.scss]
+// 推荐：模块化引入
+@use "bootstrap" as b;
+
+.element {
+  @include b.float-left;
+  border: 1px solid b.theme-color("dark");
+  margin-bottom: b.$spacer;
+}
+
+// 转发用法
+@forward "functions";
+@forward "variables";
+@forward "mixins";
+```
+
+### 命名空间与配置
+
+- `@use "lib" as *;` 取消命名空间（不推荐，易冲突）
+- `@use "lib" with ($color: blue);` 传递配置变量
+
+```scss [config-demo.scss]
+@use "sass:color";
+$base-color: #abc;
+@use "library" with (
+  $base-color: $base-color,
+  $secondary-color: color.scale($base-color, $lightness: -10%)
+);
+```
+
+### 包导入与 package.json 配置
+
+- 推荐包作者在 `package.json` 增加 `sass` 字段
+- 消费者可用 `@use 'pkg:library';` 导入依赖包样式
+
+::code-group
+```json [package.json]
+{
+  "exports": {
+    ".": {
+      "sass": "./dist/scss/index.scss",
+      "import": "./dist/js/index.mjs",
+      "default": "./dist/js/index.js"
+    }
+  }
+}
+```
+
+```scss [package-import-demo.scss]
+@use 'pkg:bootstrap';
+```
+::
+
+## 主流构建工具配置
+
+### Vite
+
+在 `vite.config.ts` 配置 Sass 选项：
+
+```ts [vite.config.ts]
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // 推荐使用 modern-compiler API
+        api: 'modern-compiler'
+      }
+    }
+  }
+})
+```
+
+### Webpack
+
+需安装 `sass-loader`，自动支持 `@use`/`@forward` 语法。
+
+## 弃用警告与应对
+
+Sass 正在逐步淘汰部分旧特性，常见弃用警告包括：
+
+- **@import**：已弃用，推荐使用 `@use` 和 `@forward`
+- **slash-div**：`/` 作为除法符号已弃用，建议用 `math.div()`
+- **legacy-js-api**：旧版 JS API 已弃用
+- **type-function**、**call-string*&#x2A;、**@elseif**、**new-global** 等
+
+可通过编译器参数如 `fatalDeprecations`、`futureDeprecations`、`silenceDeprecations` 控制警告行为。
+
+```text [text]
+[Deprecation] '@import' is deprecated. Use '@use' or '@forward' instead.
+```
+
+
+# 全局变量
+
+::callout{icon="i-lucide-book"}
+[TypeScript 声明文件](https://ts.xcatliu.com/basics/declaration-files.html#%E5%9C%A8-npm-%E5%8C%85%E6%88%96-umd-%E5%BA%93%E4%B8%AD%E6%89%A9%E5%B1%95%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F){rel="nofollow"}
+::
+
+## 扩展全局变量
+
+::note
+使用 `declare global`。这对于为未提供类型定义的第三方库补充类型非常有用。
+::
+
+::code-group
+```ts [index.ts]
+import JSEncrypt from 'jsencrypt'
+
+const encrypt = new JSEncrypt()
+encrypt.setPublicKey('publicKey')
+encrypt.encrypt('hello')
+```
+
+```ts [d.ts]
+declare global {
+  interface JSEncrypt {
+    setPublicKey: (publicKey: string) => void
+    setPrivateKey: (privateKey: string) => void
+    encrypt: (value: string) => string
+    decrypt: (value: string) => string
+    getPublicKey: () => string
+    getPrivateKey: () => string
+  }
+}
+```
+::
+
+## 全局组件类型
+
+::note
+为了让 TypeScript 识别并正确提示全局注册的组件（如 `Element Plus` 或 `Ant Design Vue` 的组件），可以在 `tsconfig.json` 中通过 `types` 字段指定全局组件类型定义文件的位置。
+::
+
+```json [tsconfig.json]
+{
+  "compilerOptions": {
+    "types": [
+      "element-plus/global",
+      "ant-design-vue/typings/global"
+    ]
+  }
+}
+```
+
+
+# 踩坑笔记
+
+## 打包失败 Missing "./preload-helper" export in "vite" package
+
+::caution
+打包失败：`Missing "./preload-helper" export in "vite" package`
+::
+
+搜索 `vite/preload-helper` 替换为 `\0vite/preload-helper`
+
+## vue-element-admin 安装第三包（npm install）时报错
+
+::caution
+控制台报错：`ls-remote -h -t git://github.com/adobe-webplatform/eve.git`
+::
+
+- 修改 Git 的协议（ssh 替换为 https）
+  ```sh [sh]
+  git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+  ```
+- 切换镜像网站
+  ```sh [sh]
+  git config --global url."https://hub.fastgit.xyz/".insteadOf "ssh://git@github.com/"
+  ```
+
+## 使用 import.meta.env 获取环境变量提示类型 “ImportMeta” 上不存在属性 “env”
+
+在 `tsconfig.json` 中添加 `"types": ["vite/client"]`
+
+```json [tsconfig.json]
+{
+  "compilerOptions": {
+    "types": ["vite/client"]
+  }
+}
+```
+
+::tip
+实际上启用了 Vite 提供的类型支持，这让 TypeScript 能够理解并正确处理 Vite 特有的代码结构，如环境变量访问。这是确保 TypeScript 项目中 Vite 功能正确工作的关键配置。
+::
+
+## JSX 元素隐式具有类型 "any"，因为不存在接口 "JSX.IntrinsicElements" 的索引签名
+
+在 `tsconfig.json` 中添加 `"jsx": "preserve"` 和 `"jsxImportSource": "vue"`
+
+```json [tsconfig.json]
+{
+  "compilerOptions": {
+    "jsx": "preserve",
+    "jsxImportSource": "vue"
+  }
+}
+```
+
+::note
+---
+to: https://vuejs.org/guide/extras/render-function.html#jsx-type-inference
+---
+根据 vue 指南，这是由以下更改引起的：
+
+> Starting in Vue 3.4, Vue no longer implicitly registers the global JSX namespace，从 Vue 3.4 开始，Vue 不再隐式注册全局 JSX 命名空间
+::
+
+## Big integer literals are not available in the configured target environment (“chrome87“, “edge88“)
+
+在 `vite.config.ts` 中添加：
+
+```ts [vite.config.ts]
+export default defineConfig({
+  // ...
+  build: {
+    target: 'esnext', // you can also use 'es2020' here
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'esnext', // you can also use 'es2020' here
+    },
+  },
+})
+```
+
+另外，请确保你的 Typescript 目标足够高：
+
+```json [tsconfig.json]
+{
+  "compilerOptions": {
+    "target": "ES2020" // you can also use higher value
+  // ...
+  }
+}
+```
+
+
+# 按需自动导入
+
+## 自动导入组件和 API
+
+::callout{icon="i-lucide-book"}
+[unplugin-vue-components](https://github.com/unplugin/unplugin-vue-components){rel="nofollow"}、
+[unplugin-auto-import](https://github.com/unplugin/unplugin-auto-import){rel="nofollow"}
+::
+
+通过以下配置，可以实现 `vue`、`@vueuse/core` 的 API 以及 `Element Plus` 组件的自动导入。
+
+::code-group
+```sh [sh]
+pnpm add -D unplugin-vue-components unplugin-auto-import
+```
+
+```ts [vite.config.ts]
+import AutoImport from 'unplugin-auto-import/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import Components from 'unplugin-vue-components/vite'
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  plugins: [
+    AutoImport({
+      imports: ['vue', '@vueuse/core'],
+      resolvers: [ElementPlusResolver()],
+    }),
+    Components({
+      resolvers: [
+        ElementPlusResolver(),
+      ],
+    }),
+  ],
+})
+```
+::
+
+## 自动导入图标
+
+结合 [`unplugin-icons`](https://github.com/unplugin/unplugin-icons){rel="nofollow"} 可以在项目中方便地使用 [Iconify](https://icon-sets.iconify.design/){rel="nofollow"} 中的海量图标。
+
+::steps{level="3"}
+### 安装图标集
+
+  :::note
+  如果只需要使用特定图标集，可以单独安装，例如 `ep` (Element Plus) 和 `maki` 图标集。
+  :::
+
+```sh [sh]
+pnpm add -D @iconify-json/ep @iconify-json/maki
+```
+
+### 配置 Vite 插件
+
+在 `vite.config.ts` 中配置 `unplugin-icons` 的 `IconsResolver` 和 `Icons` 插件。
+
+  :::code-collapse
+  ```ts [vite.config.ts]
+  import AutoImport from 'unplugin-auto-import/vite'
+  import IconsResolver from 'unplugin-icons/resolver'
+  import Icons from 'unplugin-icons/vite'
+  import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+  import Components from 'unplugin-vue-components/vite'
+  import { defineConfig } from 'vite'
+  
+  export default defineConfig({
+    plugins: [
+      AutoImport({
+        imports: ['vue', '@vueuse/core'],
+        resolvers: [
+          ElementPlusResolver(),
+          IconsResolver({
+            prefix: 'icon',
+          }),
+        ],
+      }),
+      Components({
+        resolvers: [
+          ElementPlusResolver(),
+          IconsResolver({
+            enabledCollections: ['ep', 'maki'],
+          }),
+        ],
+      }),
+      Icons({
+        autoInstall: true,
+      }),
+    ],
+  })
+  ```
+  :::
+
+### 在 `tsconfig.json` 中添加类型
+
+  :::note
+  为了让 TypeScript 识别通过 `~icons/...` 导入的图标类型，需要添加相应的类型声明。
+  :::
+
+```json [tsconfig.json]
+{
+  "compilerOptions": {
+    "types": [
+      "unplugin-icons/types/vue"
+    ]
+  }
+}
+```
+
+### 使用图标
+
+配置完成后，可以直接在模板中使用 `<icon-ep-user-filled />` 这样的组件，或者通过 `import IconMakiAnimalShelter from '~icons/maki/animal-shelter'` 的方式在脚本中导入图标。
+::
+
+
+# Vite 资源导入
+
+## 常用导入方式
+
+| 导入后缀      | 用途                | 示例                                        |
+| --------- | ----------------- | ----------------------------------------- |
+| `?url`    | 获取资源处理后的 URL      | `import url from './img.png?url'`         |
+| `?raw`    | 获取文件原始内容字符串       | `import text from './data.txt?raw'`       |
+| `?inline` | 将文件内容内联为 base64   | `import json from './data.json?inline'`   |
+| `?worker` | 创建一个新的 Web Worker | `import Worker from './worker.js?worker'` |
+
+## 应用场景
+
+下面的示例展示了如何在 Vue 组件中利用 `?url` 后缀导入静态资源 URL。
+
+```vue [ImportExample.vue]
+<script setup lang="ts">
+// 导入图片 URL
+import logoUrl from './logo.svg?url'
+// 导入 JSON 数据 URL，适用于地图瓦片等场景
+import tilesJsonUrl from './tiles.json?url'
+
+const imageSource = logoUrl
+</script>
+
+<template>
+  <!-- 在模板属性中使用导入的 URL -->
+  <img :src="imageSource" alt="Logo">
+  <!-- 将 URL 作为属性传递给子组件 -->
+  <MapComponent :tiles-url="tilesJsonUrl" />
+</template>
+```
+
+
+# Copy Page
+
+## 路由
+
+- 路径：`/raw/[...slug].md`
+- 返回：`text/markdown; charset=utf-8`
+- 行为：基于 `@nuxt/content` 查询页面，缺少 H1/描述时自动注入，再用 `minimark/stringify` 输出为 Markdown。
+
+::note
+---
+to: https://github.com/nuxt/ui/blob/a32cc37f7392499ab02558e4d58b46195f7ffad4/docs/server/routes/raw/%5B...slug%5D.md.get.ts
+---
+服务器端实现 `server/routes/raw/[...slug].md.get.ts` 参考了 Nuxt UI 文档站的同名路由实现（思想与结构），以适配本项目需求。
+::
+
+### 关键点（精简）
+
+- 仅处理以 `.md` 结尾的请求；非 `.md` 返回 404。
+- 通过 `queryCollection('docs').path(route)` 查询对应文档。
+- 统一输出为 Markdown，便于复制、下载与 LLM 抓取。
+
+```ts [server/routes/raw/[...slug\\].md.get.ts]
+// 仅示意关键步骤
+setHeader(event, 'Content-Type', 'text/markdown; charset=utf-8')
+return stringify({ ...page.body, type: 'minimark' }, { format: 'markdown/html' })
+```
+
+## 页面工具（PageHeaderLinks）
+
+`app/components/PageHeaderLinks.vue` 提供便捷入口：
+
+- **Copy page**：复制当前文档的 Markdown 原文
+- **View as Markdown**：在新标签页打开 `/raw...[slug].md`
+- **Open in ChatGPT / Claude**：以提示语引导模型抓取原文链接
+
+```ts [app/components/PageHeaderLinks.vue]
+// 复制当前文档原文（调用 /raw 路由）
+async function copyPage() {
+  copy(await $fetch<string>(`/raw${route.path}.md`))
+}
+```
+
+## 使用建议
+
+- 站内引用原文时，优先使用 `/raw... .md`，提升跨工具可读性。
+- 若需禁止被搜索引擎索引，请结合 Robots 策略按需处理。
+
+::tip{to="https://mhaibaraai.cn/ecosystem/nuxt/llms"}
+结合 LLM 链接规范化使用。
+::
+
+
+# 踩坑笔记
+
+## Node.js ABI (Application Binary Interface) 版本不兼容
+
+::caution
+Node.js 的 ABI 版本不兼容问题。
+
+```log [log]
+The module '/Users/yixuanmiao/MOVK/mhaibaraai.cn/node_modules/.pnpm/better-sqlite3@12.2.0/node_modules/better-sqlite3/build/Release/better_sqlite3.node'
+was compiled against a different Node.js version using
+NODE_MODULE_VERSION 127. This version of Node.js requires
+NODE_MODULE_VERSION 137. Please try re-compiling or re-installing
+the module (for instance, using npm rebuild or npm install).
+```
+::
+
+### 问题分析
+
+报错信息核心是：
+
+- `better_sqlite3.node` 是用 **NODE\_MODULE\_VERSION 127** 编译的
+- 当前运行的 Node.js 版本需要 **NODE\_MODULE\_VERSION 137**
+- 升级了 Node.js（或者切换了版本），但本地依赖里的原生模块 `better-sqlite3` 没有重新编译
+
+### 最优解决方案（推荐顺序执行）：
+
+1. **删除依赖并重装**
+   ```sh [sh]
+   rm -rf node_modules
+   pnpm store prune
+   pnpm install
+   ```
+2. **强制重编译 better-sqlite3**
+   ```sh [sh]
+   pnpm rebuild better-sqlite3
+   ```
+   :br或者全局重编译所有原生依赖：
+   ```sh [sh]
+   pnpm rebuild
+   ```
+
+要快速验证是否修复，可以运行：
+
+```sh [sh]
+node -e "require('better-sqlite3')"
+```
+
+如果没有报错，就说明 ABI 版本对上了。
+
+
+# Nuxt LLMs
+
+## 最小配置
+
+::note{to="https://nuxt.com/modules/llms"}
+`nuxt-llms` 自动生成 `llms.txt`，用于向 LLM 提供结构化站点说明，可选启用 `llms-full.txt`。
+::
+
+```ts [nuxt.config.ts]
+export default defineNuxtConfig({
+  modules: ['nuxt-llms'],
+  llms: {
+    domain: 'https://mhaibaraai.cn',
+    title: 'YiXuan 的开发随笔',
+    description: '一个专注于技术分享与知识沉淀的个人网站。',
+  },
+})
+```
+
+## 链接规范化（LLM 友好）
+
+为保证 LLM 获取「可直接抓取的 Markdown 原文」，在服务端 Hook 中将站内链接重写为 `/raw...[slug].md`：
+
+```ts [server/plugins/llms.ts]
+export default defineNitroPlugin((nitroApp) => {
+  nitroApp.hooks.hook('llms:generate', (_, { sections }) => {
+    sections.forEach((s) => {
+      if (!s.links) return
+      s.links = s.links.map((l) => ({
+        ...l,
+        href: `${l.href.replace(/^https:\/\/mhaibaraai.cn/, 'https://mhaibaraai.cn/raw')}.md`,
+      }))
+    })
+  })
+})
+```
+
+::tip
+仅转换本站链接，避免误改外域；本地与生产的域名前缀需一致或做条件处理。
+::
+
+
+# Nuxt SEO
+
+## 安装 Nuxt SEO
+
+Nuxt SEO 模块：`@nuxtjs/seo` 集合了多个 SEO 相关的模块，包括：
+
+- [`Robots`](https://nuxt.com/modules/robots){rel="nofollow"}：生成 `robots.txt` 文件，控制搜索引擎爬虫的抓取行为。
+- [`Sitemap`](https://nuxt.com/modules/sitemap){rel="nofollow"}：自动生成 `sitemap.xml` 站点地图，支持与 Nuxt Content 集成。
+- [`OG Image`](https://nuxt.com/modules/og-image){rel="nofollow"}：动态生成社交媒体分享图片，用于微信、Twitter 等平台预览。
+- [`Schema.Org`](https://nuxt.com/modules/schema-org){rel="nofollow"}：注入 Schema.org 结构化数据，帮助搜索引擎理解页面内容。
+- [`Link Checker`](https://nuxt.com/modules/link-checker){rel="nofollow"}：构建时检查并报告网站中的死链。
+- [`SEO Utils`](https://nuxtseo.com/docs/seo-utils/getting-started/introduction){rel="nofollow"}：提供一些实用的 SEO 工具函数，例如 `findPageHeadline` 用于从导航数据中提取页面标题。
+
+::note{to="https://nuxtseo.com/docs/nuxt-seo/getting-started/installation"}
+详见 `@nuxtjs/seo` 官方安装文档。
+::
+
+## 建立站点元数据中心
+
+在 `nuxt.config.ts` 中引入新的顶层 `site` 配置块。这是 `@nuxtjs/seo` 的基石。
+
+::callout
+---
+icon: i-lucide-bookmark
+to: https://nuxtseo.com/docs/nuxt-seo/guides/using-the-modules#shared-configuration
+---
+Nuxt SEO 站点配置
+::
+
+```ts [nuxt.config.ts]
+export default defineNuxtConfig({
+  site: {
+    url: 'https://mhaibaraai.cn',
+    name: 'YiXuan 的开发随笔',
+    logo: '/avatar.png',
+    description: '一个专注于技术分享与知识沉淀的个人网站。',
+    defaultLocale: 'zh-CN', // 默认语言
+  }
+})
+```
+
+::tip
+`trailingSlash: true` 将 URL 统一为以斜杠(`/`)结尾，避免搜索引擎因视 `/page` 与 `/page/` 为不同页面而产生重复内容问题，从而集中页面权重。
+::
+
+## Nuxt Content 集成
+
+::callout
+---
+icon: i-lucide-bookmark
+to: https://nuxtseo.com/docs/nuxt-seo/guides/using-the-modules#nuxt-content-integration
+---
+Nuxt SEO 与 Nuxt Content 集成
+::
+
+```ts [content.config.ts]
+import { defineCollection, defineContentConfig } from '@nuxt/content'
+import { asSeoCollection } from '@nuxtjs/seo/content'
+
+export default defineContentConfig({
+  collections: {
+    landing: defineCollection(
+      asSeoCollection({
+        type: 'page',
+        source: 'index.md',
+      }),
+    ),
+    docs: defineCollection(
+      asSeoCollection({
+        type: 'page',
+        source: {
+          include: '**',
+          exclude: ['index.md'],
+        },
+      }),
+    ),
+  },
+})
+```
+
+## 配置 Robots
+
+::callout
+---
+icon: i-lucide-bookmark
+to: https://nuxtseo.com/docs/robots/getting-started/introduction
+---
+配置 Robots 模块
+::
+
+```ts [nuxt.config.ts]
+import packageJson from './package.json'
+
+defineNuxtConfig({
+  robots: {
+    sitemap: `${packageJson.homepage}/sitemap.xml`, // 指向你的站点地图
+  },
+})
+```
+
+## 配置 Sitemap
+
+::callout
+---
+icon: i-lucide-bookmark
+to: https://nuxtseo.com/docs/sitemap/getting-started/introduction
+---
+配置 Sitemap 模块
+::
+
+示例：更改列数并添加优先级和 **changeFreq** 字段
+
+```ts [nuxt.config.ts]
+export default defineNuxtConfig({
+  sitemap: {
+    xslColumns: [
+      { label: 'URL', width: '50%' },
+      { label: 'Last Modified', select: 'sitemap:lastmod', width: '25%' },
+      { label: 'Priority', select: 'sitemap:priority', width: '12.5%' },
+      { label: 'Change Frequency', select: 'sitemap:changefreq', width: '12.5%' },
+    ],
+  },
+})
+```
+
+::tip
+---
+icon: i-lucide-bookmark
+to: https://nuxt.com/docs/4.x/getting-started/prerendering#selective-pre-rendering
+---
+你可以结合 `crawlLinks` 选项来预渲染一些爬虫无法发现的路由，比如你的 `/sitemap.xml` 或 `/robots.txt`。
+
+```ts [nuxt.config.ts]
+export default defineNuxtConfig({
+  // https://nitro.build/config
+  nitro: {
+    prerender: {
+      routes: ['/', '/sitemap.xml', '/robots.txt'],
+      crawlLinks: true,
+      autoSubfolderIndex: false,
+    },
+  },
+})
+```
+::
+
+## 配置 OG Image
+
+::callout
+---
+icon: i-lucide-bookmark
+to: https://nuxtseo.com/docs/og-image/getting-started/introduction
+---
+配置 OG Image 模块
+::
+
+::warning{to="https://nuxtseo.com/docs/og-image/guides/non-english-locales"}
+中文网站需要配置字体，否则会显示乱码。
+
+```ts [nuxt.config.ts]
+export default defineNuxtConfig({
+  ogImage: {
+    googleFontMirror: true, // 启用 Google Fonts 镜像
+    fonts: [
+      'Noto+Sans+SC:400'
+    ]
+  }
+})
+```
+::
+
+::tabs
+  :::tabs-item{icon="i-lucide-code" label="Code"}
+    ::::code-collapse
+    ```vue [app/components/og-image/Docs.vue]
+    <script lang="ts" setup>
+    import { computed } from 'vue'
+    
+    interface Props {
+      colorMode?: string
+      title?: string
+      description?: string
+      theme?: string
+      siteLogo?: string
+      siteName?: string
+    }
+    
+    const props = withDefaults(defineProps<Props>(), {
+      colorMode: 'light',
+      title: 'title',
+      description: 'description',
+      theme: '#6366f1',
+    })
+    
+    const siteConfig = useSiteConfig()
+    const siteName = computed(() => {
+      return props.siteName || siteConfig.name
+    })
+    const siteLogo = computed(() => {
+      return props.siteLogo || siteConfig.logo
+    })
+    
+    const title = computed(() => (props.title || '').slice(0, 60))
+    const description = computed(() => (props.description || '').slice(0, 200))
+    </script>
+    
+    <template>
+      <div class="w-full h-full flex flex-row justify-center items-center p-16 bg-[#9ca3af0d]">
+        <svg
+          class="absolute top-0 left-0 h-[380px] pointer-events-none"
+          viewBox="0 0 1200 380"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <linearGradient
+              id="gradientBackground"
+              x1="0"
+              y1="0"
+              x2="0"
+              y2="380"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop offset="0%" :stop-color="theme" stop-opacity="0.1" />
+              <stop offset="100%" :stop-color="theme" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#gradientBackground)" />
+        </svg>
+    
+        <div class="w-[600]">
+          <div class="flex flex-col w-full max-w-[90%]">
+            <h1
+              class="m-0 font-bold mb-[30px] text-[75px] leading-none"
+              style="display: block; text-overflow: ellipsis;"
+              :style="{ lineClamp: description ? 2 : 3 }"
+            >
+              {{ title }}
+            </h1>
+            <p
+              v-if="description"
+              class="text-[28px] leading-12"
+              :class="[
+                colorMode === 'light' ? ['text-gray-700'] : ['text-gray-300'],
+              ]"
+              style="display: block; line-clamp: 3; text-overflow: ellipsis;"
+            >
+              {{ description }}
+            </p>
+          </div>
+          <div class="flex flex-row gap-4 items-center mt-10">
+            <img v-if="siteLogo" :src="siteLogo" height="48" class="rounded-full object-cover shrink-0">
+            <p v-if="siteName" style="font-size: 25px;" class="font-bold">
+              {{ siteName }}
+            </p>
+          </div>
+        </div>
+        <img
+          width="400"
+          alt="Illustration"
+          class="rounded-lg shadow-2xl ring mx-auto"
+          :style="{
+            '--tw-ring-color': '#e7e3e4',
+          }"
+          src="/i-llustration.png"
+        >
+      </div>
+    </template>
+    ```
+    ::::
+  :::
+
+  :::tabs-item{icon="i-lucide-eye" label="Preview"}
+  ![og-image](https://mhaibaraai.cn/images/ecosystem/nuxt/og-image.png)
+  :::
+::
+
+## 配置 Link Checker
+
+::callout
+---
+icon: i-lucide-bookmark
+to: https://nuxtseo.com/docs/link-checker/getting-started/introduction
+---
+配置 Link Checker 模块
+::
+
+```ts [nuxt.config.ts]
+export default defineNuxtConfig({
+  linkChecker: {
+    // 配置报告输出
+    report: {
+      publish: true, // 是否发布报告
+      html: true,
+      markdown: true,
+      json: true,
+    },
+  },
+})
+```
+
+## 配置 Schema.Org
+
+::callout
+---
+icon: i-lucide-bookmark
+to: https://nuxtseo.com/docs/schema-org/getting-started/introduction
+---
+配置 Schema.Org 模块
+::
+
+当您的网站是关于个人、个人品牌或个人博客时，应使用 `Person` 身份。
+
+```ts [nuxt.config.ts]
+export default defineNuxtConfig({
+  schemaOrg: {
+    identity: definePerson({
+      name: 'YiXuan',
+      image: '/avatar.png',
+      url: 'https://mhaibaraai.cn',
+      description: '一个专注于技术分享与知识沉淀的个人网站。',
+      email: 'mhaibaraai@gmail.com',
+      sameAs: [
+        'https://github.com/mhaibaraai',
+      ],
+    }),
+  },
+})
+```
+
+
+# Nuxt SSR + PM2 部署
+
+## 前置要求与架构说明
+
+- **部署目标**：本项目以 SSR 方式运行，主站由 Nginx（Docker）反代至 Node 服务（PM2 集群托管）。
+- **监听策略**：Node 监听 `0.0.0.0:3000`（容器通过 `host.docker.internal` 访问宿主机端口）。
+- **域名与 CDN**：域名走 Cloudflare，需关闭 Rocket Loader/Mirage/Email Obfuscation 以避免注入脚本导致水合异常。
+
+::note{to="https://nuxt.com/docs/4.x/getting-started/deployment#nodejs-server"}
+参考 Nuxt 官方文档（Node.js Server 入口：`node .output/server/index.mjs`，可用 `HOST/PORT` 或 `NITRO_HOST/NITRO_PORT` 控制）。
+::
+
+::note{to="https://pm2.keymetrics.io/docs/usage/quick-start/"}
+参考 PM2 官方文档（集群模式 `instances: 'max'`，守护、日志、开机自启、零停机重载）。
+::
+
+## 服务器环境准备
+
+::steps{level="3"}
+### 安装 PM2
+
+  :::tip{to="https://mhaibaraai.cn/guides/runtime/node#直接下载安装"}
+  在 Linux 上安装 Node 22、pnpm 请参考 Node.js 安装指南
+  :::
+
+```sh [sh]
+# 安装
+npm i -g pm2
+# 查看 pm2 版本
+pm2 --version
+# 查看 pm2 状态
+pm2 status
+```
+
+![验证 PM2 版本](https://mhaibaraai.cn/images/ecosystem/nuxt/verify-pm2.png)
+
+### 配置 PM2 开机自启
+
+为确保服务器重启后应用自动恢复，需要配置 PM2 开机自启：
+
+```sh [sh]
+# 1. 生成并配置启动脚本
+pm2 startup
+
+# 2. 保存当前进程列表
+pm2 save
+```
+
+### 验证 PM2 自启配置
+
+```sh [sh]
+# 测试重启后恢复
+sudo reboot
+
+# 重启后检查应用状态
+pm2 list
+pm2 logs
+```
+
+  :::warning
+  **`pm2 startup` 行为说明**：
+  
+  **Root 用户**：
+  
+  - PM2 会自动配置系统服务，无需手动执行额外命令
+  - 直接创建 `/etc/systemd/system/pm2-root.service` 并启用
+  
+  **普通用户**：
+  
+  - PM2 会输出需要手动执行的 sudo 命令
+  - 需要复制完整的 sudo 命令并执行，例如：
+  
+    ```sh
+    sudo env PATH=$PATH:/usr/bin /usr/local/lib/node_modules/pm2/bin/pm2 startup systemd -u username --hp /home/username
+    ```
+  
+  **通用注意事项**：
+  
+  - `pm2 startup` 只需在服务器初次配置时执行一次
+  - `pm2 save` 在每次应用更新后执行，保持进程列表同步
+  - 使用 `pm2 unstartup systemd` 可以移除开机自启配置
+  :::
+
+### （可选）UFW 防火墙策略
+
+```sh [sh]
+sudo ufw allow 22/tcp
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw deny 3000/tcp
+```
+::
+
+## Nginx（Docker）反代至 Node（宿主机）
+
+::tip{to="https://mhaibaraai.cn/guides/deployment/docker"}
+参考 Docker 安装和使用指南
+::
+
+确保 `docker-compose.yml` 已配置：
+
+```yml [docker-compose.yml]
+services:
+  nginx:
+    image: nginx:latest
+    container_name: my-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./html:/usr/share/nginx/html:ro
+      - ./etc/ssl:/etc/ssl:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # 添加这一行，用于容器内访问宿主机端口
+    restart: unless-stopped
+```
+
+将主站从静态目录切换为反代 Node ：
+
+```conf [nginx/default.conf]
+server {
+    # 主站改为反代到 Node SSR
+    location / {
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass http://host.docker.internal:3000;
+    }
+}
+```
+
+重启：
+
+```sh [sh]
+docker compose -f /root/my-nginx/docker-compose.yml restart nginx
+```
+
+## PM2 配置（集群模式）
+
+在项目根目录新增 `ecosystem.config.cjs`：
+
+```js [ecosystem.config.cjs]
+module.exports = {
+  apps: [
+    {
+      name: 'mhaibaraai.cn',
+      script: './.output/server/index.mjs',
+      exec_mode: 'cluster',
+      instances: 'max',
+      env: {
+        HOST: '0.0.0.0',
+        PORT: '3000',
+        NITRO_HOST: '0.0.0.0',
+        NITRO_PORT: '3000'
+      },
+      max_memory_restart: '512M',
+      out_file: './.pm2/out.log',
+      error_file: './.pm2/error.log',
+      time: true
+    }
+  ]
+}
+```
+
+首启与持久化：
+
+```sh [sh]
+pm2 start ecosystem.config.cjs
+pm2 save
+pm2 startup
+```
+
+## GitHub Actions（CI）与 SSH 发布
+
+::note
+CI Secrets 最小集，其余参数在工作流中直接定义：
+
+- `SSH_PRIVATE_KEY` - SSH 私钥
+- `SSH_HOST` - SSH 主机
+::
+
+::code-collapse
+  :::code-group
+  ```yml [.github/workflows/deploy.yml]
+  name: Deploy
+  
+  on:
+    push:
+      branches:
+        - main
+  
+  jobs:
+    deploy:
+      runs-on: ubuntu-latest
+      env:
+        NODE_OPTIONS: --max_old_space_size=4096
+  
+      permissions:
+        contents: write
+        id-token: write
+  
+      steps:
+        - uses: actions/checkout@v5
+          with:
+            fetch-depth: 0
+  
+        - uses: pnpm/action-setup@v4
+  
+        - name: Setup Node.js
+          uses: actions/setup-node@v4
+          with:
+            node-version: lts/*
+            cache: pnpm
+  
+        - name: Install dependencies
+          run: pnpm install --frozen-lockfile
+  
+        - name: Prepare build
+          run: pnpm run dev:prepare
+  
+        - name: Run build (SSR)
+          run: pnpm run build
+  
+        - name: Setup SSH agent
+          uses: webfactory/ssh-agent@v0.9.1
+          with:
+            ssh-private-key: |
+              ${{ secrets.SSH_PRIVATE_KEY }}
+  
+        - name: Add known_hosts
+          env:
+            SSH_HOST: ${{ secrets.SSH_HOST }}
+            SSH_PORT: 22
+          run: |
+            mkdir -p ~/.ssh
+            ssh-keyscan -H "$SSH_HOST" -p "$SSH_PORT" >> ~/.ssh/known_hosts
+  
+        - name: Deploy to server via SSH
+          env:
+            SSH_USER: root
+            SSH_HOST: ${{ secrets.SSH_HOST }}
+            SSH_PORT: 22
+            DEPLOY_DIR: /root/my-nginx/html/www/mhaibaraai.cn
+            PM2_APP_NAME: mhaibaraai.cn
+          run: |
+            bash scripts/deploy.sh
+  
+        - name: Deploy build artifacts to gh-pages
+          uses: peaceiris/actions-gh-pages@v4
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: ./.output
+            publish_branch: gh-pages
+            force_orphan: true
+            commit_message: 'chore(release): build artifacts'
+  ```
+  
+  ```sh [scripts/deploy.sh]
+  #!/usr/bin/env bash
+  set -euo pipefail
+  
+  # Required envs from GitHub Actions
+  SSH_USER="${SSH_USER:?missing}"
+  SSH_HOST="${SSH_HOST:?missing}"
+  SSH_PORT="${SSH_PORT:?missing}"
+  DEPLOY_DIR="${DEPLOY_DIR:?missing}"
+  PM2_APP_NAME="${PM2_APP_NAME:-nuxt-app}"
+  
+  # Fixed deploy directory (no releases)
+  echo "[deploy] Host=${SSH_USER}@${SSH_HOST}:${SSH_PORT}"
+  echo "[deploy] Target dir=${DEPLOY_DIR}"
+  
+  # Local safety checks
+  [ -n "${DEPLOY_DIR:-}" ] || { echo "[deploy] DEPLOY_DIR empty" >&2; exit 2; }
+  TARGET_DIR="${DEPLOY_DIR%/}/.output"
+  if [ -z "$TARGET_DIR" ] || [ "$TARGET_DIR" = "/" ] || [ "$(basename -- "$TARGET_DIR")" != ".output" ]; then
+    echo "[deploy] invalid TARGET_DIR='$TARGET_DIR'" >&2
+    exit 3
+  fi
+  if [ ! -d ./.output ] || [ -z "$(ls -A ./.output 2>/dev/null || true)" ]; then
+    echo "[deploy] local ./.output missing or empty" >&2
+    exit 4
+  fi
+  
+  # Connection options
+  SSH_OPTS="-p ${SSH_PORT}"
+  RSYNC_SSH="ssh ${SSH_OPTS}"
+  
+  # Ensure pm2 directory exists later in remote block; create .output via rsync
+  
+  # Sync only built artifacts and PM2 ecosystem file
+  RSYNC_PATH="mkdir -p '${DEPLOY_DIR%/}/.output' && rsync"
+  rsync -az --delete-after -e "${RSYNC_SSH}" --rsync-path "${RSYNC_PATH}" ./.output/ "${SSH_USER}@${SSH_HOST}":"${DEPLOY_DIR%/}/.output/"
+  rsync -az -e "${RSYNC_SSH}" ./ecosystem.config.cjs "${SSH_USER}@${SSH_HOST}":"${DEPLOY_DIR}/ecosystem.config.cjs"
+  
+  # Remote pm2 reload/start (no install/build)
+  ssh ${SSH_OPTS} "${SSH_USER}@${SSH_HOST}" "export DEPLOY_DIR='${DEPLOY_DIR}' PM2_APP_NAME='${PM2_APP_NAME}'; bash -s" <<'REMOTE_EOF'
+  set -eo pipefail
+  
+  export NODE_OPTIONS=--max_old_space_size=1024
+  export PATH="/usr/local/bin:/usr/bin:/bin:$PATH"
+  
+  # Resolve Node/npm global prefix bin without relying on interactive shells
+  PREFIX_BIN=""
+  if command -v npm >/dev/null 2>&1; then
+    PREFIX_BIN="$(npm config get prefix 2>/dev/null)/bin"
+  elif [ -d "$HOME/.local/share/fnm/node-versions" ]; then
+    # Fallback: pick the newest installed node version directory
+    LATEST_NODE_DIR="$(ls -1dt "$HOME/.local/share/fnm/node-versions"/*/installation 2>/dev/null | head -n 1 || true)"
+    [ -n "$LATEST_NODE_DIR" ] && PREFIX_BIN="$LATEST_NODE_DIR/bin"
+  fi
+  [ -z "$PREFIX_BIN" ] && PREFIX_BIN="/usr/local/bin"
+  export PATH="$PREFIX_BIN:$PATH"
+  
+  echo "[remote] prefix bin: $PREFIX_BIN"
+  
+  # Locate pm2
+  PM2_BIN="$(command -v pm2 || true)"
+  if [ -z "$PM2_BIN" ]; then
+    echo "[remote] pm2 not found" >&2
+    exit 127
+  fi
+  
+  echo "[remote] using pm2: $PM2_BIN"
+  
+  cd "${DEPLOY_DIR}"
+  mkdir -p .pm2
+  
+  echo "[remote] PM2 operation for $PM2_APP_NAME..."
+  if "$PM2_BIN" describe "$PM2_APP_NAME" >/dev/null 2>&1; then
+    "$PM2_BIN" reload "$PM2_APP_NAME" --update-env
+  else
+    PM2_APP_NAME="$PM2_APP_NAME" "$PM2_BIN" start ecosystem.config.cjs
+    "$PM2_BIN" save
+  fi
+  
+  "$PM2_BIN" status | cat
+  REMOTE_EOF
+  
+  echo "[deploy] Completed"
+  ```
+  :::
+::
+
+## Nuxt 本地调试脚本
+
+`package.json` 增加 `start` 便于本地/服务调试：
+
+```json [package.json]
+{
+  "scripts": {
+    "start": "node .output/server/index.mjs"
+  }
+}
+```
+
+## 提交站点地图
+
+::tip{to="https://nuxtseo.com/docs/sitemap/guides/submitting-sitemap"}
+参考 SEO 指南（站点地图提交）
+::
+
+首先确保站点地图已生成，并上传到 `./public/sitemap.xml` 目录下。例如：[`https://mhaibaraai.cn/sitemap.xml`](https://mhaibaraai.cn/sitemap.xml){rel="nofollow"}
+
+![站点地图](https://mhaibaraai.cn/images/ecosystem/nuxt/sitemap.png)
+
+## 验证与排错
+
+- 容器内验证：`curl -I http://host.docker.internal:3000` 应返回 200。
+- 通过域名访问页面，关注 `pm2 logs` 与 Nginx 访问/错误日志。
+- 若出现 `better-sqlite3` ABI 不匹配，确保在目标机上重新安装与构建（见项目的 Nuxt 踩坑笔记）。
+
+::tip{to="https://nuxt.com/docs/4.x/getting-started/deployment#cdn-proxy"}
+如果经 Cloudflare，确保关闭 Rocket Loader/Mirage/Email Obfuscation，防止注入脚本引发水合异常。
+::
+
+
+# Element Plus
+
+## Tree 树节点过滤时保留父节点和子节点
+
+::code-collapse
+```vue [FilterableTree.vue]
+<script setup lang="ts">
+import type { ElTree } from 'element-plus'
+import { ref, watch } from 'vue'
+
+interface Tree {
+  id: number
+  label: string
+  children?: Tree[]
+}
+
+const filterText = ref('')
+const treeRef = ref<InstanceType<typeof ElTree>>()
+
+watch(filterText, (val) => {
+  treeRef.value!.filter(val)
+})
+
+function filterNode(value: string, data: Tree) {
+  if (!value)
+    return true
+  return check(data, value)
+}
+
+function check(node: Tree, value: string): boolean {
+  if (node.label.includes(value))
+    return true
+
+  if (node.children)
+    return node.children.some(child => check(child, value))
+
+  return false
+}
+
+const data: Tree[] = [
+  {
+    id: 1,
+    label: 'Level one 1',
+    children: [
+      {
+        id: 4,
+        label: 'Level two 1-1',
+        children: [
+          {
+            id: 9,
+            label: 'Level three 1-1-1',
+          },
+          {
+            id: 10,
+            label: 'Level three 1-1-2',
+          },
+        ],
+      },
+    ],
+  },
+]
+</script>
+
+<template>
+  <el-input v-model="filterText" placeholder="Filter keyword" />
+  <el-tree
+    ref="treeRef"
+    class="filter-tree"
+    :data="data"
+    :props="{ children: 'children', label: 'label' }"
+    default-expand-all
+    :filter-node-method="filterNode"
+  />
+</template>
+```
+::
+
+## 无法找到模块 `element-plus/dist/locale/zh-cn.mjs` 的声明文件
+
+::caution
+无法找到模块 `element-plus/dist/locale/zh-cn.mjs` 的声明文件。`/node_modules/element-plus/dist/locale/zh-cn.mjs` 隐式拥有 "any" 类型。
+如果 `element-plus` 包实际公开了此模块，请尝试添加包含 `declare module 'element-plus/dist/locale/zh-cn.mjs';` 的新声明(.d.ts)文件ts-plugin
+::
+
+- 使用正确的 Locale 模块路径 （推荐） :br element-plus 从 `2.2.0` 开始，推荐从 `element-plus/es/locale/lang/` 导入语言包。修改你的导入语句如下：
+  ```ts [main.ts]
+  import zhCn from 'element-plus/es/locale/lang/zh-cn'
+  ```
+- 添加手动类型声明
+  ```ts [d.ts]
+  declare module 'element-plus/dist/locale/zh-cn.mjs' {
+    import { Language } from 'element-plus/es/locale'
+
+    const zhCn: Language
+    export default zhCn
+  }
+  ```
+
+
+# 全局依赖缓存位置
+
+## 全局依赖缓存位置
+
+### Maven
+
+- 路径：`~/.m2/repository`
+- 按 `groupId/artifactId/version` 目录结构存放 JAR 文件
+- 配置文件位置：`~/.m2/settings.xml`，可通过 `<localRepository>` 自定义存储路径
+- 示例：`~/.m2/repository/org/springframework/boot/spring-boot-starter-web/3.1.0/`
+
+### Gradle
+
+- 路径：`~/.gradle/caches/modules-2/files-2.1/`
+- 使用哈希目录存储
+- 可通过 `GRADLE_USER_HOME` 修改缓存位置
+- 示例：`~/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-web/3.1.0/xxxx.jar`
+
+::note
+IntelliJ IDEA 不会额外保存依赖，所有依赖来自 Maven 或 Gradle 缓存；项目本地 `libs` 目录中的 JAR 为私有依赖，不会进入全局缓存。
+::
+
+
+# 安装 Java 与构建工具
+
+在 macOS 上，推荐使用 [Homebrew](https://brew.sh/){rel="nofollow"} 来安装和管理软件包。
+
+## 安装 Java
+
+您可以选择安装最新版本的 OpenJDK，或者安装特定的 LTS (长期支持) 版本，如 Java 17。
+
+```sh [sh]
+# 安装最新版本 (例如 Java 21)
+brew install openjdk
+
+# 安装 LTS 版本 (例如 Java 17)
+brew install openjdk@17
+```
+
+::note
+Homebrew 会将它们安装在 Apple Silicon (`/opt/homebrew/opt/`) 或 Intel (`/usr/local/opt/`) 芯片的对应目录下。
+::
+
+## 配置环境变量
+
+安装完成后，Homebrew 会提示您如何配置。以 OpenJDK 17 为例，您需要执行以下步骤：
+
+::code-collapse
+```text [log]
+==> openjdk@17
+For the system Java wrappers to find this JDK, symlink it with
+  sudo ln -sfn /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
+
+openjdk@17 is keg-only, which means it was not symlinked into /opt/homebrew,
+because this is an alternate version of another formula.
+
+If you need to have openjdk@17 first in your PATH, run:
+  echo 'export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"' >> ~/.zshrc
+
+For compilers to find openjdk@17 you may need to set:
+  export CPPFLAGS="-I/opt/homebrew/opt/openjdk@17/include"
+```
+::
+
+根据提示，将 Java 添加到系统环境变量中：
+
+```sh [sh]
+# 1. 创建符号链接，让系统能识别 JDK
+sudo ln -sfn /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
+
+# 2. 配置 PATH 环境变量
+echo 'export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"' >> ~/.zshrc
+
+# 3. 设置 JAVA_HOME (推荐)
+echo 'export JAVA_HOME=$(/usr/libexec/java_home -v 17)' >> ~/.zshrc
+
+# 4. 重新加载配置
+source ~/.zshrc
+```
+
+## 使用 jenv 管理多版本
+
+当您需要频繁切换多个 Java 版本时，`jenv` 是一个强大的工具。
+
+### 1. 安装和配置 jenv
+
+```sh [sh]
+# 安装 jenv
+brew install jenv
+
+# 添加到 Zsh (推荐)
+echo 'export PATH="$HOME/.jenv/bin:$PATH"' >> ~/.zshrc
+echo 'eval "$(jenv init -)"' >> ~/.zshrc
+
+# 重新加载配置
+source ~/.zshrc
+```
+
+### 2. 添加 Java 版本到 jenv
+
+将已安装的 Java 版本添加到 `jenv` 进行管理：
+
+```sh [sh]
+# 添加 Java 17
+jenv add $(/usr/libexec/java_home -v 17)
+
+# 添加最新版 Java
+jenv add $(/usr/libexec/java_home)
+```
+
+### 3. 查看和设置版本
+
+```sh [sh]
+# 查看所有可用版本
+jenv versions
+
+# 设置全局默认版本
+jenv global 17.0
+
+# 查看当前版本
+jenv version
+```
+
+
+# DigitalOcean
+
+## 创建配置 Droplets
+
+创建 Droplets 的入口：
+
+![创建入口](https://mhaibaraai.cn/images/guides/deployment/digitalocean/create-entry.png)
+
+创建 Droplets 的配置：
+
+![创建 Droplets 配置](https://mhaibaraai.cn/images/guides/deployment/digitalocean/create-droplets-config.png)
+
+## Droplets 仪表盘
+
+管理界面仪表盘：
+
+![Droplets 仪表盘](https://mhaibaraai.cn/images/guides/deployment/digitalocean/droplets-dashboard.png)
+
+## SSH 登录
+
+使用 `your_ipv4_address` IP 地址进行 SSH 连接：
+
+```sh [sh]
+ssh root@your_ipv4_address
+```
+
+### 系统更新提示
+
+::note
+当看到以下更新提示时：
+
+```text [log]
+107 of these updates are standard security updates.
+To see these additional updates run: apt list --upgradable
+```
+::
+
+这是 **Ubuntu** 或 **Debian** 系 Linux 系统在执行 `sudo apt update` 或类似命令后给出的信息。
+
+最优做法如下（一步到位）：
+
+```sh [sh]
+sudo apt update
+sudo apt upgrade -y
+```
+
+完成后重启系统：
+
+```sh [sh]
+sudo reboot
+```
+
+## SSH 密钥配置
+
+::note
+---
+to: https://docs.digitalocean.com/products/droplets/how-to/add-ssh-keys/
+---
+参考官方文档
+::
+
+::steps{level="3"}
+### 创建 SSH 密钥
+
+```sh [sh]
+ssh-keygen
+```
+
+### 获取公钥内容
+
+```sh [sh]
+cat ~/.ssh/id_ed25519.pub
+```
+
+  :::note
+  复制输出内容，格式类似：
+  
+  ```text [log]
+  ssh-ed25519 EXAMPLEzaC1lZDI1NTE5AAAAIGKy65/WWrFKeWdpJKJAuLqev9bb9ZNofcMrR/OnC9BM username@203.0.113.0
+  ```
+  :::
+
+### 配置 SSH 密钥
+
+在 Droplet 上，创建 `~/.ssh` 目录（如果不存在）：
+
+```sh [sh]
+mkdir -p ~/.ssh
+```
+
+  :::note
+  将 SSH 密钥添加到 `~/.ssh/authorized_keys` 文件中，替换引号中的示例键：
+  
+  ```text [log]
+  echo "ssh-ed25519 EXAMPLEzaC1yc2E...GvaQ== username@203.0.113.0" >> ~/.ssh/authorized_keys
+  ```
+  :::
+
+设置正确的权限：
+
+```sh [sh]
+chmod -R go= ~/.ssh
+chown -R $USER:$USER ~/.ssh
+```
+
+### 测试 SSH 连接
+
+```sh [sh]
+ssh root@your_ipv4_address
+```
+
+  :::warning
+  一定要关闭任何 **VPN** 或 **代理**，否则会连接失败：
+  
+  ```text [log]
+  ssh root@your_ipv4_address
+  Connection closed by your_ipv4_address port 22
+  ```
+  :::
+::
+
+## 安装 Docker 环境
+
+::note{to="https://mhaibaraai.cn/guides/deployment/docker"}
+参考 Docker 安装和使用指南
+::
+
+
+# Docker
+
+## 安装 Docker 环境
+
+在 Ubuntu 系统上安装 Docker 和 Docker Compose：
+
+::code-collapse
+```sh [sh]
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl gnupg
+
+# 添加 Docker 官方 GPG key
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+  sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+# 添加 Docker 官方稳定源（noble）
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+  https://download.docker.com/linux/ubuntu noble stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# 更新软件包索引
+sudo apt-get update
+
+# 安装 Docker 相关组件
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# 测试 Docker 是否正常
+docker --version
+sudo docker run hello-world
+```
+::
+
+## 配置用户权限
+
+```sh [sh]
+# 查看版本
+docker --version
+# 将当前用户加入 docker 用户组（避免每次都要 sudo）
+sudo usermod -aG docker $USER
+# 应用用户组变更（需要重新登录或执行）
+newgrp docker
+# 再次测试
+docker run hello-world
+```
+
+## Nginx + Docker Compose 项目设置
+
+创建完整的 Nginx + Docker Compose 项目结构：
+
+```sh [sh]
+# 设置项目根目录
+PROJECT_DIR=~/my-nginx
+# 创建目录
+mkdir -p $PROJECT_DIR/nginx $PROJECT_DIR/html
+```
+
+::code-tree{expand-all default-value="docker-compose.yml" expand-all=""}
+```yml [docker-compose.yml]
+services:
+  nginx:
+    image: nginx:latest
+    container_name: my-nginx
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./html:/usr/share/nginx/html:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # 添加这一行，用于容器内访问宿主机端口
+    restart: unless-stopped
+```
+
+```conf [nginx/default.conf]
+server {
+    listen 80;
+    server_name localhost;
+
+    location / {
+        root /usr/share/nginx/html;
+        index index.html index.htm;
+    }
+}
+```
+
+```html [html/index.html]
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Nginx on Docker!</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f2f5; }
+        .container { text-align: center; background-color: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h1 { color: #26953d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hello from Nginx!</h1>
+        <p>Your Nginx server is running successfully inside a Docker container managed by Docker Compose.</p>
+    </div>
+</body>
+</html>
+```
+::
+
+成功后，访问 `http://your_ipv4_address`，看到页面就成功了！
+
+![Docker Compose 部署效果](https://mhaibaraai.cn/images/guides/deployment/docker/docker-compose-result.png)
+
+## Cloudflare 配置
+
+### 添加 DNS 记录
+
+在 Cloudflare 中添加 DNS 记录，例如：添加一条 `example.com` 的 A 记录，记录值为 IP 地址 `your_ipv4_address`。
+
+![Cloudflare A 记录配置](https://mhaibaraai.cn/images/guides/deployment/docker/cloudflare-a-record.png)
+
+### SSL 证书创建
+
+::steps{level="4"}
+#### 在 Cloudflare 仪表板创建证书
+
+1. 登录 Cloudflare，进入 `example.com` 的管理页面
+2. 点击左侧菜单的 "SSL/TLS" -> "源服务器" (Origin Server)
+3. 点击 "创建证书" (Create Certificate)
+4. 保持默认选项（"由 Cloudflare 生成私钥和 CSR"），主机名列表里应该已经包含了 `*.example.com` 和 `example.com`
+5. 点击 "创建"
+
+![Cloudflare 创建证书](https://mhaibaraai.cn/images/guides/deployment/docker/cloudflare-create-certificate.png)
+
+#### 复制并保存证书和私钥
+
+Cloudflare 会立即显示两个文本框：
+
+- 源证书 (Origin Certificate)
+- 私钥 (Private Key)
+
+#### 在服务器上存放证书文件
+
+在服务器上创建证书存储目录：
+
+```sh [sh]
+mkdir -p /etc/ssl
+```
+
+#### 更新配置文件
+
+  :::code-group
+  ```yaml [docker-compose.yml]
+  services:
+    nginx:
+      image: nginx:latest
+      container_name: my-nginx
+      ports:
+        - '80:80'
+        - '443:443'
+      volumes:
+        - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+        - ./html:/usr/share/nginx/html:ro
+        - ./etc/ssl:/etc/ssl:ro # 添加这一行，指向您存放证书的目录
+      extra_hosts:
+        - "host.docker.internal:host-gateway" # 添加这一行，用于容器内访问宿主机端口
+      restart: unless-stopped
+  ```
+  
+  ```conf [nginx/default.conf]
+  server {
+      listen 80;
+      server_name example.com;
+  
+      return 301 https://$host$request_uri;
+  }
+  
+  server {
+      listen 443 ssl http2;
+      server_name example.com;
+  
+      ssl_certificate /etc/ssl/example.com.pem;
+      ssl_certificate_key /etc/ssl/example.com.key;
+      ssl_protocols TLSv1.2 TLSv1.3;
+      ssl_ciphers 'TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:ECDHE-RSA-AES128-GCM-SHA256';
+      ssl_prefer_server_ciphers off;
+  
+      # 启用 gzip 压缩
+      gzip on;
+      gzip_types text/plain text/css application/javascript application/json image/svg+xml;
+      gzip_min_length 1k;
+      gzip_comp_level 5;
+  
+      location / {
+          root /usr/share/nginx/html;
+          index index.html index.htm;
+          try_files $uri /index.html;
+      }
+  }
+  ```
+  :::
+
+#### 重启 Nginx 容器
+
+```sh [sh]
+docker compose down
+docker compose up -d
+```
+
+## 完整项目目录结构
+
+完成上述所有步骤后，项目目录结构应该如下所示：
+
+```tree [tree]
+~/my-nginx/
+├── docker-compose.yml          # Docker Compose 配置文件
+├── nginx/                      # Nginx 配置目录
+│   └── default.conf           # Nginx 服务器配置
+├── html/                       # 网站静态文件目录
+│   ├── index.html             # 首页文件
+└── etc/                       # 证书和配置目录
+    └── ssl/                   # SSL 证书目录
+        ├── example.com.pem    # SSL 证书文件
+        └── example.com.key    # SSL 私钥文件
+```
+::
+
+
+# PostgreSQL 部署
+
+::note
+本指南使用 Docker Compose v2+ 部署 PostgreSQL。
+::
+
+::steps{level="2"}
+## 创建项目结构
+
+```sh [sh]
+mkdir -p ~/postgres-server
+cd ~/postgres-server
+
+# 使用 .env 文件存储敏感凭据
+touch .env
+
+# Docker Compose v2+ 推荐使用 compose.yml
+touch compose.yml
+```
+
+## 配置环境变量
+
+将所有敏感信息（如密码、用户名）存储在 `.env` 文件中，可以避免将它们硬编码到配置文件中。
+
+  :::tip
+  请务必使用一个难以猜测的强密码替换 `your_very_strong_password`
+  :::
+
+```env [~/postgres-server/.env]
+DB_USER=postgres
+DB_PASSWORD=your_very_strong_password
+DB_NAME=postgres
+COMPOSE_PROJECT_NAME=pg_server
+```
+
+## 编写 Compose 文件
+
+  :::code-collapse
+  ```yaml [~/postgres-server/compose.yml]
+  services:
+    database:
+      image: postgres:17
+      container_name: ${COMPOSE_PROJECT_NAME}-db
+      restart: unless-stopped
+  
+      environment:
+        POSTGRES_USER: ${DB_USER}
+        POSTGRES_PASSWORD: ${DB_PASSWORD}
+        POSTGRES_DB: ${DB_NAME}
+  
+      ports:
+        - '127.0.0.1:5432:5432'
+  
+      volumes:
+        - db-data:/var/lib/postgresql/data
+  
+      networks:
+        - default
+  
+  volumes:
+    db-data:
+      name: ${COMPOSE_PROJECT_NAME}-data-volume
+  
+  networks:
+    default:
+      name: ${COMPOSE_PROJECT_NAME}-network
+  ```
+  :::
+
+## 启动服务
+
+在 `~/postgres-server` 目录下启动数据库。
+
+```sh [sh]
+docker compose up -d
+```
+
+## 验证安装
+
+检查容器是否正在运行，并尝试连接到数据库。
+
+```sh [sh]
+docker compose ps
+docker compose exec database psql -U postgres -d postgres
+```
+
+成功连接后，将看到 `postgres=>` 提示符。输入 `\q` 退出。
+::
+
+## 添加 PostGIS 支持（用于地图和地理空间操作）
+
+如果项目需要处理地理数据（例如，存储经纬度、计算距离、处理地图瓦片），需要使用带有 PostGIS 扩展的 PostgreSQL 镜像。
+
+```yaml [~/postgres-server/compose.yml]
+services:
+  database:
+    image: postgis/postgis:17-3.4
+    # ... 其余配置保持不变 ...
+```
+
+重启服务使配置生效
+
+```sh [sh]
+docker compose down
+docker compose up -d
+```
+
+## 在数据库中激活扩展
+
+即使使用了 PostGIS 镜像，仍需要在目标数据库中手动激活扩展。
+
+1. 连接到数据库
+   ```sh [sh]
+   docker compose exec database psql -U postgres -d postgres
+   ```
+2. `psql` 提示符后，运行以下 SQL 命令：
+   ```sql [sh]
+   -- 激活 PostGIS 核心功能
+   CREATE EXTENSION postgis;
+
+   -- (可选) 激活拓扑支持
+   CREATE EXTENSION postgis_topology;
+
+   -- (可选) 激活栅格数据支持
+   CREATE EXTENSION postgis_raster;
+   ```
+3. **验证安装**:br 运行 `\dx` 命令，应该能看到 `postgis` 及其他已安装的扩展。 :code-collapse[```text \[log\]
+   postgres=> \dx
+                                         List of installed extensions
+             Name          | Version |   Schema   |                        Description
+   ------------------------+---------+------------+------------------------------------------------------------
+   fuzzystrmatch          | 1.2     | public     | determine similarities and distance between strings
+   plpgsql                | 1.0     | pg_catalog | PL/pgSQL procedural language
+   postgis                | 3.5.2   | public     | PostGIS geometry and geography spatial types and functions
+   postgis_raster         | 3.5.2   | public     | PostGIS raster types and functions
+   postgis_tiger_geocoder | 3.5.2   | tiger      | PostGIS tiger geocoder and reverse geocoder
+   postgis_topology       | 3.5.2   | topology   | PostGIS topology spatial types and functions
+   (6 rows)
+
+   ```]
+
+现在，PostgreSQL 数据库已完全具备处理地理空间数据的能力。
+
+## 远程连接数据库
+
+当需要使用 Navicat、DBeaver 或其他桌面客户端连接服务器上的数据库时，强烈推荐通过 SSH 隧道进行连接，以确保安全。
+
+在 Navicat 中配置 SSH 隧道：
+
+1. 打开 Navicat，新建一个 PostgreSQL 连接。
+2. 在 &#x2A;*“常规”** 选项卡中:
+   - **主机**: `localhost` 或 `127.0.0.1` (连接到本地隧道)
+   - **端口**: `5432`
+   - **初始数据库**: `postgres` (或在 `.env` 中设置的 `DB_NAME`)
+   - **用户名**: `postgres` (或 `DB_USER`)
+   - **密码**: 在 `.env` 文件中设置的 `DB_PASSWORD`
+3. 切换到 &#x2A;*“SSH”*&#x2A; 选项卡，勾选 &#x2A;*“使用 SSH 通道”**:
+   - **主机**: 服务器的 **公网 IP 地址** (`your_ipv4_address`)
+   - **端口**: `22`
+   - **用户名**: `root` (或用于 SSH 登录的用户名)
+   - **验证方法**: 选择“密码”并输入 SSH 登录密码，或者选择“公钥”并指定 SSH 私钥文件 (例如 `~/.ssh/id_ed25519`)。
+4. 点击 &#x2A;*“连接测试”**。如果信息正确，应会提示连接成功。
+
+
+# Linux
+
+## 常用命令
+
+| 命令                               | 功能说明                              |
+| -------------------------------- | --------------------------------- |
+| `mkdir include`                  | 创建一个 `include` 文件夹                |
+| `unzip -d ./include include.zip` | 将 `include.zip` 解压到 `include` 文件夹 |
+| `mv old_folder new_folder`       | 文件夹重命名                            |
+
+
+# macOS
+
+::note{to="https://brew.sh/zh-cn/"}
+Homebrew ： macOS（或 Linux）缺失的软件包的管理器
+::
+
+::note{to="https://iterm2.com/"}
+iTerm2 ： macOS Terminal Replacement
+::
+
+::note{to="https://ohmyz.sh/"}
+Oh My Zsh ： a delightful & open source framework for Zsh
+::
+
+## 配置 Homebrew
+
+[Homebrew](https://brew.sh/zh-cn/){rel="nofollow"}（通常称为 Brew）是 macOS 和 Linux 上的一个流行的包管理器，用于简化软件的安装和管理。
+
+::steps{level="3"}
+### 打开终端
+
+在应用程序文件夹中找到终端（Terminal），或使用 Spotlight 搜索“终端”，在终端中输入以下命令并按回车
+
+```sh [sh]
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+### 配置环境变量
+
+安装完成后，可能需要将 Homebrew 添加到你的 PATH 中，按提示操作，例如：
+
+  :::code-collapse
+  ```text [log] {4-5}
+  ==> Next steps:
+  
+   - Run these two commands in your terminal to add Homebrew to your PATH:
+     (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> /Users/yixuanmiao/.zprofile // [!code focus]
+       eval "$(/opt/homebrew/bin/brew shellenv)" // [!code focus]
+   - Run brew help to get started
+   - Further documentation:
+  https://docs.brew.sh
+  ```
+  :::
+
+```sh [sh]
+(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> /Users/yixuanmiao/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
+```
+
+### 验证安装
+
+输入以下命令检查 Homebrew 是否安装成功：
+
+```sh [sh]
+brew --version
+```
+
+输出:
+
+```text [log]
+Homebrew 4.3.23-56-g9160445
+```
+::
+
+## 安装 Iterm2
+
+[Iterm2](https://iterm2.com/){rel="nofollow"} 是 macOS 上一款功能强大的终端仿真器，提供了许多增强的功能和自定义选项。
+
+![iterm2](https://mhaibaraai.cn/images/guides/os/macos/iterm2.png)
+
+::steps{level="3"}
+### 下载
+
+- 访问 [Iterm2 官网](https://iterm2.com/){rel="nofollow"} 下载最新版本的 Iterm2
+- 或者使用 Homebrew 安装
+  ```sh [sh]
+  brew install --cask iterm2
+  ```
+
+### 将 iTerm2设置为默认终端
+
+打开 iTerm2，选择菜单栏中的 `iTerm2 -> Make iTerm2 Default Term`
+
+![默认终端](https://mhaibaraai.cn/images/guides/os/macos/iterm2-default.png)
+
+### 配置迁移(可选)
+
+如果你之前使用过终端，可以将配置迁移过来,并将其设置为默认配置。
+
+- iTerm2 -> Setting -> Profiles -> Other Actions
+- Save Profile as JSON (保存配置文件)
+- Import JSON Profiles (导入配置文件)
+- Set as Default (设置为默认配置)
+
+![import](https://mhaibaraai.cn/images/guides/os/macos/iterm2-import.png)
+
+### 更改主题
+
+- iTerm2 -> Setting -> Profiles -> Colors-> Color Presets
+- 选择你喜欢的主题 (例如：Solarized)
+
+![theme](https://mhaibaraai.cn/images/guides/os/macos/iterm2-theme.png)
+
+### 调整 Status Bar
+
+- iTerm2 -> Setting -> Profiles -> Session -> Status Bar
+- 勾选 Enable status bar
+- 配置你需要的信息
+
+![status](https://mhaibaraai.cn/images/guides/os/macos/iterm2-status.png)
+
+将上方 Status Bar Component Menu 中的内容拖动到 Active Components 中，即可显示在状态栏中。
+
+![status-active](https://mhaibaraai.cn/images/guides/os/macos/iterm2-status-active.png)
+::
+
+## Oh My Zsh
+
+[`Oh My Zsh`](https://ohmyz.sh/){rel="nofollow"} 是一个流行的 Zsh 配置管理工具，旨在简化 Zsh 的配置和管理。它提供了许多预配置的插件、主题以及一些便捷的功能，帮助用户提高终端使用效率。
+
+```sh [sh]
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+
+安装完成后，`Oh My Zsh` 会自动创建一个配置文件 `~/.zshrc`。你可以在这个文件中进行自定义：
+
+- **修改主题**： 找到 `ZSH_THEME` 这一行，修改为你喜欢的主题（例如 `robbyrussell`、`powerlevel10k/powerlevel10k` 等）。
+- **启用插件**： 在 `plugins=(...)` 一行中添加你需要的插件，如 `git`、`zsh-autosuggestions`、`zsh-syntax-highlighting` 等。
+
+::tip
+每次修改完 `~/.zshrc` 后，运行以下命令以应用更改：
+
+```sh [sh]
+source ~/.zshrc
+```
+::
+
+### 修改主题 Powerlevel10k
+
+`Powerlevel10k` 是一个非常流行的 Zsh 主题，它以速度和高度可定制化著称，能够为你的终端提供丰富的信息和美观的外观。
+
+::steps{level="4"}
+#### 克隆 Powerlevel10k 到 `oh-my-zsh` 主题目录
+
+```sh [sh]
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel10k
+```
+
+#### 启用 Powerlevel10k 主题
+
+- 打开 `~/.zshrc` 文件
+  ```sh [sh]
+  code ~/.zshrc
+  ```
+- 找到 `ZSH_THEME="..."` 这一行，修改为：
+  ```sh [sh]
+  ZSH_THEME="powerlevel10k/powerlevel10k"
+  ```
+- 保存并退出编辑器，然后运行以下命令以应用更改：
+  ```sh [sh]
+  source ~/.zshrc
+  ```
+
+#### 配置 Powerlevel10k
+
+安装完成后，首次启动 Zsh 时会自动启动 Powerlevel10k 配置向导，它会引导你选择主题的外观和信息显示内容。
+
+如果你想重新配置 Powerlevel10k，可以运行以下命令：
+
+```sh [sh]
+p10k configure
+```
+
+以下是配置向导的示例：
+
+- 自动安装所需字体 :code-collapse[```text \[log\]
+  This is Powerlevel10k configuration wizard. It will ask you a few questions and
+                          configure your prompt.
+
+                          Install Meslo Nerd Font?
+
+  (y)  Yes (recommended).
+
+  (n)  No. Use the current font.
+
+  (q)  Quit and do nothing.
+
+  Choice [ynq]: y
+  ```]
+- 手动安装字体 [MesloLGS Nerd Font GitHub](https://github.com/romkatv/powerlevel10k#manual-font-installation){rel="nofollow"}
+- 生成配置文件
+
+配置完成后，向导会生成一个 `~/.p10k.zsh` 文件，保存用户的所有设置。
+::
+
+### 安装插件
+
+Oh My Zsh 提供了多种实用插件，能够提升你的开发效率。以下是一些常用的插件：
+
+- **git**：方便 git 操作，缩短命令长度
+- **zsh-autosuggestions**：根据历史命令自动补全
+- **zsh-syntax-highlighting**：根据语法高亮显示命令
+
+```sh [sh]
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+```
+
+然后在 `~/.zshrc` 文件中启用这两个插件：
+
+```sh [sh]
+plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
+```
+
+启用插件后，运行以下命令以应用更改：
+
+```sh [sh]
+source ~/.zshrc
+```
+
+
+# 浙政钉开发
+
+## H5 应用 Console 调试功能
+
+浙政钉 `H5` 应用开发中，为了方便调试，可以在页面中加入 `VConsole` 调试工具，方便查看日志、调试代码。
+
+::tip{to="https://github.com/Tencent/vConsole/tree/master"}
+vConsole 是一个轻量、可拓展、针对手机网页的前端开发者调试面板
+::
+
+::code-group
+```sh [pnpm]
+pnpm add vconsole
+```
+
+```sh [npm]
+npm install vconsole
+```
+::
+
+::code-group
+```ts [pc.ts]
+import VConsole from 'vconsole'
+
+const vConsole = null
+
+// 当鼠标按下中键时，显示vConsole，结束后销毁
+document.addEventListener('keydown', (e) => {
+  if (e.keyCode === 123) {
+    if (!vConsole)
+      vConsole = new VConsole()
+    else if (vConsole)
+      vConsole.destroy()
+  }
+})
+```
+
+```ts [ios-android.ts]
+const vConsole = null
+const pressTimer = null
+
+function handleTouchStart() {
+  pressTimer = setTimeout(() => {
+    if (!vConsole)
+      vConsole = new VConsole()
+    else if (vConsole)
+      vConsole.destroy()
+  }, 3000) // 长按时间阈值
+}
+
+function handleTouchEnd() {
+  clearTimeout(pressTimer)
+}
+```
+::
+
+## 浙政钉应用埋点
+
+::tip{to="https://wetx6c6wxe.feishu.cn/wiki/wikcnu9v1TpnP34dShwEyPzNife"}
+浙政钉埋点文档
+::
+
+埋点需要三个参数:
+
+- `sapp_name` ：应用标识
+- `bid` ：`sapp_name`\_zzdpro
+- `sapp_id` ：应用ID（可以去浙政钉支持群咨询）、[官网查看埋点参数](https://yida-pro.ding.zj.gov.cn/alibaba/web/APP_VTZ4TZZSGZXB37IUIUM6/inst/homepage/#/REPORT-GWLBVYNV25OXGEY68AOOWR7GIXSVZ2B75HH1SLC6){rel="nofollow"}
+
+::code-tree{expand-all default-value="app/permission.ts" expand-all=""}
+```ts [app/permission.ts]
+import aplus_push from './gdt_aplus'
+
+router.beforeEach(async (to, from, next) => {
+  if (token) {
+    /** 开始埋点 */
+    const { meta: { title }, path, fullPath } = to
+    const pageId = (path.replace('/', '') || 'app').toUpperCase()
+    const userId = userStore.getUserInfo()?.dingId
+    aplus_push(pageId, title as string, fullPath, userId)
+    /** 结束埋点 */
+  }
+})
+```
+
+```ts [app/gdt_aplus.ts]
+// 浙政钉应用配置信息
+const gdt_config = {
+  sapp_id: 'xxx', // 43832
+  sapp_name: 'xxx', // gxq_msgd01
+}
+/**
+ * 浙政钉埋点-流量分析代码（基础埋点、用户信息埋点）
+ * @param page_id 页面ID, 保证唯一性
+ * @param page_name 页面名称
+ * @param page_url 页面 url
+ * @param _user_id 用户id
+ * 浙政钉-H5&小程序应用采集开发手册文档：
+ * https://www.yuque.com/sisialing/bcg47r/ywfbnk?#YmwM5
+ */
+export default function aplus_queue_push(
+  page_id: number | string,
+  page_name = 'app',
+  page_url: string,
+  _user_id: number | string,
+) {
+  /**
+   * 基础埋点
+   */
+  // 单页应用或“单个页面”需异步补充PV日志参数还需进行如下埋点：
+  window.aplus_queue.push({
+    action: 'aplus.setMetaInfo',
+    arguments: ['aplus-waiting', 'MAN'],
+  })
+  // 单页应用路由切换后或在异步获取到pv日志所需的参数后再执行sendPV：
+  window.aplus_queue.push({
+    action: 'aplus.sendPV',
+    arguments: [
+      {
+        is_auto: false,
+      },
+      {
+        // 当前你的应用信息，此两行按应用实际参数修改，不可自定义。
+        sapp_id: gdt_config.sapp_id,
+        sapp_name: gdt_config.sapp_name,
+        // 自定义PV参数key-value键值对（只能是这种平铺的json，不能做多层嵌套）
+        page_id,
+        page_name,
+        page_url,
+      },
+    ],
+  })
+  /**
+   * 用户信息埋点
+   */
+  // 如采集用户信息是异步行为需要先执行这个BLOCK埋点
+  window.aplus_queue.push({
+    action: 'aplus.setMetaInfo',
+    arguments: ['_hold', 'BLOCK'],
+  })
+  // 用户ID
+  window.aplus_queue.push({
+    action: 'aplus.setMetaInfo',
+    arguments: ['_user_id', _user_id],
+  })
+  // 如采集用户信息是异步行为，需要先设置完用户信息后再执行这个START埋点
+  // 此时被block住的日志会携带上用户信息逐条发出
+  window.aplus_queue.push({
+    action: 'aplus.setMetaInfo',
+    arguments: ['_hold', 'START'],
+  })
+}
+```
+
+```html [index.html]
+<!-- 稳定性监控- wpkReporter.js -->
+<script src="https://wpkgate-emas.ding.zj.gov.cn/static/wpk-jssdk.1.0.2/wpkReporter.js" crossorigin="true"></script>
+<script>
+  // 稳定性监控代码
+  try {
+    const config = {
+      bid: 'gxq_msgd01_zzdpro',
+      signkey: '1234567890abcdef',
+      gateway: 'https://wpkgate-emas.ding.zj.gov.cn',
+    }
+    const wpk = new wpkReporter(config)
+    wpk.installAll()
+    window._wpk = wpk
+  } catch (err) {
+    console.error('WpkReporterinitfail', err)
+  }
+  // 流量分析-通用采集sdk
+  ;(function (w, d, s, q, i) {
+    w[q] = w[q] || []
+    const f = d.getElementsByTagName(s)[0],
+      j = d.createElement(s)
+    j.async = true
+    j.id = 'beacon-aplus'
+    j.src = 'https://alidt.alicdn.com/alilog/mlog/aplus_cloud.js'
+    f.parentNode.insertBefore(j, f)
+  })(window, document, 'script', 'aplus_queue')
+  aplus_queue.push({
+    action: 'aplus.setMetaInfo',
+    arguments: ['aplus-rhost-v', 'alog-api.ding.zj.gov.cn'],
+  })
+  aplus_queue.push({
+    action: 'aplus.setMetaInfo',
+    arguments: ['aplus-rhost-g', 'alog-api.ding.zj.gov.cn'],
+  })
+  const u = navigator.userAgent
+  const isAndroid = u.indexOf('Android') > -1
+  const isIOS = !!u.match(/\(i[^;]+;(U;)?CPU.+MacOSX/)
+  aplus_queue.push({
+    action: 'aplus.setMetaInfo',
+    arguments: ['appId', isAndroid ? '28302650' : isIOS ? '28328447' : '47130293'],
+  })
+</script>
+
+```
+
+```html [index-multi.html]
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      :root {
+        box-sizing: border-box;
+      }
+
+      *,
+      ::before,
+      ::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: inherit;
+        /* ←---- 告诉 其他 所有 元素 和 伪 元素 继承 其 盒 模型 */
+      }
+    </style>
+  </head>
+
+  <body></body>
+  <script>
+    function getUrlSearch(name) {
+      // 未传参，返回空
+      if (!name) return null
+      // 查询参数：先通过search取值，如果取不到就通过hash来取
+      var after = window.location.search
+      after = after.substr(1) || window.location.hash.split('?')[1]
+      // 地址栏URL没有查询参数，返回空
+      if (!after) return null
+      // 如果查询参数中没有"name"，返回空
+      if (after.indexOf(name) === -1) return null
+
+      var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)')
+      // 当地址栏参数存在中文时，需要解码，不然会乱码
+      var r = decodeURI(after).match(reg)
+      // 如果url中"name"没有值，返回空
+      if (!r) return null
+      return r[2]
+    }
+    function isMobile() {
+      if (
+        window.navigator.userAgent.match(
+          /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i,
+        )
+      ) {
+        return true // 移动端
+      } else {
+        return false // PC端
+      }
+    }
+    //判断后的操作
+    function changeProject() {
+      const res = getUrlSearch('type')
+      console.log('res', res)
+      if (res === 'pc') {
+        window.location.href = './pc/index.html'
+      } else if (res === 'mobile') {
+        window.location.href = './mobile/index.html'
+      } else {
+        window.location.href = './pc/index.html'
+      }
+    }
+
+    if (window.navigator.userAgent) {
+      if (isMobile()) {
+        location.href = './mobile/index.html'
+        // 判断true跳转到这个主页
+      } else {
+        location.href = './pc/index.html'
+        // 判断false跳转到这个主页
+      }
+    } else {
+      changeProject()
+    }
+  </script>
+</html>
+
+```
+::
+
+
+# GitLab CI/CD 完全指南
+
+## 参考文档
+
+::note
+---
+icon: i-lucide-book
+to: https://gitlab.cn/docs/jh/topics/build_your_application/
+---
+GitLab CI/CD: 使用 CI/CD 构建您的应用程序
+::
+
+::note
+---
+icon: i-lucide-book
+to: https://developer.work.weixin.qq.com/document/path/99110
+---
+企业微信机器人: 消息推送配置说明
+::
+
+## 核心流程
+
+项目的流水线被划分为多个阶段 (Stages)，确保任务按预定顺序执行，完整流程如下：
+
+`notify_start` -> `lint` -> `sonar` -> `build` -> `deploy` -> `notify_end`
+
+- **lint & sonar**: 在合并请求 (Merge Request) 场景下运行，进行代码规范检查和静态质量分析，保障代码质量。
+- **build & deploy**: 在推送到 `dev` 或 `master` 分支，或手动触发时执行，完成应用的构建和部署。
+
+::code-preview
+  :::tabs
+    ::::tabs-item{icon="i-lucide-git-pull-request" label="发起合并请求"}
+    ![发起合并请求](https://mhaibaraai.cn/images/guides/platforms/gitlab-ci/merge-request-start.png)
+    ::::
+  
+    ::::tabs-item{icon="i-lucide-workflow" label="合并请求流水线"}
+    ![合并请求流水线](https://mhaibaraai.cn/images/guides/platforms/gitlab-ci/merge-request-workflow.png)
+    ::::
+  
+    ::::tabs-item{icon="i-lucide-chart-network" label="build-deploy 流水线"}
+    ![build-deploy 流水线](https://mhaibaraai.cn/images/guides/platforms/gitlab-ci/build-deploy-workflow.png)
+    ::::
+  :::
+::
+
+## 配置详解
+
+### CI/CD 文件结构
+
+```tree [tree]
+.
+├── .gitlab-ci.yml       # 主配置文件，定义 stages, workflow, variables, include 规则
+├── .gitlab-dev.yml      # dev 环境的作业 (build, deploy, notify)
+├── .gitlab-prod.yml     # prod 环境的作业 (build, notify)
+└── scripts/
+    └── ci/
+        ├── package-zip.sh     # 打包构建产物为 .zip 并生成环境变量
+        ├── deploy-zip.sh      # 部署 .zip 包到目标服务器
+        └── wechat-notify.js   # 发送企业微信通知
+```
+
+::code-tree{expand-all default-value=".gitlab-ci.yml" expand-all=""}
+```yaml [.gitlab-ci.yml]
+# 全局规则：只在指定分支或合并到指定分支的请求中运行
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "master")
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: always
+    - when: never
+
+# 定义流水线的阶段
+stages:
+  - notify_start
+  - lint
+  - sonar
+  - build
+  - deploy
+  - notify_end
+
+# 定义变量
+variables:
+  NODE_VERSION: lts
+  PNPM_VERSION: latest
+  GIT_DEPTH: 0
+  GIT_STRATEGY: clone
+  BUILD_ENV:
+    value: dev
+    options:
+      - dev
+      - prod
+    description: 选择构建环境（dev/prod）
+  SONAR_HOST_URL: # SonarQube 主机地址（自定义）
+    value: 'http://10.0.0.100:9000'
+    description: SonarQube主机地址
+  WECHAT_WEBHOOK_URL: # 企业微信webhook地址，用于通知（自定义）
+    value: 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=your-webhook-key-here'
+    description: 企业微信webhook地址
+  BUILD_DIR: # 构建目录（自定义）
+    value: app-gen/dist/web/your-app-name
+    description: 构建目录
+  DEPLOY_HOST: # 测试部署主机（一般固定，无需修改）
+    value: 10.0.0.100
+    description: 测试部署主机
+  DEPLOY_DIR: # 测试部署目录（自定义）
+    value: /home/user/nginx/html/
+    description: 测试部署目录
+
+default:
+  image: node:${NODE_VERSION}
+  tags:
+    - sonarqube
+
+include:
+  - local: .gitlab-dev.yml
+    rules:
+      - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "dev"
+      - if: $CI_PIPELINE_SOURCE == "web" && $BUILD_ENV == "dev"
+  - local: .gitlab-prod.yml
+    rules:
+      - if: $CI_PIPELINE_SOURCE == "web" && $BUILD_ENV == "prod"
+
+# 代码检查作业
+lint:
+  stage: lint
+  script:
+    - npm install -g pnpm@${PNPM_VERSION}
+    - pnpm install --frozen-lockfile
+    - pnpm eslint 'app/**/*.{ts,tsx,vue}'
+  artifacts:
+    when: always
+    reports:
+      junit: .eslintcache
+    paths:
+      - .eslintcache
+    expire_in: 1 week
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  allow_failure: true
+
+# SonarQube 代码分析
+sonarqube-check:
+  stage: sonar
+  image: openjdk:11-jre-slim
+  variables:
+    SONAR_PROJECT_KEY: ${CI_PROJECT_ID}
+    SONAR_PROJECT_NAME: ${CI_PROJECT_TITLE}
+    SONAR_PROJECT_VERSION: ${CI_COMMIT_SHORT_SHA}
+    SONAR_USER_HOME: '${CI_PROJECT_DIR}/.sonar'
+    SONAR_SCANNER_VERSION: 4.6.2.2472
+  cache:
+    key: 'sonarqube-${SONAR_SCANNER_VERSION}'
+    paths:
+      - .sonar/cache
+      - sonar-scanner/
+  before_script:
+    - echo "准备 SonarScanner CLI ${SONAR_SCANNER_VERSION}..."
+    - |
+      if [ ! -d "sonar-scanner" ]; then
+        echo "下载并安装 SonarScanner CLI..."
+        apt-get update && apt-get install -y wget unzip
+        wget -O sonar-scanner.zip "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_SCANNER_VERSION}-linux.zip"
+        unzip sonar-scanner.zip
+        mv sonar-scanner-${SONAR_SCANNER_VERSION}-linux sonar-scanner
+      else
+        echo "使用缓存的 SonarScanner CLI..."
+      fi
+    - export PATH="$PWD/sonar-scanner/bin:$PATH"
+  script:
+    - echo "运行测试并生成覆盖率报告..."
+    - export PATH="$PWD/sonar-scanner/bin:$PATH"
+    - |
+      sonar-scanner \
+        -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+        -Dsonar.projectName="${SONAR_PROJECT_NAME}" \
+        -Dsonar.projectVersion=${SONAR_PROJECT_VERSION} \
+        -Dsonar.host.url=${SONAR_HOST_URL} \
+        -Dsonar.login=${SONAR_TOKEN}
+  allow_failure: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+# 流水线开始通知
+notify-start:
+  stage: notify_start
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+    - node scripts/ci/wechat-notify.js --label "${CI_MERGE_REQUEST_TITLE}" --type CI-start
+  when: on_success
+
+# 流水线结束通知成功
+notify-end-success:
+  stage: notify_end
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+    - node scripts/ci/wechat-notify.js --label "${CI_MERGE_REQUEST_TITLE}" --type CI-end --success
+  when: on_success
+
+# 流水线结束通知失败
+notify-end-failed:
+  stage: notify_end
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+    - node scripts/ci/wechat-notify.js --label "${CI_MERGE_REQUEST_TITLE}" --type CI-end --failed
+  when: on_failure
+```
+
+```yaml [.gitlab-dev.yml]
+# dev 环境作业定义（通过根 .gitlab-ci.yml 的 include.rules 条件加载）
+
+# 构建作业
+build:
+  stage: build
+  before_script:
+    - npm install -g pnpm@${PNPM_VERSION}
+    - pnpm install --frozen-lockfile
+    - pnpm run build:dev
+  script:
+    - bash scripts/ci/package-zip.sh
+  artifacts:
+    paths:
+      - '*.zip'
+    reports:
+      dotenv: zip.env
+    expire_in: 1 week
+
+# 部署作业
+deploy:
+  stage: deploy
+  needs:
+    - job: build
+      artifacts: true
+  variables:
+    DEPLOY_PORT: 22
+    DEPLOY_USER: root
+    DEPLOY_PASSWORD: your-password-here
+  script:
+    - bash scripts/ci/deploy-zip.sh
+  when: on_success
+
+notify-deploy-start:
+  stage: notify_start
+  script:
+    - node scripts/ci/wechat-notify.js --label "测试环境部署开始" --type deploy-start
+  when: on_success
+
+notify-deploy-end-success:
+  stage: notify_end
+  needs:
+    - job: build
+      artifacts: true
+    - job: deploy
+  script:
+    - node scripts/ci/wechat-notify.js --label "测试环境部署 <font color=\"info\">成功</font> 🎉" --type deploy-end
+  when: on_success
+
+notify-deploy-end-failed:
+  stage: notify_end
+  script:
+    - node scripts/ci/wechat-notify.js --label "测试环境部署 <font color=\"warning\">失败</font> 😭" --type deploy-end
+  when: on_failure
+```
+
+```yaml [.gitlab-prod.yml]
+# prod 环境作业定义（通过根 .gitlab-ci.yml 的 include.rules 条件加载）
+
+# 构建作业
+build:
+  stage: build
+  before_script:
+    - npm install -g pnpm@${PNPM_VERSION}
+    - pnpm install --frozen-lockfile
+    - pnpm run build
+  script:
+    - bash scripts/ci/package-zip.sh
+  artifacts:
+    paths:
+      - '*.zip'
+    reports:
+      dotenv: zip.env
+    expire_in: 1 week
+
+notify-deploy-start:
+  stage: notify_start
+  script:
+    - node scripts/ci/wechat-notify.js --label "正式环境打包开始" --type deploy:prod-start
+  when: on_success
+
+notify-deploy-end-success:
+  stage: notify_end
+  needs:
+    - job: build
+      artifacts: true
+  script:
+    - node scripts/ci/wechat-notify.js --label "正式环境打包 <font color=\"info\">成功</font> 🎉" --type deploy:prod-end
+  when: on_success
+
+notify-deploy-end-failed:
+  stage: notify_end
+  script:
+    - node scripts/ci/wechat-notify.js --label "正式环境打包 <font color=\"warning\">失败</font> 😭" --type deploy:prod-end
+  when: on_failure
+```
+
+```sh [scripts/ci/deploy-zip.sh]
+#!/usr/bin/env bash
+set -euo pipefail
+
+# required envs
+for v in CI_PROJECT_DIR DEPLOY_HOST DEPLOY_DIR DEPLOY_USER DEPLOY_PASSWORD; do
+  if [ -z "${!v:-}" ]; then
+    echo "[deploy-zip] missing env: $v" >&2
+    exit 1
+  fi
+done
+
+DEPLOY_PORT="${DEPLOY_PORT:-22}"
+
+# determine zip file
+if [ -z "${ZIP_FILE:-}" ]; then
+  if [ -z "${BUILD_DIR:-}" ]; then
+    echo "[deploy-zip] ZIP_FILE and BUILD_DIR both unset" >&2
+    exit 1
+  fi
+  ZIP_BASENAME="$(basename "$BUILD_DIR")"
+  ZIP_FILE="${ZIP_BASENAME}.zip"
+fi
+
+cd "$CI_PROJECT_DIR"
+if [ ! -f "$ZIP_FILE" ]; then
+  echo "[deploy-zip] ZIP_FILE not found: $ZIP_FILE" >&2
+  ls -la
+  exit 1
+fi
+
+# askpass for non-interactive ssh/scp
+mkdir -p /tmp
+echo '#!/bin/sh' > /tmp/askpass.sh && echo 'echo "$DEPLOY_PASSWORD"' >> /tmp/askpass.sh && chmod +x /tmp/askpass.sh
+export SSH_ASKPASS=/tmp/askpass.sh
+export DISPLAY=:0
+
+SSH_OPTS="-p ${DEPLOY_PORT} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o BatchMode=no"
+
+# ensure remote dir exists
+setsid ssh $SSH_OPTS "${DEPLOY_USER}@${DEPLOY_HOST}" "mkdir -p '${DEPLOY_DIR}'"
+
+# upload zip
+setsid scp -P "${DEPLOY_PORT}" -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o BatchMode=no \
+  "$ZIP_FILE" "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_DIR}/"
+
+# unzip remotely and optional cleanup
+setsid ssh $SSH_OPTS "${DEPLOY_USER}@${DEPLOY_HOST}" \
+  "cd '${DEPLOY_DIR}' && (command -v unzip >/dev/null 2>&1 || (apt-get update && apt-get install -y unzip || yum install -y unzip || true)) && unzip -o '${ZIP_FILE}' -d '${DEPLOY_DIR}' && rm -f '${ZIP_FILE}'"
+
+echo "[deploy-zip] deployed $ZIP_FILE to ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_DIR}"
+```
+
+```sh [scripts/ci/package-zip.sh]
+#!/usr/bin/env bash
+set -euo pipefail
+
+# required envs
+for v in BUILD_DIR CI_PROJECT_DIR CI_PROJECT_ID CI_SERVER_URL CI_JOB_ID; do
+  if [ -z "${!v:-}" ]; then
+    echo "[package-zip] missing env: $v" >&2
+    exit 1
+  fi
+done
+
+# ensure zip exists (install once if missing)
+if ! command -v zip >/dev/null 2>&1; then
+  apt-get update && apt-get install -y zip && rm -rf /var/lib/apt/lists/*
+fi
+
+ZIP_BASENAME="$(basename "$BUILD_DIR")"
+ZIP_FILE="${ZIP_BASENAME}.zip"
+
+cd "$(dirname "$BUILD_DIR")"
+zip -rq "$CI_PROJECT_DIR/$ZIP_FILE" "$ZIP_BASENAME"
+
+cat > "$CI_PROJECT_DIR/zip.env" <<EOF
+ZIP_BASENAME=$ZIP_BASENAME
+ZIP_FILE=$ZIP_FILE
+ZIP_ARTIFACT_JOB_ID=$CI_JOB_ID
+ZIP_ARTIFACT_URL=$CI_SERVER_URL/api/v4/projects/$CI_PROJECT_ID/jobs/$CI_JOB_ID/artifacts/$ZIP_FILE
+EOF
+
+echo "[package-zip] created $CI_PROJECT_DIR/$ZIP_FILE"
+```
+
+```js [scripts/ci/wechat-notify.js]
+#!/usr/bin/env node
+// 企业微信群机器人通知脚本（参考 https://developer.work.weixin.qq.com/document/path/99110 ）
+
+const args = process.argv.slice(2)
+
+function parseArgs(argv) {
+  const result = { type: '', label: '', success: false, failed: false }
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i]
+    if (a === '--type')
+      result.type = argv[++i]
+    else if (a === '--label')
+      result.label = argv[++i]
+    else if (a === '--success')
+      result.success = true
+    else if (a === '--failed')
+      result.failed = true
+  }
+  return result
+}
+
+function formatShanghai(date) {
+  const d = date instanceof Date ? date : new Date(date)
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Asia/Shanghai',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).formatToParts(d)
+  const get = type => parts.find(p => p.type === type)?.value || '00'
+  const yyyy = get('year')
+  const MM = get('month')
+  const dd = get('day')
+  const HH = get('hour')
+  const mm = get('minute')
+  const ss = get('second')
+  return `${yyyy}-${MM}-${dd} ${HH}:${mm}:${ss}`
+}
+
+function formatHMS(totalSeconds) {
+  const pad = n => String(n).padStart(2, '0')
+  const s = Math.max(0, Math.floor(totalSeconds))
+  const hh = pad(Math.floor(s / 3600))
+  const mm = pad(Math.floor((s % 3600) / 60))
+  const ss = pad(s % 60)
+  return `${hh}:${mm}:${ss}`
+}
+
+async function send(payload) {
+  const url = process.env.WECHAT_WEBHOOK_URL
+  if (!url) {
+    console.log('[wechat-notify] WECHAT_WEBHOOK_URL not set, skip sending.')
+    return { skipped: true }
+  }
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    const text = await res.text()
+    console.log('[wechat-notify] response:', res.status, text)
+    return { status: res.status, body: text }
+  }
+  catch (e) {
+    console.error('[wechat-notify] error:', e && e.message ? e.message : e)
+    return { error: true }
+  }
+}
+
+function buildContentMarkdown({ type, label, success, failed }) {
+  const CI_MERGE_REQUEST_PROJECT_URL = `${process.env.CI_MERGE_REQUEST_PROJECT_URL}/-/merge_requests/${process.env.CI_MERGE_REQUEST_IID}`
+  const DEPLOY_HOST = process.env.DEPLOY_HOST
+  const DEPLOY_DIR = process.env.DEPLOY_DIR
+  const BUILD_DIR = process.env.BUILD_DIR
+  const ZIP_ARTIFACT_URL = process.env.ZIP_ARTIFACT_URL
+
+  // 提交者
+  const author = (process.env.GITLAB_USER_NAME || '').trim()
+  // 审核者
+  const reviewers = author === '张三' ? 'reviewer1' : 'reviewer2'
+
+  // 选择 @ 成员（即 userid）
+  const authorMap = {
+    张三: 'zhang.san',
+    李四: 'li.si',
+    王五: 'wang.wu',
+    赵六: 'zhao.liu',
+    孙七: 'sun.qi',
+    周八: 'zhou.ba',
+  }
+
+  // 时间计算
+  const startISO = process.env.CI_PIPELINE_CREATED_AT || new Date().toISOString()
+  const start = new Date(startISO)
+  const now = new Date()
+  const elapsedSec = (now - start) / 1000
+
+  // 状态处理（失败优先）
+  const isFailed = !!failed
+  const isSuccess = !!success && !failed
+
+  // 标题与基础信息
+  const title = `<font color="info">【${process.env.CI_PROJECT_TITLE}】</font> ${label}`
+  const lines = []
+  lines.push(title)
+
+  // 公共信息区块
+  lines.push(`> 提交者：<font color="comment">${author}</font>`)
+
+  // 类型分支逻辑
+  if (type === 'CI-start') {
+    lines.push(`> 开始时间：<font color="comment">${formatShanghai(start)}</font>`)
+    lines.push(`<@${reviewers}> [查看合并请求](${CI_MERGE_REQUEST_PROJECT_URL})`)
+  }
+  else if (type === 'CI-end') {
+    lines.push(`> 开始-结束时间：<font color="comment">${formatShanghai(start)} 至 ${formatShanghai(now)}</font>`)
+    lines.push(`> 总耗时：<font color="comment">${formatHMS(elapsedSec)}</font>`)
+    if (isSuccess) {
+      lines.push(`> 状态：<font color="info">成功</font> 🎉`)
+      lines.push(`<@${reviewers}> [查看合并请求](${CI_MERGE_REQUEST_PROJECT_URL})`)
+    }
+    else if (isFailed) {
+      lines.push(`> 状态：<font color="warning">失败</font> 😭`)
+      lines.push(`<@${authorMap[author]}> <@${reviewers}> [查看合并请求](${CI_MERGE_REQUEST_PROJECT_URL})`)
+    }
+  }
+  else if (type === 'deploy-start') {
+    lines.push(`> 开始时间：<font color="comment">${formatShanghai(start)}</font>`)
+    lines.push(`> 打包目录：<font color="comment">${BUILD_DIR}</font>`)
+    lines.push(`> 目标主机：<font color="comment">${DEPLOY_HOST}</font>`)
+    lines.push(`> 目标目录：<font color="comment">${DEPLOY_DIR}</font>`)
+  }
+  else if (type === 'deploy-end' || type === 'deploy:prod-end') {
+    lines.push(`> 开始-结束时间：<font color="comment">${formatShanghai(start)} 至 ${formatShanghai(now)}</font>`)
+    lines.push(`> 总耗时：<font color="comment">${formatHMS(elapsedSec)}</font>`)
+    if (ZIP_ARTIFACT_URL) {
+      lines.push(`> [下载部署包](${ZIP_ARTIFACT_URL})`)
+    }
+    else {
+      lines.push(`<@${authorMap[author]}> <@${reviewers}>`)
+    }
+  }
+  else if (type === 'deploy:prod-start') {
+    lines.push(`> 开始时间：<font color="comment">${formatShanghai(start)}</font>`)
+    lines.push(`> 打包目录：<font color="comment">${BUILD_DIR}</font>`)
+  }
+  lines.push(`> [查看流水线](${process.env.CI_PIPELINE_URL})`)
+
+  return lines.join('\n')
+}
+
+async function main() {
+  const { type, label, success, failed } = parseArgs(args)
+  if (!type) {
+    console.log('[wechat-notify] no --type provided, skip.')
+    return
+  }
+  const md = buildContentMarkdown({ type, label, success, failed })
+  await send({ msgtype: 'markdown', markdown: { content: md } })
+}
+
+main().catch((e) => {
+  console.error('[wechat-notify] unexpected error:', e)
+}).finally(() => {
+  // 不阻塞流水线
+  process.exit(0)
+})
+```
+::
+
+::tip
+为了隔离不同环境的构建逻辑，采用了多脚本和动态配置的策略。
+
+- **构建脚本分离**: `package.json` 中定义了两个构建脚本：
+
+  - `build`: 用于 `prod` 环境，执行生产环境的完整构建。
+  - `build:dev`: 用于 `dev` 环境，执行测试环境的特定构建。
+- **动态加载配置**: `.gitlab-ci.yml` 会根据 `$BUILD_ENV` 变量的值，通过 `include` 规则动态加载 `.gitlab-dev.yml` 或 `.gitlab-prod.yml`，从而执行对应环境的作业。
+::
+
+### 全局环境变量
+
+| 变量名                  | 用途                               |
+| :------------------- | :------------------------------- |
+| `BUILD_ENV`          | 控制构建环境 (`dev`/`prod`)，流水线自动或手动选择 |
+| `BUILD_DIR`          | 指定构建产物的输出目录，根据项目调整               |
+| `SONAR_HOST_URL`     | SonarQube 服务器地址                  |
+| `WECHAT_WEBHOOK_URL` | 企业微信 WebHook地址，用于通知              |
+| `DEPLOY_HOST`        | 部署目标服务器 IP 地址                    |
+| `DEPLOY_DIR`         | 部署到服务器上的目标目录                     |
+
+::warning
+`BUILD_DIR` 等变量需要根据不同项目进行修改，请确保其指向正确的构建产物目录。
+::
+
+### 企业微信通知
+
+流水线的关键节点会通过企业微信机器人发送实时通知。
+
+- **通知脚本**: `scripts/ci/wechat-notify.js` 负责组装消息内容并发送。
+- **@ 成员**: 在消息中可以使用 `<@userid>` 的语法来提及指定成员，请确保填入的是成员的&#x2A;*账号 (userid)**，而不是手机号或姓名。
+
+![ci 开始通知](https://mhaibaraai.cn/images/guides/platforms/gitlab-ci/ci-start-notify.png)![部署成功通知](https://mhaibaraai.cn/images/guides/platforms/gitlab-ci/deploy-end-success-notify.png)
+
+## 手动执行流水线
+
+除了自动化触发，你也可以手动运行流水线，并指定构建环境或者其他定义的全局变量。
+
+1. 进入项目的 `构建` -> `流水线` 页面。
+2. 点击 `运行流水线` 按钮。
+3. 选择对应分支，在 `变量` 区域，`BUILD_ENV` 变量会提供一个下拉框，你可以选择 `dev` 或 `prod` 环境。
+
+![手动运行流水线](https://mhaibaraai.cn/images/guides/platforms/gitlab-ci/manual-run-pipeline.png)
+
+## 常见问题 (FAQ)
+
+::code-preview
+  :::accordion
+    ::::accordion-item
+    ---
+    icon: i-lucide-circle-help
+    label: CI 脚本报错 `No such file or directory`，找不到构建产物目录？
+    ---
+    这是因为 `.gitlab-ci.yml` 中的 `BUILD_DIR` 变量被配置为了**绝对路径** (例如 `/app/dist/...`)。
+    
+      :::::note
+      CI Runner 的工作目录是 `$CI_PROJECT_DIR`，构建产物路径应该是相对于该目录的**相对路径**。
+      :::::
+    
+    解决方案:
+    
+    修改 `.gitlab-ci.yml` 中的 `BUILD_DIR` 变量，将其改为**相对路径** (例如 `app/dist/...`)。
+    ::::
+  
+    ::::accordion-item
+    ---
+    icon: i-lucide-circle-help
+    label: 部署成功通知 (`notify-deploy-end-success`) 为什么在部署完成前就发送了？
+    ---
+    因为该通知作业的 `needs` 依赖中只包含了 `build` 作业，而没有包含 `deploy` 作业，导致它在 `build` 完成后就立即执行。
+    ::::
+  
+    ::::accordion-item
+    ---
+    icon: i-lucide-circle-help
+    label: 为什么合并到 `dev` 分支的 Merge Request 没有触发 `dev` 环境的构建和部署流程？
+    ---
+    因为 `.gitlab-dev.yml` 的 `include` 规则依赖于 `$BUILD_ENV` 变量，但在自动触发的 MR 流水线中，定义在 `.gitlab-ci.yml` 文件内部的 `variables` **在 `include` 解析阶段是不可用的**。
+    ::::
+  
+    ::::accordion-item
+    ---
+    icon: i-lucide-circle-help
+    label: 部署时，服务器上只出现了 `dist` 目录里的文件，而没有包含父文件夹？
+    ---
+    这是因为部署脚本中的 `scp` 命令源路径使用了 `.../.` 结尾，这表示只复制目录的**内容**，而不是目录本身。
+    ::::
+  
+    ::::accordion-item
+    ---
+    icon: i-lucide-circle-help
+    label: "`build` 或 `deploy` 失败后，为什么收不到失败通知？"
+    ---
+    因为失败通知作业 (`notify-deploy-end-failed`) 的 `needs` 依赖了上游作业。一旦上游作业失败，该通知作业自身会被 GitLab 跳过 (skipped)。
+    ::::
+  
+    ::::accordion-item{icon="i-lucide-circle-help" label="企业微信通知中的 `@` 为什么不生效？"}
+    企业微信的 Markdown 消息中，`@` 成员有严格的语法要求。
+    ::::
+  :::
+::
+
+
+# IServer 踩坑归集
+
+## 参考文档
+
+::note
+---
+icon: i-lucide-book
+to: http://support.supermap.com.cn/DataWarehouse/WebDocHelp/iServer/API/iServer_API_reference.htm
+---
+iServer 开发指南: API 参考
+::
+
+::note
+---
+icon: i-lucide-book
+to: https://iclient.supermap.io/examples/mapboxgl/examples.html#iServer
+---
+iClient for MapboxGL 示范程序
+::
+
+::note
+---
+icon: i-lucide-book
+to: https://support.supermap.com/DataWarehouse/WebDocHelp/iServer/mergedProjects/SuperMapiServerRESTAPI/resource_hierarchy.htm
+---
+iServer 服务资源层次结构
+::
+
+## 地图服务
+
+地图服务名称通常以 **map-xxx** 开头， 如 `https://iserver.supermap.io/iserver/services/map-world/`
+
+配置通用的服务接口:
+
+![Map 服务接口](https://mhaibaraai.cn/images/guides/platforms/iserver/mapInterface.png)
+
+目前项目主要使用的接口有: `rest` 和 `wms130`
+
+::warning
+SuperMap 的 `wms110` 版本服务支持该值的目的是向后兼容
+::
+
+### zxyTileImage 瓦片服务
+
+::note
+---
+icon: i-lucide-book
+to: http://support.supermap.com.cn/DataWarehouse/WebDocHelp/iServer/mergedProjects/SuperMapiServerRESTAPI/root/maps/map/zxyTileImage/zxyTileImage.htm
+---
+iServe zxyTileImage 瓦片服务
+::
+
+![zxyTileImage 瓦片服务](https://mhaibaraai.cn/images/guides/platforms/iserver/zxyTileImage.png)
+
+示例服务地址: `https://iserver.supermap.io/iserver/services/map-china400/rest/maps/China/zxyTileImage`
+
+### wms130 服务
+
+::note
+---
+icon: i-lucide-book
+to: http://support.supermap.com.cn/DataWarehouse/WebDocHelp/iServer/API/WMS/WMS_introduce.htm
+---
+iServer WMS 服务
+::
+
+![wms130 服务](https://mhaibaraai.cn/images/guides/platforms/iserver/wms130.png)
+
+示例服务地址: `https://iserver.supermap.io/iserver/services/map-china400/wms130`
+
+## 数据服务
+
+数据服务名称通常以 **data-xxx** 开头， 如 `https://iserver.supermap.io/iserver/services/data-jingjin`
+
+配置通用的服务接口:
+
+![Data 服务接口](https://mhaibaraai.cn/images/guides/platforms/iserver/dataInterface.png)
+
+### rest 服务
+
+::note
+---
+icon: i-lucide-book
+to: https://support.supermap.com/DataWarehouse/WebDocHelp/iServer/mergedProjects/SuperMapiServerRESTAPI/root/data/featureResults/featureResults.htm
+---
+featureResults 资源
+::
+
+- 数据服务: `https://iserver.supermap.io/iserver/services/data-jingjin/rest/data/featureResults.geojson`
+- 数据集格式: 数据源名称:数据集名称， 如 `Jingjin:County_L`
+
+### wfs2.0 服务
+
+::note
+---
+icon: i-lucide-book
+to: http://support.supermap.com.cn/DataWarehouse/WebDocHelp/iServer/API/WFS/WFS_introduce.htm
+---
+iServer WFS 服务
+::
+
+示例服务地址: `https://iserver.supermap.io/iserver/services/data-world/wfs200`
+
+## 问题归集 (FAQ)
+
+::code-preview
+  :::accordion
+    ::::accordion-item
+    ---
+    icon: i-lucide-circle-help
+    label: wms 服务通过 sld_body 修改样式不生效
+    ---
+      :::::caution
+      尝试用 SLD\_BODY 自定义 wms 服务的样式， GetMap 请求格式如下，图层样式没有渲染
+      :::::
+    
+    ![sld\_body error](https://mhaibaraai.cn/images/guides/platforms/iserver/sldBody.png)
+    
+    问题原因:
+    
+    wms 服务目前只支持已定义的图层样式
+    
+      :::::note
+      ---
+      icon: i-lucide-book
+      to: http://support.supermap.com.cn/DataWarehouse/WebDocHelp/iServer/API/WMS/WMS130/GetMap/GetMap_request.htm
+      ---
+      iServer GetMap 请求
+      :::::
+    
+    ![sld\_body reply](https://mhaibaraai.cn/images/guides/platforms/iserver/sldBodyReply.png)
+    ::::
+  
+    ::::accordion-item{icon="i-lucide-circle-help" label="地图服务获取 geojson 表述格式错误"}
+      :::::caution
+      请求url /iserver/services/map-text/rest/FZJZSSD\@cs.geojson 与资源 root 的 url 模板不匹配
+      :::::
+    
+    ![geojson error](https://mhaibaraai.cn/images/guides/platforms/iserver/geojson.png)
+    
+    问题原因:
+    
+    - 数据服务的要素才有 geojson 表述格式，是否支持 geojson 格式，可以看右侧目录栏
+    - 地图服务和数据服务属于不同的服务类型，需要重新发布服务并勾选 rest 接口
+    ::::
+  
+    ::::accordion-item{icon="i-lucide-circle-help" label="报错：400 ，msg：对象已经被释放"}
+    ![release error](https://mhaibaraai.cn/images/guides/platforms/iserver/releaseError.png)
+    
+    问题原因:
+    
+    可能是数据库数据不同步，先用文件型数据源试下接口请求是否正确
+    ::::
+  
+    ::::accordion-item
+    ---
+    icon: i-lucide-circle-help
+    label: wfs2.0 服务获取描述文档成功，获取要素的时候报错
+    ---
+    ![wfs error1](https://mhaibaraai.cn/images/guides/platforms/iserver/wfsError1.png)
+    
+    ![wfs error2](https://mhaibaraai.cn/images/guides/platforms/iserver/wfsError2.png)
+    
+    问题原因:
+    
+    - iserver 版本为 `iserver 2023 11i` ，不支持 geojson 输出
+    
+    supermap wfs2.0 执行 GetFeature 操作支持 `outputFormat=json` 输出，但是 xml 表述文档中没有加上`<ows:Value>json</ows:Value>`， 猜测是这个原因导致 arcgis 提示不支持
+    ::::
+  
+    ::::accordion-item{icon="i-lucide-circle-help" label="wfs2.0服务的点击事件拿不到要素全部属性值"}
+    有个需求为点击地块展示详情，但是获取到的要素只有部分属性值
+    
+    ![wfs error3](https://mhaibaraai.cn/images/guides/platforms/iserver/wfsError3.png)
+    
+    ![wfs error4](https://mhaibaraai.cn/images/guides/platforms/iserver/wfsError4.png)
+    
+    问题原因:
+    
+    `iServer` 的 `GetFeature` 请求使用 `FILTER` 参数,编码语言为 `urn:ogc:def:query Language:OGC-FES:Filter`
+    
+      :::::note
+      ---
+      icon: i-lucide-book
+      to: http://support.supermap.com.cn/DataWarehouse/WebDocHelp/iServer/API/WFS/WFS200/GetFeature/FILTER.htm
+      ---
+      iServer FILTER 示例
+      :::::
+    
+    可以通过 `esri_wfs_id` 与 `表名` 传给后端，后端根据 `esri_wfs_id` 查询数据库，返回结果
+    ::::
+  
+    ::::accordion-item{icon="i-lucide-circle-help" label="如何获取地图当前状态的基本信息"}
+    [iServer map 资源](http://support.supermap.com.cn/DataWarehouse/WebDocHelp/iServer/mergedProjects/SuperMapiServerRESTAPI/root/maps/map/map.htm){rel="nofollow"}
+    
+    获取服务的四至范围，用来实现服务跳转定位
+    ::::
+  
+    ::::accordion-item{icon="i-lucide-circle-help" label="列出当前地图中所有图层的图例"}
+    利用上面的问题6，获取到服务的四至范围，然后拼接成 `BBOX` 参数,
+    
+    ```ts
+    const bbox = `${bounds.left},${bounds.bottom},${bounds.right},${bounds.top}`
+    const url = `https://iserver.supermap.io/iserver/services/map-china400/rest/maps/China/legend.rjson?returnVisibleOnly=true&bbox=-20037508.34,-20037508.34,20037508.34,20037508.34`
+    ```
+    ::::
+  :::
+::
+
+
+# Node
+
+## Node 的版本选择
+
+- **LTS 版本**（长期支持版本）：稳定版本，通常用于生产环境。
+- **Current 版本**（当前版本）：最新的主要版本，加入最新特性和改进，通常用于开发和测试。
+
+## 安装配置
+
+### 使用包管理器安装
+
+::note{icon="i-lucide-package"}
+包版本管理工具的主要好处在于帮助开发者更方便地管理多个版本的 Node 和 npm。
+::
+
+- [nvm](https://github.com/nvm-sh/nvm){rel="nofollow"} 最受欢迎的 Node 版本管理工具，适用于 macOS 和 Linux。
+- [nvm-windows](https://github.com/coreybutler/nvm-windows){rel="nofollow"} `nvm` 的 Windows 版本，专为 Windows 开发者设计。
+- [fnm](https://github.com/Schniz/fnm){rel="nofollow"} 也是 macOS 的优秀选择，具备轻量和高效的特点，适合那些不想耗费系统资源的开发者。
+
+### 直接下载安装
+
+::callout
+---
+color: neutral
+icon: i-lucide-download
+title: Node.js 官网
+to: https://nodejs.org/
+---
+从 Node.js 官网下载安装包（`.pkg`、`.msi`、`.tar.gz` 文件）
+::
+
+::tabs
+  :::tabs-item{label="Linux"}
+  ```sh [sh]
+  # 安装 unzip
+  sudo apt-get update && sudo apt-get install -y unzip
+  # 安装 fnm
+  curl -o- https://fnm.vercel.app/install | bash
+  # 重新加载环境
+  source /root/.bashrc
+  # 安装 Node.js
+  fnm install 22
+  # 验证 Node.js 版本
+  node -v # Should print "v22.18.0".
+  # 验证 npm 版本
+  npm -v # Should print "10.9.3".
+  # 启用 pnpm
+  corepack enable pnpm
+  ```
+  :::
+
+  :::tabs-item{label="macOS"}
+  ```sh [sh]
+  brew install node
+  ```
+  :::
+
+  :::tabs-item{label="Windows"}
+  ```sh [sh]
+  winget install --id=OpenJS.Nodejs
+  ```
+  :::
+::
+
+## 实用命令
+
+- 删除所有 `node_modules` 文件夹
+  ```sh [sh]
+  find . -name 'node_modules' -type d -prune -execdir rm -rf '{}' +
+  ```
+- 递归删除 `packages` 和 `internal` 目录下的 `dist` 文件夹，同时忽略 `node_modules` 目录
+  ```sh [sh]
+  find packages internal -path '*/node_modules/*' -prune -o -name 'dist' -type d -exec rm -rf {} + || true
+  ```
+- `postinstall` 钩子在安装依赖后执行，可以用来执行一些构建操作，比如构建、设置环境或修复依赖关系。
+  ```json [package.json]
+  {
+    "scripts": {
+      "postinstall": "pnpm build",
+      "build": "pnpm clean && pnpm -r -F='./packages/**' -F='./internal/**' run build",
+      "clean": "find packages internal -path '*/node_modules/*' -prune -o -name 'dist' -type d -exec rm -rf {} + || true"
+    }
+  }
+  ```
+
+## 笔记
+
+### 参数传递
+
+- 当你使用 `npm run` 命令时，如果你想要传递参数给你的脚本，你需要在参数前加上 `--` , 例如：
+
+```sh [sh]
+npm run gen:cc -- --path ol-cesium-map --name demo
+```
+
+这样，`--path ol-cesium-map --name demo` 就会被传递给你的脚本，而不是 `npm run` 命令。
+
+- 使用 `mri` 来解析这些参数：
+
+```ts [index.ts]
+const argv = process.argv.slice(2)
+const mriData = mri<MriData>(argv)
+
+// mriData : { _: [], path: 'ol-cesium-map', name: 'demo' }
+```
+
+### 增加 node 内存限制
+
+通过 `--max_old_space_size` 选项，你可以指定更大的内存使用限制，构建大项目时能有效避免内存不足导致的 `JavaScript heap out of memory` 错误
+
+```sh [sh]
+export NODE_OPTIONS=--max_old_space_size=10240
+```
+
+或者在 `package.json` 中的 `scripts` 中指定：
+
+```json [package.json]
+{
+  "scripts": {
+    "build": "NODE_OPTIONS=--max_old_space_size=10240 react-scripts build"
+  }
+}
+```
+
+
+# Cursor
+
+::note
+---
+icon: i-lucide-github
+to: https://github.com/mhaibaraai/cursor-settings
+---
+这是我的个人 Cursor 配置，仅供参考。
+::
+
+
+# IntelliJ IDEA
+
+## 安装 IntelliJ IDEA
+
+直接下载来安装 IntelliJ IDEA。
+
+1. **访问官网**:
+   前往 [IntelliJ IDEA 官方下载页面](https://www.jetbrains.com/idea/download/){rel="nofollow"}。
+2. **选择版本**:
+   根据你的需求下载 `.dmg` 文件。
+3. **安装**:
+   打开下载的 `.dmg` 文件，将 `IntelliJ IDEA.app` 拖入 `Applications` 文件夹。
+
+## 添加版权声明
+
+::tip{to="https://www.jetbrains.com/zh-cn/help/idea/copyright.html"}
+IDEA 官方文档
+::
+
+我的版权声明模板：
+
+```text [md]
+@Author $username
+@Date $file.lastModified.format("yyyy/MM/dd HH:mm")
+```
+
+代码文件生成的版权如下：
+
+```java [java]
+/*
+ * @Author yixuanmiao
+ * @Date 2025/08/11 17:07
+ */
+```
+
+![版权声明模板](https://mhaibaraai.cn/images/tools/editors/idea/copyright.png)
+
+
+# VS Code
+
+## 安装
+
+- 打开浏览器，访问 [VSCode 官方下载页面](https://code.visualstudio.com/){rel="nofollow"}
+- 点击页面中的 "Download for macOS" 按钮。
+- 下载完成后，你将获得一个 `.zip` 文件。
+- 双击 `.zip` 文件进行解压，你会得到一个 `Visual Studio Code.app` 应用程序。
+- 将 `Visual Studio Code.app` 拖动到 **Applications** 文件夹中，这样你就可以从应用程序目录运行它。
+
+## 在提取后删除远程分支
+
+删除操作会删除不再存在于远程库上的远程跟踪分支，有助于将分支列表保持干净和最新，对应于 `git fetch --prune`。
+
+1. 打开 VS Code 的设置，搜索 `git prune`。
+2. 启用“提取时修剪”选项。
+
+![git prune](https://mhaibaraai.cn/images/tools/editors/vscode/git-prune.png)
+
+## GitLens 提交消息自定义指令
+
+在 VS Code 的 `settings.json` 文件中添加 `gitlens.ai.generateCommitMessage.customInstructions` 配置项：
+
+```json [settings.json]
+{
+  "gitlens.ai.generateCommitMessage.customInstructions": "Generate a Conventional Commit message. The commit type (e.g., feat, fix, chore) and any optional scope can be in English, but the main description of the commit must be written in Chinese."
+}
+```
+
+### 使用方法
+
+1. 完成代码修改后，在 GitLens 面板中选择 "Generate Commit Message with GitLens"
+2. AI 将根据自定义模板生成符合规范的提交消息
+3. 根据需要微调生成的消息内容
+4. 提交代码
+
+![Generate Commit Message with GitLens](https://mhaibaraai.cn/images/tools/editors/vscode/gitlens-commit-message.png)
+
+## 使用 VSCode 打开
+
+为了能够在终端中使用 `code` 命令来快速打开文件和文件夹，你可以安装 `code` 命令行工具：
+
+打开 VSCode，按 `Cmd + Shift + P`，然后输入 `Shell Command: Install 'code' command in PATH`,选择该选项并执行。
+安装完成后，你可以在终端中运行 code 命令。例如：
+
+```sh [sh]
+# 打开当前目录
+code .
+```
+
+## 添加 "使用 VSCode 打开" 的右键菜单选项
+
+1. 打开 Automator 应用程序
+   - 你可以通过 Spotlight 搜索 `Automator` 打开它
+2. 选择 "快速操作" 类型 :br![quick-operating](https://mhaibaraai.cn/images/tools/editors/vscode/quick-operating.png)
+3. 配置服务
+   - 在窗口顶部，将 “工作流程收到当前” 更改为 “文件或文件夹”
+   - 将 “位于” 设置为 “访达.app”
+   :br![service-config](https://mhaibaraai.cn/images/tools/editors/vscode/service-config.png)
+4. 添加 VSCode 动作：
+   - 在左侧搜索框中输入 `运行 Shell 脚本`，将其拖动到右侧的工作区
+   - 在 `Shell` 下拉菜单中选择 `/bin/zsh`
+   - 在 `传递输入` 下拉菜单中选择 `作为自变量`
+   - 在脚本框中输入以下内容：
+     ```sh [sh]
+     for f in "$@"
+     do
+         open -a "Visual Studio Code" "$f"
+     done
+     ```
+   :br![add-vscode-action](https://mhaibaraai.cn/images/tools/editors/vscode/add-vscode-action.png)
+5. 保存服务
+   - 点击左上角的保存按钮，输入服务名称，例如 `使用 VSCode 打开`
+6. 使用服务
+   - 在 Finder 中，右键单击文件或文件夹，选择 `服务` -> `使用 VSCode 打开`
+   :br![use-service](https://mhaibaraai.cn/images/tools/editors/vscode/use-service.png)
+
+
+# Homebrew
+
+::note{icon="i-lucide-package" to="https://brew.sh/zh-cn/"}
+Homebrew ： macOS（或 Linux）缺失的软件包的管理器
+::
+
+## 安装 Homebrew
+
+::steps{level="3"}
+### 安装命令
+
+```sh [sh]
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+### 添加 Homebrew 到系统路径
+
+  :::tip
+  安装完成后，Homebrew 可能不会自动添加到你的系统路径中。根据你的 Mac 使用的是 Intel 处理器还是 Apple Silicon（M1/M2 等），路径有所不同。
+  :::
+
+  :::tabs
+    ::::tabs-item{label="Intel 处理器"}
+    ```sh [sh]
+    echo 'eval "$(/usr/local/bin/brew shellenv)"' >> /Users/$(whoami)/.zprofile
+    eval "$(/usr/local/bin/brew shellenv)"
+    ```
+    ::::
+  
+    ::::tabs-item{label="Apple Silicon (M1/M2)"}
+    ```sh [sh]
+    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/$(whoami)/.zprofile
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    ```
+    ::::
+  :::
+
+### 验证安装
+
+```sh [sh]
+brew --version
+```
+
+输出：
+
+```sh [sh]
+Homebrew 4.3.23-56-g9160445
+```
+::
+
+## 配置文件导出
+
+在当前目录下导出 Homebrew 的软件包列表和配置文件。
+
+```sh [sh]
+# 导出已安装的软件包列表
+brew list --formula > brew-packages.txt
+# 导出已安装的 Cask 软件包列表
+brew list --cask > brew-cask-packages.txt
+# 导出 Homebrew 的配置
+brew config > brew-config.txt
+```
+
+将文件保存到指定目录： `/path/to/your/directory/`
+
+```sh [sh]
+brew list --formula > /path/to/your/directory/brew-packages.txt
+```
+
+## 导入软件包和配置
+
+```sh [sh]
+# 导入已安装的软件包列表
+xargs brew install < brew-packages.txt
+# 导入已安装的 Cask 软件包列表
+xargs brew install --cask < brew-cask-packages.txt
+```
+
+::tip
+一般情况下，Homebrew 的配置不会随着系统的重装等过程丢失，因此不需要专门导入配置
+::
+
+
+# Pnpm
+
+## 安装
+
+::code-group
+```sh [npm]
+npm install -g pnpm
+```
+
+```sh [sh]
+brew install pnpm
+```
+::
+
+## 工作空间
+
+`pnpm-workspace.yaml` 定义了工作空间的根目录，并能够使您从工作空间中包含 `/` 排除目录。默认情况下，包含所有子目录。
+
+```yaml [pnpm-workspace.yaml]
+packages:
+  - packages/*
+  - docs
+  - packages/playground/**
+```
+
+## 常用命令
+
+| 命令                 | 描述   |
+| ------------------ | ---- |
+| `pnpm install`     | 安装依赖 |
+| `pnpm store prune` | 清理缓存 |
+
+
+# Fnm
+
+::note{icon="i-lucide-package" to="https://github.com/Schniz/fnm"}
+Fast Node Manager (fnm) ： 一个快速的 Node.js 版本管理器，它可以帮助你在不同项目中切换 Node.js 版本。
+::
+
+## 安装
+
+::code-group
+```sh [curl.sh]
+curl -fsSL https://fnm.vercel.app/install | bash
+```
+
+```sh [brew.sh]
+brew install fnm
+```
+::
+
+## 配置环境
+
+需要将 fnm 集成到你的 Shell（如 bash、zsh）。可以参考输出的安装脚本，或手动添加以下命令到你的 `.zshrc` 或 `.bashrc` 文件中：
+
+```sh [sh]
+eval "$(fnm env)"
+source ~/.zshrc
+```
+
+::note
+brew 在安装 fnm 后给出了环境配置的提示，并自动将 fnm 的路径和相关配置追加到 `~/.zshrc` 文件中
+
+  :::code-collapse
+  ```text [log]
+  ==> Running `brew cleanup fnm`...
+  Disable this behaviour by setting HOMEBREW_NO_INSTALL_CLEANUP.
+  Hide these hints with HOMEBREW_NO_ENV_HINTS (see `man brew`).
+  Installing for Zsh. Appending the following to /Users/yixuanmiao/.zshrc:
+  
+  # fnm
+  
+  FNM_PATH="/Users/yixuanmiao/Library/Application Support/fnm"
+  if [ -d "$FNM_PATH" ]; then
+  export PATH="/Users/yixuanmiao/Library/Application Support/fnm:$PATH"
+  eval "`fnm env`"
+  fi
+  
+  In order to apply the changes, open a new terminal or run the following command:
+  
+  source /Users/yixuanmiao/.zshrc
+  ```
+  :::
+::
+
+## 安装 Node.js
+
+```sh [sh]
+fnm install <version>
+fnm use <version>
+```
+
+## 功能参数
+
+- `--use-on-cd`：在每次进入目录时自动切换 Node.js 版本 （✅ 推荐）
+- `--version-file-strategy=recursive`：递归查找 `.node-version` 或 `.nvmrc` 文件 （✅ 推荐）
+- `--resolve-engines`：解析 `package.json` 中的 `engines.node` 字段 （🧪 实验）
+  ```json [package.json]
+  {
+    "engines": {
+      "node": ">=18.0.0"
+    }
+  }
+  ```
+- `--corepack-enabled`： 使用 Corepack 作为包管理器 （🧪 实验）
+
+## 常用命令
+
+| 命令                        | 功能说明                |
+| ------------------------- | ------------------- |
+| `fnm ls-remote`           | 查询所有 Node.js 版本     |
+| `fnm install <version>`   | 安装特定版本的 Node.js     |
+| `fnm install --lts`       | 安装最新的 LTS 版本        |
+| `fnm use <version>`       | 切换 Node.js 版本       |
+| `fnm current`             | 查看当前使用的 Node.js 版本  |
+| `fnm default <version>`   | 设置默认版本              |
+| `fnm ls`                  | 查看所有已安装的 Node.js 版本 |
+| `fnm uninstall <version>` | 卸载 Node.js          |
+
+## 报错处理
+
+::code-preview
+  :::accordion
+    ::::accordion-item
+    ---
+    icon: i-lucide-circle-help
+    label: "zsh: command not found: node"
+    ---
+      :::::warning{to="https://github.com/Schniz/fnm/issues/1279"}
+      github issues : Zsh shell setup command did not work for me
+      :::::
+    
+    如果在使用 `node` 命令时出现 `zsh: command not found: node` 错误，可以尝试在 `.zshrc` 文件中替换以下配置：
+    
+    ```diff
+    FNM_PATH="/Users/yixuanmiao/Library/Application Support/fnm"
+    - if [ -d "$FNM_PATH" ]; then
+    export PATH="/Users/yixuanmiao/Library/Application Support/fnm:$PATH"
+    eval "`fnm env`"
+    - fi
+    ```
+    ::::
+  :::
+::
+
+
+# Git
+
+## Mac
+
+Mac 通常自带 Git ，但如果没有安装，或者你想更新到最新版本，可以通过以下几种方式安装：
+
+::tabs
+  :::tabs-item{label="Homebrew"}
+  ```sh [sh]
+  brew install git
+  ```
+  :::
+
+  :::tabs-item{label="Xcode"}
+  ```sh [sh]
+  xcode-select --install
+  ```
+  :::
+::
+
+## Windows
+
+通过 Git 官网下载安装包：<https://git-scm.com/download/win>{rel="nofollow"}
+
+验证是否安装成功：
+
+```sh [sh]
+git --version
+```
+
+## 配置 Git 用户信息
+
+Git 需要知道提交者的身份信息。通过以下命令设置全局用户信息：
+
+```sh [sh]
+# 设置用户名
+git config --global user.name "Your Name"
+# 设置邮箱
+git config --global user.email "Your Email"
+```
+
+## 设置默认编辑器（可选）
+
+::tabs
+  :::tabs-item{label="Vim"}
+  ```sh [sh]
+  git config --global core.editor vim
+  ```
+  :::
+
+  :::tabs-item{label="VSCode"}
+  ```sh [sh]
+  git config --global core.editor "code --wait"
+  ```
+  :::
+::
+
+## 配置 SSH 密钥（用于 GitHub、GitLab 等远程仓库）
+
+::steps{level="3"}
+### 生成 SSH 密钥
+
+```sh [sh]
+ssh-keygen -t rsa -b 4096 -C "你的邮箱地址"
+```
+
+- `-t rsa`：指定密钥类型为 RSA
+- `-b 4096`：指定密钥长度为 4096 位
+- `-C "你的邮箱地址"`：指定注释信息为你的邮箱地址，通常是你的 GitHub 邮箱地址
+
+执行命令后，会提示你输入保存密钥的文件路径，按回车键默认保存在 `~/.ssh/id_rsa`。
+
+### 设置密码（可选）
+
+  :::tip
+  系统会提示你设置一个密码，这个密码用来加密你的私钥文件。如果你不想设置密码，直接按回车键即可。
+  :::
+
+### 添加 SSH 密钥到 ssh-agent
+
+```sh [sh]
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_rsa
+```
+
+  :::note
+  `~/.ssh/id_rsa` 是你生成的 SSH 密钥的路径。
+  :::
+
+### 复制 SSH 公钥到剪贴板
+
+```sh [sh]
+pbcopy < ~/.ssh/id_rsa.pub
+```
+
+或者对于 Linux 系统：
+
+```sh [sh]
+cat ~/.ssh/id_rsa.pub | xclip -selection clipboard
+```
+
+### 测试 SSH 连接
+
+```sh [sh]
+ssh -T git@github.com
+```
+::
+
+## 配置 GPG 密钥
+
+::steps{level="3"}
+### 安装 gnupg 并生成 GPG 密钥
+
+```sh [sh]
+brew install gnupg
+gpg --full-generate-key
+```
+
+  :::collapsible
+  - **选择密钥类型**：默认情况下，现在的 GPG 会选择 `ECC and ECC` 。您可以直接按 `Enter` 选择默认选项，生成 `ECC` 密钥。
+    :warning[`ECC` 密钥（如 `Ed25519` ）提供了更高的安全性和更小的密钥尺寸。但在某些旧系统或软件中，可能存在兼容性问题。如果需要最大兼容性，可以选择 `RSA and RSA` ，然后将密钥长度设置为 `4096` 位。]
+  - **选择曲线类型**： 如果选择了 `ECC`，系统会提示您选择曲线。默认的 `Curve 25519（Ed25519）`是推荐的选项，直接按 `Enter` 即可。
+  - **设置密钥的有效期**： 输入 `0` 表示密钥永不过期，或者根据需要设置。
+  - **用户信息**： 输入您的姓名、邮箱地址（必须与 GitHub 上的邮箱一致）和可选的注释。
+  - **确认信息**： 检查所有信息是否正确，输入 `O` 确认。
+  - **设置密码短语**： 为您的密钥设置一个安全的密码短语。
+  :::
+
+### 查看 GPG 密钥
+
+```sh [sh]
+gpg --list-secret-keys --keyid-format LONG
+```
+
+  :::note
+  会看到类似以下的输出：
+  
+  ```text [log]
+  [keyboxd]
+  ----------------
+  sec   ed25519/密钥ID  日期 [SC]
+        密钥指纹
+  uid           [ultimate] 姓名 <邮箱>
+  ssb   cv25519/子密钥ID  日期 [E]
+  ```
+  :::
+
+记录下 **ed25519/** 后面的长密钥 ID。例如，`ABCD1234EFGH5678`。
+
+### 导出并复制公钥
+
+```sh [sh]
+gpg --armor --export 密钥ID | pbcopy
+```
+
+  :::note
+  复制的内容类似于：
+  
+  ```text [log]
+  -----BEGIN PGP PUBLIC KEY BLOCK-----
+  mDMEY...
+  ...
+  -----END PGP PUBLIC KEY BLOCK-----
+  ```
+  :::
+
+### 配置 Git 使用 GPG 签名
+
+```sh [sh]
+git config --global user.signingkey 密钥ID
+git config --global commit.gpgsign true
+git config --global gpg.program $(which gpg)
+git config --global --unset gpg.format
+```
+
+### 安装 pinentry-mac
+
+pinentry 程序用于提示您输入 GPG 密钥的密码。
+
+```sh [sh]
+brew install pinentry-mac
+echo "pinentry-program $(which pinentry-mac)" >> ~/.gnupg/gpg-agent.conf
+killall gpg-agent
+```
+
+为避免每次提交都输入密码，可以配置 GPG 缓存密码：
+
+```sh [sh]
+code ~/.gnupg/gpg-agent.conf
+```
+
+添加以下内容，代表把密码缓存 1 小时，最大缓存时间为 2 小时。
+
+```sh [sh]
+default-cache-ttl 3600
+max-cache-ttl 7200
+```
+
+重启代理：
+
+```sh [sh]
+killall gpg-agent
+```
+
+### 在 VSCode 打开 `"git.enableCommitSigning": true,` 选项。
+
+![VSCode GPG 设置](https://mhaibaraai.cn/images/tools/editors/vscode/git-vscode-gpg.png)
+::
+
+## 常用命令
+
+| 命令                                                 | 功能说明                     |
+| -------------------------------------------------- | ------------------------ |
+| `git config --global -l`                           | 查看所有配置                   |
+| `git config --global user.name`                    | 查看某个特定的全局配置项             |
+| `git rebase --abort`                               | 取消变基操作                   |
+| `git branch | grep -v "^\*" | xargs git branch -D` | 删除除当前分支外的所有分支            |
+| `git branch | xargs git branch -D`                 | 删除所有本地分支，包括当前分支          |
+| `git fetch --prune`                                | 从远程仓库获取最新的代码，并删除已经被删除的分支 |
+| `git branch -m <old_branch> <new_branch>`          | 重命名本地分支                  |
+| `git push origin --delete <branch_name>`           | 删除远程分支                   |
+
+## 常见问题
+
+::code-preview
+  :::accordion
+    ::::accordion-item
+    ---
+    icon: i-lucide-circle-help
+    label: "RPC failed; HTTP 500 curl 22 The requested URL returned error: 500"
+    ---
+    原因：使用 http 协议进行传输的缓存区太小
+    
+    ```sh [sh]
+    git config --global http.postBuffer 524288000
+    ```
+    
+      :::::tip
+      将缓存区提高到500MB或者更高，看自己的项目需要。
+      :::::
+    ::::
+  :::
+::
