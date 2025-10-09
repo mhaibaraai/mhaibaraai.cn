@@ -1,7 +1,7 @@
 {
   "name": "mhaibaraai.cn",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "packageManager": "pnpm@10.18.1",
   "description": "一个专注于技术分享与知识沉淀的个人网站。",
@@ -44,6 +44,7 @@
     "@vueuse/nuxt": "catalog:",
     "better-sqlite3": "catalog:",
     "motion-v": "catalog:",
+    "nuxt": "catalog:",
     "nuxt-llms": "catalog:",
     "ufo": "catalog:"
   },
@@ -51,10 +52,8 @@
     "@antfu/eslint-config": "catalog:",
     "@nuxt/eslint": "catalog:",
     "eslint": "catalog:",
-    "nuxt": "catalog:",
     "taze": "catalog:",
     "tsx": "catalog:",
-    "typescript": "catalog:",
-    "vue-tsc": "catalog:"
+    "typescript": "catalog:"
   }
 }
