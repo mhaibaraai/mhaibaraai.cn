@@ -140,7 +140,6 @@ Claude Code for VS Code
     "deny": [],
     "defaultMode":"acceptEdits"
   },
-  "model": "openrouter,z-ai/glm-4.5-air:free",
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh",
