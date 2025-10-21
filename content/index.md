@@ -31,7 +31,7 @@ transition: { duration: 0.6, delay: 0.5 }
 ---
   ::::u-button
   ---
-  to: /docs/getting-started
+  to: /docs
   size: xl
   trailing-icon: i-lucide-arrow-right
   ---
