@@ -2,5 +2,10 @@
 import withNuxt from './.nuxt/eslint.config.mjs'
 
 export default withNuxt(
-  // Your custom configs here
+  {
+    files: ['**/*.vue'],
+    rules: {
+      'vue/max-attributes-per-line': ['error', { singleline: 3, multiline: 1 }]
+    }
+  }
 )

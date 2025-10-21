@@ -1,4 +1,30 @@
 export default defineAppConfig({
+  ui: {
+    prose: {
+      codeIcon: {
+        sh: 'i-tabler-brand-tabler',
+        conf: 'i-tabler-file-code'
+      }
+    }
+  },
+  toc: {
+    bottom: {
+      links: [
+        {
+          icon: 'i-lucide-brain',
+          to: 'https://mhaibaraai.cn/llms.txt',
+          target: '_blank',
+          label: 'Open LLMs'
+        },
+        {
+          icon: 'i-lucide-link',
+          to: 'https://mhaibaraai.cn/__link-checker__/link-checker-report.html',
+          target: '_blank',
+          label: 'Open Link Checker'
+        }
+      ]
+    }
+  },
   footer: {
     credits: `Copyright © 2024 - ${new Date().getFullYear()} YiXuan - <span class="text-highlighted">MIT License</span>`,
     socials: [
@@ -14,6 +40,6 @@ export default defineAppConfig({
         'target': '_blank',
         'aria-label': 'YiXuan\'s Gmail'
       }
-    ],
-  },
+    ]
+  }
 })
