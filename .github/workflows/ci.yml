@@ -29,6 +29,3 @@ jobs:
 
       - name: Typecheck
         run: pnpm run typecheck
-
-      - name: Publish
-        run: npx pkg-pr-new publish --compact './layer'
