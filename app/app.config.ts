@@ -17,6 +17,12 @@ export default defineAppConfig({
           label: 'Open LLMs'
         },
         {
+          icon: 'i-lucide-brain',
+          to: 'https://mhaibaraai.cn/_llms-full.txt',
+          target: '_blank',
+          label: 'Open Full LLMs'
+        },
+        {
           icon: 'i-lucide-link',
           to: 'https://mhaibaraai.cn/__link-checker__/link-checker-report.html',
           target: '_blank',
