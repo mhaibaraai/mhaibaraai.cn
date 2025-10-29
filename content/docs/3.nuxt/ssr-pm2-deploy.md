@@ -36,7 +36,7 @@ pm2 --version
 pm2 status
 ```
 
-![验证 PM2 版本](/images/ecosystem/nuxt/verify-pm2.png)
+![验证 PM2 版本](/images/nuxt/verify-pm2.png)
 
 ### 配置 PM2 开机自启
 
@@ -372,7 +372,7 @@ echo "[deploy] Completed"
 
 首先确保站点地图已生成，并上传到 `./public/sitemap.xml` 目录下。例如：[`https://mhaibaraai.cn/sitemap.xml`](https://mhaibaraai.cn/sitemap.xml)
 
-![站点地图](/images/ecosystem/nuxt/sitemap.png)
+![站点地图](/images/nuxt/sitemap.png)
 
 ## 验证与排错
 

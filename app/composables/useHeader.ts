@@ -3,15 +3,30 @@ export function useHeader() {
 
   const desktopLinks = computed(() => [{
     label: '笔记',
-    to: '/docs/ecosystem',
+    to: '/docs/fundamentals',
     active: route.path.startsWith('/docs/')
   }])
 
   const mobileLinks = computed(() => [{
-    label: '语言与生态',
-    icon: 'i-lucide-folder-code',
-    to: '/docs/ecosystem',
-    active: route.path.startsWith('/docs/ecosystem')
+    label: '前端基础',
+    icon: 'i-lucide-square-code',
+    to: '/docs/fundamentals',
+    active: route.path.startsWith('/docs/fundamentals')
+  }, {
+    label: 'Vue',
+    icon: 'i-tabler-brand-vue',
+    to: '/docs/vue',
+    active: route.path.startsWith('/docs/vue')
+  }, {
+    label: 'Nuxt',
+    icon: 'i-simple-icons-nuxt',
+    to: '/docs/nuxt',
+    active: route.path.startsWith('/docs/nuxt')
+  }, {
+    label: 'Java',
+    icon: 'i-ri-java-line',
+    to: '/docs/java',
+    active: route.path.startsWith('/docs/java')
   }, {
     label: '实践指南',
     icon: 'i-lucide-rocket',

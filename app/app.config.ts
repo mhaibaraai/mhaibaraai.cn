@@ -1,5 +1,15 @@
 export default defineAppConfig({
   ui: {
+    pageHero: {
+      slots: {
+        container: 'lg:py-20'
+      }
+    },
+    pageSection: {
+      slots: {
+        container: 'lg:py-20'
+      }
+    },
     prose: {
       codeIcon: {
         sh: 'i-tabler-brand-tabler',
@@ -17,7 +27,7 @@ export default defineAppConfig({
           label: 'Open LLMs'
         },
         {
-          icon: 'i-lucide-brain',
+          icon: 'i-lucide-brain-circuit',
           to: 'https://mhaibaraai.cn/_llms-full.txt',
           target: '_blank',
           label: 'Open Full LLMs'

@@ -60,41 +60,4 @@ transition: { duration: 0.6, delay: 0.1 }
 :::
 ::
 
-::u-page-section{class="dark:bg-neutral-950"}
-#title
-快速查阅
-
-#features
-  :::u-page-feature
-  ---
-  icon: i-lucide-folder-code
-  ---
-  #title
-  语言与生态
-
-  #description
-  按语言、框架与工具分类整理，聚焦实践要点与可复用知识。
-  :::
-
-  :::u-page-feature
-  ---
-  icon: i-lucide-rocket
-  ---
-  #title
-  实践指南
-
-  #description
-  从环境部署到平台开发的实践指南。
-  :::
-
-  :::u-page-feature
-  ---
-  icon: i-lucide-wrench
-  ---
-  #title
-  工具集
-
-  #description
-  开发过程中常用工具的配置和使用指南。
-  :::
-::
+:page-section{class="dark:bg-neutral-950"}

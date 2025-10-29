@@ -1,5 +1,5 @@
 ---
-title: Vercel 部署 llms.txt
+title: Vercel 部署 llms-full.txt
 description: 解决 Vercel 平台上 llms-full.txt 动态路由导致 500 错误的问题，并提供完整的 LLM 友好部署方案。
 ---
 
@@ -10,10 +10,34 @@ description: 解决 Vercel 平台上 llms-full.txt 动态路由导致 500 错误
 ::caution
 Vercel 会将所有动态路由自动转换为 Serverless Function，导致 `llms-full.txt` 在生产环境无法正常访问。
 
+:::code-collapse
 ```log [error-log]
-500 Internal Server Error
-Failed to fetch /llms-full.txt
+2025-10-29T02:54:56.658Z [error] [request error] [unhandled] [GET] https://movk-nuxt-docs-docs-4trjpa04t-yixuans-projects-ca20164e.vercel.app/llms-full.txt
+ Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@nuxtjs/mdc' imported from /var/task/chunks/nitro/nitro.mjs
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:255:9)
+    ... 8 lines matching cause stack trace ...
+    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:646:36) {
+  cause: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@nuxtjs/mdc' imported from /var/task/chunks/nitro/nitro.mjs
+      at Object.getPackageJSONURL (node:internal/modules/package_json_reader:255:9)
+      at packageResolve (node:internal/modules/esm/resolve:773:81)
+      at moduleResolve (node:internal/modules/esm/resolve:859:18)
+      at moduleResolveWithNodePath (node:internal/modules/esm/resolve:989:14)
+      at defaultResolve (node:internal/modules/esm/resolve:1032:79)
+      at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:783:12)
+      at #cachedDefaultResolve (node:internal/modules/esm/loader:707:25)
+      at ModuleLoader.resolve (node:internal/modules/esm/loader:690:38)
+      at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:307:38)
+      at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:646:36) {
+    code: 'ERR_MODULE_NOT_FOUND'
+  },
+  statusCode: 500,
+  fatal: false,
+  unhandled: true,
+  statusMessage: undefined,
+  data: undefined
+}
 ```
+:::
 ::
 
 ### 问题原因分析

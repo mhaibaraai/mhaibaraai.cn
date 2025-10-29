@@ -1,7 +1,6 @@
 ---
 title: IntelliJ IDEA
 description: 在 macOS 上安装和配置 IntelliJ IDEA，优化你的 Java 开发环境。
-category: editors
 ---
 
 ## 安装 IntelliJ IDEA

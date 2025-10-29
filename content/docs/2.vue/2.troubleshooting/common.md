@@ -1,7 +1,6 @@
 ---
 title: 踩坑笔记
-description: 记录 Vue 开发过程中遇到的问题和解决方案。
-category: vue
+description: 常见问题及其解决方案。
 ---
 
 ## 打包失败 Missing "./preload-helper" export in "vite" package

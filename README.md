@@ -1,248 +1,129 @@
-# Movk Nuxt Docs 模板
+[![og](https://mhaibaraai.cn/__og-image__/static/og.png)](https://mhaibaraai.cn/)
 
-> 使用 Movk Nuxt Docs 快速创建文档网站的起始模板
+> 一个专注于技术分享与知识沉淀的个人网站。从代码片段到架构思考，这里是我在成为更优秀全栈工程师路上的所有笔记。
 
-这是一个预配置的项目模板，包含了创建文档网站所需的所有基础结构和示例内容。
+[![npm version](https://img.shields.io/badge/version-1.1.1-blue)](https://github.com/mhaibaraai/mhaibaraai.cn)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Nuxt](https://img.shields.io/badge/Nuxt-4.2.0-00DC82?logo=nuxt.js)](https://nuxt.com/)
+[![Movk Nuxt Docs](https://img.shields.io/badge/Movk_Nuxt_Docs-1.2.0-00DC82)](https://docs.mhaibaraai.cn/)
 
-## 🚀 快速开始
+本站使用 [Movk Nuxt Docs](https://github.com/mhaibaraai/movk-nuxt-docs) 主题构建，提供优雅的文档浏览体验。
 
-### 使用此模板创建项目
 
-```bash [Terminal]
-# 使用此模板创建新项目
-npx nuxi init -t gh:mhaibaraai/movk-nuxt-docs/templates/default my-docs
-# 进入项目目录
-cd my-docs
-# 启动开发服务器
+## 📚 内容分类
+
+这里记录了我在全栈开发过程中的经验总结，涵盖前端、后端、部署运维等多个方向：
+
+### 💡 基础知识
+
+JavaScript/TypeScript 核心概念梳理
+
+- Async/Await 异步编程最佳实践
+- Fetch API 网络请求处理
+- TypeScript 全局类型声明技巧
+- CSS 与 Sass 预处理器应用
+
+### 🎨 Vue 生态
+
+Vue 3 及其生态系统的实战经验
+
+- 自动导入配置优化
+- Element Plus 组件库集成
+- 资源导入与管理方案
+- 常见问题排查与解决
+
+### ⚡ Nuxt 框架
+
+Nuxt 全栈开发实践指南
+
+- **SEO 优化** - 搜索引擎优化实战配置
+- **SSR 部署** - 服务端渲染 + PM2 部署方案
+- **LLMs 集成** - AI 友好化改造实践
+- **Vercel 部署** - Serverless 平台部署经验
+- **问题排查** - Node 版本兼容性等常见问题
+
+### ☕ Java 开发
+
+Java 后端开发实战笔记
+
+- 全局缓存架构设计
+- macOS 开发环境配置
+
+### 🚀 操作指南
+
+系统运维与部署实战手册
+
+**操作系统配置**
+- Linux 系统常用操作与优化
+- macOS 开发环境搭建
+- Node.js 多版本管理
+
+**部署方案实践**
+- DigitalOcean VPS 服务器部署
+- Docker 容器化实战
+- PostgreSQL 数据库配置与优化
+
+**平台集成开发**
+- 钉钉机器人开发与集成
+- GitLab CI/CD 持续集成配置
+- iServer 服务器管理实践
+
+### 🛠️ 开发工具
+
+提效工具配置与使用技巧
+
+**包管理与编辑器**
+- Homebrew macOS 包管理器
+- pnpm 高效包管理实践
+- IntelliJ IDEA 配置优化
+- VS Code 插件与配置
+
+**版本控制**
+- Git 工作流与常用技巧
+- FNM Node 版本管理工具
+
+**AI 辅助开发**
+- Claude Code Router 多模型路由配置
+- OpenRouter API 集成实践
+- AI 工具个人配置分享
+
+## 🤖 AI 友好
+
+本站为 AI 助手优化，提供结构化文档索引：
+- [llms.txt](https://mhaibaraai.cn/llms.txt) - 快速参考
+- [_llms-full.txt](https://mhaibaraai.cn/_llms-full.txt) - 完整文档
+
+## ⚡ 技术栈
+
+- [Nuxt 4](https://nuxt.com/) + [Nuxt Content](https://content.nuxt.com/)
+- [Movk Nuxt Docs](https://github.com/mhaibaraai/movk-nuxt-docs) 主题
+- [Nuxt UI](https://ui.nuxt.com/) + [Tailwind CSS 4](https://tailwindcss.com/)
+
+## 💻 本地开发
+
+需要 Node.js >= 20.x 和 pnpm >= 10.x：
+
+```bash
+pnpm install
 pnpm dev
 ```
 
-访问 `http://localhost:3000` 查看你的文档网站。
+访问 `http://localhost:3000`
 
-## 📁 项目结构
-
-```bash
-my-docs/
-├── app/
-│   ├── assets/css/main.css      # 全局样式
-│   └── composables/             # 自定义 Composables
-├── content/                     # Markdown 内容
-│   ├── index.md                 # 首页
-│   └── docs/                    # 文档页面
-├── public/                      # 静态资源
-├── scripts/                     # 脚本
-├── nuxt.config.ts               # Nuxt 配置
-├── tsconfig.json                # TypeScript 配置
-├── package.json                 # 依赖与脚本
-├── pnpm-workspace.yaml          # pnpm 工作区配置
-└── README.md                    # 项目说明
-```
-
-## 📝 开始编写
-
-### 1. 修改首页
-
-编辑 `content/index.md` 来自定义你的首页：
-
-```md
----
-seo:
-  title: 你的文档标题
-  description: 你的文档描述
----
-
-::u-page-hero
-#title
-你的[标题]{.text-primary}
-
-#description
-你的文档描述
-
-#links
-  :::u-button
-  ---
-  to: /docs/getting-started
-  ---
-  开始使用
-  :::
-::
-```
-
-### 2. 添加文档页面
-
-在 `content/docs/` 目录下创建新的 Markdown 文件：
-
-```md
----
-title: 页面标题
-description: 页面描述
----
-
-# 页面标题
-
-你的内容...
-```
-
-### 3. 组织导航
-
-使用数字前缀来控制导航顺序：
+<details>
+<summary>其他可用命令</summary>
 
 ```bash
-content/docs/
-├── 1.getting-started/
-│   ├── 1.introduction.md    # 第一章第一节
-│   └── 2.installation.md    # 第一章第二节
-├── 2.guide/
-│   ├── 1.basic.md
-│   └── 2.advanced.md
-└── 3.api/
-    └── 1.reference.md
+pnpm build        # 构建生产版本
+pnpm preview      # 预览生产构建
+pnpm typecheck    # 类型检查
+pnpm lint         # 代码检查
+pnpm lint:fix     # 修复代码问题
+pnpm clean        # 清理构建缓存
+pnpm up           # 更新依赖
 ```
-
-### 4. 添加静态资源
-
-将图片、图标等静态文件放入 `public/` 目录：
-
-```bash
-public/
-├── logo.svg
-├── social-card.png
-└── images/
-    └── example.png
-```
-
-在 Markdown 中引用：
-
-```md
-![示例图片](/images/example.png)
-```
-
-## ⚙️ 配置
-
-### 基础配置
-
-编辑 `nuxt.config.ts`:
-
-```ts [nuxt.config.ts]
-export default defineNuxtConfig({
-  extends: ['@movk/nuxt-docs'],
-  modules: ['@nuxt/eslint'],
-  css: ['~/assets/css/main.css'],
-  routeRules: {
-    // redirects - default root pages
-    '/docs': { redirect: '/docs/getting-started', prerender: false },
-  },
-  compatibilityDate: 'latest',
-  // 你的自定义配置
-  site: {
-    url: 'https://your-domain.com',
-    name: '你的文档标题'
-  }
-})
-```
-
-### 应用配置
-
-创建 `app.config.ts` 来自定义主题：
-
-```ts [app.config.ts]
-export default defineAppConfig({
-  ui: {
-    colors: {
-      primary: 'blue',    // 主色调
-      neutral: 'slate'    // 中性色
-    }
-  }
-})
-```
-
-## 🎨 自定义
-
-### 添加自定义组件
-
-创建 `app/components/` 目录来添加自定义组件：
-
-```bash
-app/
-└── components/
-    └── MyCustomComponent.vue
-```
-
-在 Markdown 中使用：
-
-```md
-::my-custom-component
-内容
-::
-```
-
-### 自定义样式
-
-创建 `app/assets/css/main.css`:
-
-```css [app/assets/css/main.css]
-@import 'tailwindcss';
-@import '@nuxt/ui';
-
-@theme static {
-  --font-sans: 'Public Sans', sans-serif;
-  --container-8xl: 90rem;
-}
-
-:root {
-  --ui-container: var(--container-8xl);
-}
-```
-
-## 🔧 脚本命令
-
-```bash
-# 开发
-pnpm dev              # 启动开发服务器
-
-# 构建
-pnpm build            # 构建生产版本
-pnpm preview          # 预览生产构建
-
-# 其他
-pnpm typecheck        # 类型检查
-pnpm lint             # 代码检查
-pnpm lint:fix         # 自动修复代码问题
-pnpm clean            # 清理生成文件
-```
-
-## 📦 构建和部署
-
-### 构建生产版本
-
-```bash
-pnpm build
-```
-
-生成的静态文件将位于 `.output/public` 目录。
-
-### 部署到 Vercel
-
-1. 将项目推送到 GitHub
-2. 在 [Vercel](https://vercel.com) 导入项目
-3. Vercel 会自动检测 Nuxt 项目并部署
-
-### 部署到其他平台
-
-查看 [Nuxt 部署文档](https://nuxt.com/docs/getting-started/deployment) 了解更多部署选项。
-
-## 📖 文档和资源
-
-- [Movk Nuxt Docs 文档](https://docs.mhaibaraai.cn)
-- [Nuxt 文档](https://nuxt.com)
-- [Nuxt Content 文档](https://content.nuxt.com)
-- [Nuxt UI 文档](https://ui.nuxt.com)
-
-## 🆘 获取帮助
-
-- [GitHub Issues](https://github.com/mhaibaraai/movk-nuxt-docs/issues) - 报告问题或建议
-- [GitHub Discussions](https://github.com/mhaibaraai/movk-nuxt-docs/discussions) - 提问和讨论
+</details>
 
 ## 📄 许可证
 
-[MIT](https://github.com/mhaibaraai/movk-nuxt-docs/blob/main/LICENSE) License © 2024-PRESENT [YiXuan](https://github.com/mhaibaraai)
+[MIT](./LICENSE) © 2024-PRESENT [YiXuan](https://github.com/mhaibaraai)

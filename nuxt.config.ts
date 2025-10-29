@@ -12,11 +12,13 @@ export default defineNuxtConfig({
   },
   routeRules: {
     // redirects - default root pages
-    '/docs': { redirect: '/docs/ecosystem', prerender: false },
-    '/docs/ecosystem': { redirect: '/docs/ecosystem/async-await', prerender: false },
-    '/docs/ecosystem/vue': { redirect: '/docs/ecosystem/vue/auto-import', prerender: false },
-    '/docs/ecosystem/nuxt': { redirect: '/docs/ecosystem/nuxt/copy-page', prerender: false },
-    '/docs/ecosystem/java': { redirect: '/docs/ecosystem/java/mac-install', prerender: false },
+    '/docs': { redirect: '/docs/fundamentals', prerender: false },
+    '/docs/fundamentals': { redirect: '/docs/fundamentals/async-await', prerender: false },
+    '/docs/vue': { redirect: '/docs/vue/auto-import', prerender: false },
+    '/docs/vue/troubleshooting': { redirect: '/docs/vue/troubleshooting/common', prerender: false },
+    '/docs/nuxt': { redirect: '/docs/nuxt/copy-page', prerender: false },
+    '/docs/nuxt/troubleshooting': { redirect: '/docs/nuxt/troubleshooting/node-version-compatibility', prerender: false },
+    '/docs/java': { redirect: '/docs/java/global-cache', prerender: false },
     '/docs/guides': { redirect: '/docs/guides/linux', prerender: false },
     '/docs/guides/deployment': { redirect: '/docs/guides/deployment/digitalocean', prerender: false },
     '/docs/guides/platforms': { redirect: '/docs/guides/platforms/dingtalk', prerender: false },

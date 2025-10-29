@@ -1,6 +1,6 @@
 ---
-title: 踩坑笔记
-description: 记录 Nuxt 开发过程中遇到的问题和解决方案。
+title: Node.js 版本兼容
+description: Node.js 版本升级导致的原生模块 ABI 不兼容问题及解决方案
 ---
 
 ## Node.js ABI (Application Binary Interface) 版本不兼容

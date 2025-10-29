@@ -1,7 +1,6 @@
 ---
 title: VS Code
 description: VS Code 的配置和使用指南。
-category: editors
 ---
 
 ## 安装
