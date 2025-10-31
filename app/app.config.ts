@@ -1,5 +1,8 @@
 export default defineAppConfig({
   ui: {
+    colors: {
+      primary: 'sky'
+    },
     pageHero: {
       slots: {
         container: 'lg:py-20'
