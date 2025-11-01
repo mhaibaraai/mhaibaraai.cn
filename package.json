@@ -17,6 +17,7 @@
     "build": "nuxt build",
     "dev": "nuxt dev",
     "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
     "up": "taze major -wIr",
     "typecheck": "nuxt typecheck",
     "lint": "eslint .",
