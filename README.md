@@ -2,10 +2,10 @@
 
 > 一个专注于技术分享与知识沉淀的个人网站。从代码片段到架构思考，这里是我在成为更优秀全栈工程师路上的所有笔记。
 
-[![npm version](https://img.shields.io/badge/version-1.1.1-blue)](https://github.com/mhaibaraai/mhaibaraai.cn)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Nuxt](https://img.shields.io/badge/Nuxt-4.2.0-00DC82?logo=nuxt.js)](https://nuxt.com/)
-[![Movk Nuxt Docs](https://img.shields.io/badge/Movk_Nuxt_Docs-1.2.0-00DC82)](https://docs.mhaibaraai.cn/)
+[![Version][version-src]][version-href]
+[![Movk Nuxt Docs][movk-nuxt-docs-src]][movk-nuxt-docs-href]
+[![License][license-src]][license-href]
+[![Nuxt][nuxt-src]][nuxt-href]
 
 本站使用 [Movk Nuxt Docs](https://github.com/mhaibaraai/movk-nuxt-docs) 主题构建，提供优雅的文档浏览体验。
 
@@ -127,3 +127,14 @@ pnpm up           # 更新依赖
 ## 📄 许可证
 
 [MIT](./LICENSE) © 2024-PRESENT [YiXuan](https://github.com/mhaibaraai)
+
+<!-- Badges -->
+
+[version-src]: https://img.shields.io/github/package-json/v/mhaibaraai/mhaibaraai.cn?label=Version&color=00DC82
+[version-href]: https://www.mhaibaraai.cn/
+[movk-nuxt-docs-src]: https://img.shields.io/npm/v/@movk/nuxt-docs?label=Movk%20Nuxt%20Docs&color=00DC82
+[movk-nuxt-docs-href]: https://docs.mhaibaraai.cn
+[license-src]: https://img.shields.io/badge/License-MIT-blue.svg
+[license-href]: ./LICENSE
+[nuxt-src]: https://img.shields.io/badge/Nuxt-4-00DC82?logo=nuxt.js&logoColor=fff
+[nuxt-href]: https://nuxt.com
