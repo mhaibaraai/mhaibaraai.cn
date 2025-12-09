@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@10.24.0",
+  "packageManager": "pnpm@10.25.0",
   "description": "一个专注于技术分享与知识沉淀的个人网站。",
   "author": "Yixuan <mhaibaraai@gmail.com>",
   "license": "MIT",
@@ -40,6 +40,6 @@
     "taze": "^19.9.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "vue-tsc": "^3.1.5"
+    "vue-tsc": "^3.1.8"
   }
 }
