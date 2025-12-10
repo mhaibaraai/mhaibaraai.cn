@@ -20,7 +20,7 @@ export default defineNuxtConfig({
     '/docs/nuxt/troubleshooting': { redirect: '/docs/nuxt/troubleshooting/node-version-compatibility', prerender: false },
     '/docs/java': { redirect: '/docs/java/global-cache', prerender: false },
     '/docs/guides': { redirect: '/docs/guides/linux', prerender: false },
-    '/docs/guides/deployment': { redirect: '/docs/guides/deployment/digitalocean', prerender: false },
+    '/docs/guides/deployment': { redirect: '/docs/guides/deployment/docker', prerender: false },
     '/docs/guides/platforms': { redirect: '/docs/guides/platforms/dingtalk', prerender: false },
     '/docs/tools': { redirect: '/docs/tools/managers', prerender: false },
     '/docs/tools/managers': { redirect: '/docs/tools/managers/homebrew', prerender: false },
