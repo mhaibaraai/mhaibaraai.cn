@@ -1,4 +1,11 @@
 export default defineAppConfig({
+  vercelAnalytics: {
+    enable: true,
+    debug: false
+  },
+  header: {
+    title: 'YiXuan'
+  },
   ui: {
     colors: {
       primary: 'sky'
