@@ -1,4 +1,4 @@
-[![og](https://mhaibaraai.cn/__og-image__/static/og.png)](https://mhaibaraai.cn/)
+[![og](https://mhaibaraai.cn/og-image.png)](https://mhaibaraai.cn/)
 
 > 一个专注于技术分享与知识沉淀的个人网站。从代码片段到架构思考，这里是我在成为更优秀全栈工程师路上的所有笔记。
 
