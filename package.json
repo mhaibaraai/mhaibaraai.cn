@@ -18,25 +18,22 @@
     "dev": "nuxt dev",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "up": "taze major -wIr",
     "typecheck": "nuxt typecheck",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "clean": "tsx scripts/rm.ts"
+    "clean": "movk-clean"
   },
   "dependencies": {
     "@iconify-json/ri": "^1.2.6",
     "@iconify-json/tabler": "^1.2.25",
-    "@movk/nuxt-docs": "^1.4.2",
+    "@movk/nuxt-docs": "^1.5.1",
     "better-sqlite3": "^12.5.0",
     "nuxt": "^4.2.2"
   },
   "devDependencies": {
+    "@movk/core": "^1.0.3",
     "@nuxt/eslint": "^1.12.1",
     "eslint": "^9.39.2",
-    "fast-glob": "^3.3.3",
-    "taze": "^19.9.2",
-    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vue-tsc": "^3.2.1"
   }
