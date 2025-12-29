@@ -10,6 +10,11 @@ export default defineNuxtConfig({
     logo: '/avatar.png',
     description: '一个专注于技术分享与知识沉淀的个人网站。'
   },
+  ui: {
+    experimental: {
+      componentDetection: false
+    }
+  },
   routeRules: {
     // redirects - default root pages
     '/docs': { redirect: '/docs/fundamentals', prerender: false },
