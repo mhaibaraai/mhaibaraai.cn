@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@10.26.2",
+  "packageManager": "pnpm@10.27.0",
   "description": "一个专注于技术分享与知识沉淀的个人网站。",
   "author": "Yixuan <mhaibaraai@gmail.com>",
   "license": "MIT",
@@ -24,17 +24,17 @@
     "clean": "movk-clean"
   },
   "dependencies": {
-    "@iconify-json/ri": "^1.2.6",
-    "@iconify-json/tabler": "^1.2.25",
-    "@movk/nuxt-docs": "^1.5.1",
+    "@iconify-json/ri": "^1.2.7",
+    "@iconify-json/tabler": "^1.2.26",
+    "@movk/nuxt-docs": "^1.5.2",
     "better-sqlite3": "^12.5.0",
     "nuxt": "^4.2.2"
   },
   "devDependencies": {
-    "@movk/core": "^1.0.3",
+    "@movk/core": "^1.1.0",
     "@nuxt/eslint": "^1.12.1",
     "eslint": "^9.39.2",
     "typescript": "^5.9.3",
-    "vue-tsc": "^3.2.1"
+    "vue-tsc": "^3.2.2"
   }
 }
