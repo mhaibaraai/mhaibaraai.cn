@@ -31,22 +31,10 @@ export default defineAppConfig({
     bottom: {
       links: [
         {
-          icon: 'i-lucide-brain',
+          icon: 'i-lucide:message-circle-code',
           to: 'https://mhaibaraai.cn/llms.txt',
           target: '_blank',
           label: 'Open LLMs'
-        },
-        {
-          icon: 'i-lucide-brain-circuit',
-          to: 'https://mhaibaraai.cn/_llms-full.txt',
-          target: '_blank',
-          label: 'Open Full LLMs'
-        },
-        {
-          icon: 'i-lucide-link',
-          to: 'https://mhaibaraai.cn/__link-checker__/link-checker-report.html',
-          target: '_blank',
-          label: 'Open Link Checker'
         }
       ]
     }
