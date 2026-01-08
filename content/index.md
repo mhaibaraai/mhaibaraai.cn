@@ -44,7 +44,7 @@ transition: { duration: 0.6, delay: 0.5 }
   color: neutral
   variant: outline
   size: xl
-  to: https://github.com/mhaibaraai/movk-nuxt-docs
+  to: https://github.com/mhaibaraai/mhaibaraai.cn
   target: _blank
   ---
   Star on GitHub
