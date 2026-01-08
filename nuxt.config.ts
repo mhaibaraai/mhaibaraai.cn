@@ -10,11 +10,6 @@ export default defineNuxtConfig({
     logo: '/avatar.png',
     description: '一个专注于技术分享与知识沉淀的个人网站。'
   },
-  ui: {
-    experimental: {
-      componentDetection: false
-    }
-  },
   routeRules: {
     // redirects - default root pages
     '/docs': { redirect: '/docs/fundamentals', prerender: false },
@@ -32,6 +27,15 @@ export default defineNuxtConfig({
     '/docs/tools/version-control': { redirect: '/docs/tools/version-control/fnm', prerender: false }
   },
   compatibilityDate: 'latest',
+  aiChat: {
+    model: 'mistral/devstral-2',
+    models: [
+      'mistral/devstral-2',
+      'kwaipilot/kat-coder-pro-v1',
+      'openrouter/mistralai/devstral-2512:free',
+      'openrouter/xiaomi/mimo-v2-flash:free'
+    ]
+  },
   eslint: {
     config: {
       stylistic: {
@@ -49,6 +53,9 @@ export default defineNuxtConfig({
       description: '一个专注于技术分享与知识沉淀的个人网站。从代码片段到架构思考，这里是我在成为更优秀全栈工程师路上的所有笔记。'
     },
     notes: ['技术分享', '知识沉淀', '开发随笔']
+  },
+  mcp: {
+    name: 'mhaibaraai'
   },
   robots: {
     sitemap: 'https://mhaibaraai.cn/sitemap.xml'
