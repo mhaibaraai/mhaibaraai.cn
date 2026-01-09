@@ -24,7 +24,8 @@ export default defineNuxtConfig({
     '/docs/guides/platforms': { redirect: '/docs/guides/platforms/dingtalk', prerender: false },
     '/docs/tools': { redirect: '/docs/tools/managers', prerender: false },
     '/docs/tools/managers': { redirect: '/docs/tools/managers/homebrew', prerender: false },
-    '/docs/tools/version-control': { redirect: '/docs/tools/version-control/fnm', prerender: false }
+    '/docs/tools/version-control': { redirect: '/docs/tools/version-control/fnm', prerender: false },
+    '/docs/work-summary': { redirect: '/docs/work-summary/2025', prerender: false }
   },
   compatibilityDate: 'latest',
   aiChat: {
