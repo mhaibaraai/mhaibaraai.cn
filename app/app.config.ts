@@ -31,7 +31,7 @@ export default defineAppConfig({
     bottom: {
       links: [
         {
-          icon: 'i-lucide:message-circle-code',
+          icon: 'i-lucide-message-circle-code',
           to: 'https://mhaibaraai.cn/llms.txt',
           target: '_blank',
           label: 'Open LLMs'
