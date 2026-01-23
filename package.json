@@ -28,7 +28,7 @@
     "@iconify-json/tabler": "^1.2.26",
     "@movk/nuxt-docs": "^1.8.1",
     "better-sqlite3": "^12.6.2",
-    "nuxt": "^4.2.2"
+    "nuxt": "^4.3.0"
   },
   "devDependencies": {
     "@movk/core": "^1.1.0",
