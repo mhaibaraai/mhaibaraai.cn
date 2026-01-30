@@ -618,13 +618,15 @@ main().catch((e) => {
 ## 常见问题 (FAQ)
 
 ::code-preview
+
   ::accordion
 
     :::accordion-item{label="CI 脚本报错 `No such file or directory`，找不到构建产物目录？" icon="i-lucide-circle-help"}
     这是因为 `.gitlab-ci.yml` 中的 `BUILD_DIR` 变量被配置为了**绝对路径** (例如 `/app/dist/...`)。
-      ::note
-      CI Runner 的工作目录是 `$CI_PROJECT_DIR`，构建产物路径应该是相对于该目录的**相对路径**。
-      ::
+
+    ::note
+    CI Runner 的工作目录是 `$CI_PROJECT_DIR`，构建产物路径应该是相对于该目录的**相对路径**。
+    ::
 
     解决方案:
 
@@ -650,6 +652,5 @@ main().catch((e) => {
     :::accordion-item{label="企业微信通知中的 `@` 为什么不生效？" icon="i-lucide-circle-help"}
     企业微信的 Markdown 消息中，`@` 成员有严格的语法要求。
     :::
-
   ::
 ::

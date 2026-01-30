@@ -3,7 +3,40 @@ title: Vercel 部署 llms-full.txt
 description: 解决 Vercel 平台上 llms-full.txt 动态路由导致 500 错误的问题，并提供完整的 LLM 友好部署方案。
 ---
 
-## 问题背景
+## 官方已修复
+
+- `compatibilityDate >= 2025-07-15` 启用 Vercel Functions Observability（路由级性能监控）
+- 但会导致 **ISR 缓存失效**（cache 总是 miss）
+- 相关 issue：[nuxt/nuxt#33140](https://github.com/nuxt/nuxt/issues/33140)
+
+::tip
+官方已修复 bug，推荐使用 **ISR** 方案：
+::
+
+```typescript
+// nuxt.config.ts
+export default defineNuxtConfig({
+  compatibilityDate: 'latest',
+  
+  modules: ['@nuxt/content', 'nuxt-llms'],
+  
+  llms: {
+    domain: 'https://your-site.com',
+    title: 'Your Documentation',
+    full: { 
+      title: 'Full Documentation',
+      description: 'Complete documentation'
+    }
+  },
+
+  routeRules: {
+    '/llms.txt': { isr: true },       // 永久缓存，部署时更新
+    '/llms-full.txt': { isr: true }   // 同上
+  }
+})
+```
+
+## 问题背景（已过期）
 
 在 Vercel 平台上部署使用 `nuxt-llms` 模块生成的文档站点时，访问 `/llms-full.txt` 会遇到 500 错误。
 
@@ -175,17 +208,3 @@ ls -la .output/public/*llms*.txt
 - ✅ `https://your-domain.com/llms.txt`
 - ✅ `https://your-domain.com/_llms-full.txt`
 - ❌ ~~`https://your-domain.com/llms-full.txt`~~ (可能 500 错误)
-
-## 相关链接
-
-::note{to="https://vercel.com/docs/functions/configuring-functions/advanced-configuration"}
-了解 Vercel Serverless Functions 的高级配置
-::
-
-::note{to="https://nuxt.com/modules/llms"}
-查看 `nuxt-llms` 模块官方文档
-::
-
-::note{to="/docs/ecosystem/nuxt/llms"}
-查看本站的 Nuxt LLMs 基础配置指南
-::
