@@ -1,9 +1,12 @@
 export default defineNuxtConfig({
   extends: ['@movk/nuxt-docs'],
+
   modules: ['@nuxt/eslint'],
+
   site: {
     url: 'https://mhaibaraai.cn'
   },
+
   routeRules: {
     // redirects - default root pages
     '/docs': { redirect: '/docs/fundamentals', prerender: false },
@@ -21,17 +24,19 @@ export default defineNuxtConfig({
     '/docs/tools/version-control': { redirect: '/docs/tools/version-control/fnm', prerender: false },
     '/docs/work-summary': { redirect: '/docs/work-summary/2025', prerender: false }
   },
+
   compatibilityDate: 'latest',
+
   aiChat: {
-    model: 'mistral/devstral-2',
+    model: 'mistral/devstral-3b',
     models: [
       'mistral/devstral-2',
-      'kwaipilot/kat-coder-pro-v1',
-      'openrouter/mistralai/devstral-2512:free',
       'openrouter/xiaomi/mimo-v2-flash:free',
-      'openrouter/z-ai/glm-4.5-air:free'
+      'openrouter/z-ai/glm-4.5-air:free',
+      'mistral/ministral-3b'
     ]
   },
+
   eslint: {
     config: {
       stylistic: {
@@ -40,6 +45,7 @@ export default defineNuxtConfig({
       }
     }
   },
+
   llms: {
     domain: 'https://mhaibaraai.cn',
     title: 'YiXuan 的开发随笔',
@@ -50,6 +56,7 @@ export default defineNuxtConfig({
     },
     notes: ['技术分享', '知识沉淀', '开发随笔']
   },
+
   mcp: {
     name: 'mhaibaraai'
   }
