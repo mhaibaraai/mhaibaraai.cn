@@ -3,8 +3,16 @@ export default defineNuxtConfig({
 
   modules: ['@nuxt/eslint'],
 
-  site: {
-    url: 'https://mhaibaraai.cn'
+  $development: {
+    site: {
+      url: 'http://localhost:3000'
+    }
+  },
+
+  $production: {
+    site: {
+      url: 'https://mhaibaraai.cn'
+    }
   },
 
   routeRules: {
