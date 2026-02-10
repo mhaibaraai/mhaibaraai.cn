@@ -35,6 +35,14 @@ export default defineNuxtConfig({
 
   compatibilityDate: 'latest',
 
+  nitro: {
+    preset: 'cloudflare_module',
+    cloudflare: {
+      deployConfig: true,
+      nodeCompat: true
+    }
+  },
+
   aiChat: {
     model: 'alibaba/qwen3-coder',
     models: [
