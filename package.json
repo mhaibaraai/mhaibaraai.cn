@@ -29,9 +29,11 @@
     "@movk/nuxt-docs": "https://pkg.pr.new/@movk/nuxt-docs@2b64df1",
     "@nuxt/content": "^3.11.2",
     "@nuxt/ui": "^4.4.0",
+    "@nuxtjs/mdc": "^0.20.1",
     "better-sqlite3": "^12.6.2",
     "nuxt": "^4.3.1",
-    "tailwindcss": "^4.1.18"
+    "tailwindcss": "^4.1.18",
+    "unist-util-visit": "^5.1.0"
   },
   "devDependencies": {
     "@movk/core": "^1.1.0",

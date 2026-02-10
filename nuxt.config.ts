@@ -15,6 +15,13 @@ export default defineNuxtConfig({
     }
   },
 
+  mdc: {
+    highlight: {
+      noApiRoute: false,
+      shikiEngine: 'oniguruma'
+    }
+  },
+
   routeRules: {
     // redirects - default root pages
     '/docs': { redirect: '/docs/fundamentals', prerender: false },
