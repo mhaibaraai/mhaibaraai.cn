@@ -28,7 +28,7 @@
     "@iconify-json/tabler": "^1.2.28",
     "@movk/nuxt-docs": "^1.13.1",
     "@nuxt/content": "^3.12.0",
-    "@nuxt/ui": "^4.5.0",
+    "@nuxt/ui": "^4.5.1",
     "@nuxtjs/mdc": "^0.20.1",
     "better-sqlite3": "^12.6.2",
     "nuxt": "^4.3.1",
@@ -36,7 +36,7 @@
     "unist-util-visit": "^5.1.0"
   },
   "devDependencies": {
-    "@movk/core": "^1.1.0",
+    "@movk/core": "^1.2.0",
     "@nuxt/eslint": "^1.15.2",
     "eslint": "^10.0.2",
     "typescript": "^5.9.3",
