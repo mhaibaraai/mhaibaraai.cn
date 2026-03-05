@@ -15,8 +15,8 @@ importers:
         specifier: ^1.2.29
         version: 1.2.29
       '@movk/nuxt-docs':
-        specifier: ^1.14.0
-        version: 1.14.0(dffacbcac182a4284a78701281771637)
+        specifier: ^1.14.1
+        version: 1.14.1(dffacbcac182a4284a78701281771637)
       '@nuxt/content':
         specifier: ^3.12.0
         version: 3.12.0(better-sqlite3@12.6.2)(magicast@0.5.2)
@@ -764,8 +764,8 @@ packages:
     peerDependencies:
       vue: ^3.5.25
 
-  '@movk/nuxt-docs@1.14.0':
-    resolution: {integrity: sha512-aTBR/7eOPQjmoXcyOl3W0c9YR09pHTgx4nAFFu2m2lPLThcFcmUlg8oJgmJw5/iaamKakrUMj8lW0vkefv/VUQ==}
+  '@movk/nuxt-docs@1.14.1':
+    resolution: {integrity: sha512-i5MJb0wODZY9T1cUmNcWhKJQpIXz8giHpultc9CjU2CbLPw9CpGr2JNQfDydzMZkulu4TEwCWKHB7tEOThgjuw==}
     peerDependencies:
       better-sqlite3: 12.x
       dompurify: 3.x
@@ -7340,7 +7340,7 @@ snapshots:
       fast-glob: 3.3.3
       vue: 3.5.29(typescript@5.9.3)
 
-  '@movk/nuxt-docs@1.14.0(dffacbcac182a4284a78701281771637)':
+  '@movk/nuxt-docs@1.14.1(dffacbcac182a4284a78701281771637)':
     dependencies:
       '@ai-sdk/gateway': 3.0.66(zod@4.3.6)
       '@ai-sdk/mcp': 1.0.25(zod@4.3.6)
@@ -7358,7 +7358,7 @@ snapshots:
       '@nuxtjs/mdc': 0.20.2(magicast@0.5.2)
       '@nuxtjs/robots': 5.7.1(magicast@0.5.2)(vite@7.3.1(@types/node@25.3.3)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))(vue@3.5.29(typescript@5.9.3))(zod@4.3.6)
       '@octokit/rest': 22.0.1
-      '@openrouter/ai-sdk-provider': 2.2.3(ai@6.0.116(zod@4.3.6))(zod@4.3.6)
+      '@openrouter/ai-sdk-provider': 2.2.3(ai@6.0.116(zod@3.25.76))(zod@4.3.6)
       '@shikijs/core': 4.0.1
       '@shikijs/engine-javascript': 4.0.1
       '@shikijs/langs': 4.0.1
@@ -8396,7 +8396,7 @@ snapshots:
     dependencies:
       '@octokit/openapi-types': 27.0.0
 
-  '@openrouter/ai-sdk-provider@2.2.3(ai@6.0.116(zod@4.3.6))(zod@4.3.6)':
+  '@openrouter/ai-sdk-provider@2.2.3(ai@6.0.116(zod@3.25.76))(zod@4.3.6)':
     dependencies:
       ai: 6.0.116(zod@4.3.6)
       zod: 4.3.6
