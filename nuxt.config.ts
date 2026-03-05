@@ -36,8 +36,9 @@ export default defineNuxtConfig({
   compatibilityDate: 'latest',
 
   aiChat: {
-    model: 'deepseek/deepseek-v3.2-thinking',
+    model: 'zai/glm-4.7-flashx',
     models: [
+      'zai/glm-4.7-flashx',
       'openai/gpt-4o-mini',
       'alibaba/qwen3-coder',
       'deepseek/deepseek-v3.2',
