@@ -77,8 +77,9 @@ export default defineAppConfig({
     },
     prose: {
       codeIcon: {
-        sh: 'i-tabler-brand-tabler',
-        conf: 'i-tabler-file-code'
+        sh: 'i-lucide:square-terminal',
+        conf: 'i-lucide:file-braces-corner',
+        dockerfile: 'i-vscode-icons:file-type-docker2'
       }
     }
   },
