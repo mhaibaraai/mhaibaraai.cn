@@ -1,8 +1,4 @@
 export default defineAppConfig({
-  vercelAnalytics: {
-    enable: true,
-    debug: false
-  },
   aiChat: {
     faqQuestions: [
       {
