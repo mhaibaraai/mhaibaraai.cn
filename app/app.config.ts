@@ -4,52 +4,52 @@ export default defineAppConfig({
       {
         category: 'Nuxt 实践',
         items: [
-          'Nuxt 4 部署到 Vercel',
-          'Nuxt SSR 使用 PM2 部署',
-          'Nuxt SEO 优化方案',
-          'LLMs.txt 如何集成？'
+          '如何将 Nuxt 部署到 Vercel？',
+          'Nuxt SSR 模式怎么用 PM2 部署？',
+          'Nuxt SEO 有哪些配置方案？',
+          'LLMs.txt 如何在 Nuxt 中集成？'
         ]
       },
       {
         category: 'Vue 开发',
         items: [
-          'Vue 3 自动导入配置',
-          'Element Plus 按需引入',
-          'Async/Await 最佳实践'
+          'Vue 3 自动导入怎么配置？',
+          '如何按需引入 Element Plus？',
+          '静态资源引用有哪几种方式？'
+        ]
+      },
+      {
+        category: '前端基础',
+        items: [
+          'Async/Await 常见陷阱有哪些？',
+          'CSS 有哪些实用技巧？',
+          'Fetch API 怎么封装？',
+          'TypeScript declare global 怎么用？'
         ]
       },
       {
         category: 'AI 工具',
         items: [
-          'Claude Code Router 使用',
-          'OpenRouter API 接入',
-          'AI 辅助开发实践'
+          'Claude Code Router 如何配置？',
+          'OpenRouter API 怎么接入？',
+          'AI 辅助开发有哪些实践经验？'
         ]
       },
       {
-        category: '部署配置',
+        category: '部署运维',
         items: [
-          'Docker 容器化部署',
-          'PostgreSQL 数据库配置',
-          'SSL 证书申请配置',
-          '钉钉机器人集成'
-        ]
-      },
-      {
-        category: '开发环境',
-        items: [
-          'macOS 开发环境搭建',
-          'FNM 管理 Node 版本',
-          'pnpm 包管理器使用',
-          'Git 常用操作'
+          '如何用 Docker 容器化部署项目？',
+          'GitHub Actions CI/CD 怎么配置？',
+          'SSL 证书如何申请和配置？',
+          '钉钉机器人如何集成到工作流？'
         ]
       },
       {
         category: '问题排查',
         items: [
-          'Nuxt 4 CommonJS 兼容性',
-          'Node 版本兼容问题',
-          'Vercel LLMs 部署异常'
+          'ESM/CJS 兼容性问题怎么解决？',
+          'Nuxt Layer 与 Reka UI 的 SSR 异常',
+          'Vercel 部署 LLMs 异常怎么排查？'
         ]
       }
     ]
@@ -60,16 +60,6 @@ export default defineAppConfig({
   ui: {
     colors: {
       primary: 'sky'
-    },
-    pageHero: {
-      slots: {
-        container: 'lg:py-20'
-      }
-    },
-    pageSection: {
-      slots: {
-        container: 'lg:py-20'
-      }
     },
     prose: {
       codeIcon: {

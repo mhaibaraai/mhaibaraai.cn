@@ -11,7 +11,7 @@ const features = computed(() => mapContentNavigation(navigation?.value.map(item 
 </script>
 
 <template>
-  <UPageSection>
+  <UPageSection :ui="{ container: 'lg:py-20' }">
     <template #title>
       <Motion
         :initial="{

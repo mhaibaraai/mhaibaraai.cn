@@ -30,11 +30,9 @@
     "@movk/nuxt-docs": "^1.14.2",
     "@nuxt/content": "^3.12.0",
     "@nuxt/ui": "^4.5.1",
-    "@nuxtjs/mdc": "^0.20.2",
     "better-sqlite3": "^12.8.0",
     "nuxt": "^4.4.2",
-    "tailwindcss": "^4.2.1",
-    "unist-util-visit": "^5.1.0"
+    "tailwindcss": "^4.2.1"
   },
   "devDependencies": {
     "@movk/core": "^1.2.2",
