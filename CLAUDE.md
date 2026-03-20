@@ -65,7 +65,7 @@ content/
 推送到 `main` 分支后，GitHub Actions 自动构建 Docker 镜像并推送到 GHCR（`ghcr.io/mhaibaraai/mhaibaraai.cn`）。
 
 构建时需要两个 secret：
-- `NUXT_GITHUB_TOKEN`：用于访问私有 npm 包
+- `NUXT_GITHUB_TOKEN`：用于获取 GitHub 仓库信息
 - `AI_GATEWAY_API_KEY`：用于 AI Chat 功能
 
 ### 关键配置位置
