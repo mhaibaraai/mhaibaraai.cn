@@ -26,7 +26,7 @@
   "dependencies": {
     "@iconify-json/vscode-icons": "^1.2.45",
     "@iconify-json/ri": "^1.2.10",
-    "@iconify-json/tabler": "^1.2.31",
+    "@iconify-json/tabler": "^1.2.32",
     "@movk/nuxt-docs": "^1.14.2",
     "@nuxt/content": "^3.12.0",
     "@nuxt/ui": "^4.5.1",
