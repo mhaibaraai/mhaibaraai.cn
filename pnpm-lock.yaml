@@ -12,7 +12,7 @@ importers:
         specifier: ^1.2.10
         version: 1.2.10
       '@iconify-json/tabler':
-        specifier: ^1.2.31
+        specifier: ^1.2.32
         version: 1.2.32
       '@iconify-json/vscode-icons':
         specifier: ^1.2.45
