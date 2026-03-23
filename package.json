@@ -32,12 +32,12 @@
     "@nuxt/ui": "^4.5.1",
     "better-sqlite3": "^12.8.0",
     "nuxt": "^4.4.2",
-    "tailwindcss": "^4.2.1"
+    "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
     "@movk/core": "^1.2.2",
     "@nuxt/eslint": "^1.15.2",
-    "eslint": "^10.0.3",
+    "eslint": "^10.1.0",
     "typescript": "^5.9.3",
     "vue-tsc": "^3.2.6"
   }
