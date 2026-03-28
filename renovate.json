@@ -1,12 +1,35 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "github>nuxt/renovate-config-nuxt"
   ],
+  "timezone": "Asia/Shanghai",
+  "schedule": ["* 6-9 * * 1"],
   "lockFileMaintenance": {
     "enabled": true
   },
   "packageRules": [
+    {
+      "groupName": "iconify",
+      "matchPackageNames": [
+        "@iconify-json/*"
+      ]
+    },
+    {
+      "groupName": "nuxt",
+      "matchPackageNames": [
+        "nuxt",
+        "@nuxt/content",
+        "@nuxt/ui",
+        "@nuxt/eslint"
+      ]
+    },
+    {
+      "groupName": "movk",
+      "matchPackageNames": [
+        "@movk/nuxt-docs",
+        "@movk/core"
+      ]
+    },
     {
       "matchDepTypes": [
         "peerDependencies"
