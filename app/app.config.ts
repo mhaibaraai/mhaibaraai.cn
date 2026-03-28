@@ -4,7 +4,6 @@ export default defineAppConfig({
       {
         category: 'Nuxt 实践',
         items: [
-          '如何将 Nuxt 部署到 Vercel？',
           'Nuxt SSR 模式怎么用 PM2 部署？',
           'Nuxt SEO 有哪些配置方案？',
           'LLMs.txt 如何在 Nuxt 中集成？'
@@ -14,17 +13,8 @@ export default defineAppConfig({
         category: 'Vue 开发',
         items: [
           'Vue 3 自动导入怎么配置？',
-          '如何按需引入 Element Plus？',
-          '静态资源引用有哪几种方式？'
-        ]
-      },
-      {
-        category: '前端基础',
-        items: [
-          'Async/Await 常见陷阱有哪些？',
-          'CSS 有哪些实用技巧？',
-          'Fetch API 怎么封装？',
-          'TypeScript declare global 怎么用？'
+          'Vue + UnoCSS 项目怎么集成 Nuxt UI？',
+          'Vite 中怎么导入静态资源？'
         ]
       },
       {
@@ -32,24 +22,25 @@ export default defineAppConfig({
         items: [
           'Claude Code Router 如何配置？',
           'OpenRouter API 怎么接入？',
-          'AI 辅助开发有哪些实践经验？'
+          'Claude Code 个人配置有哪些推荐？'
         ]
       },
       {
         category: '部署运维',
         items: [
           '如何用 Docker 容器化部署项目？',
-          'GitHub Actions CI/CD 怎么配置？',
-          'SSL 证书如何申请和配置？',
-          '钉钉机器人如何集成到工作流？'
+          'GitHub Actions + Watchtower 如何实现自动部署？',
+          'GitLab CI/CD 怎么配置完整流水线？',
+          'SSL 证书如何申请和配置？'
         ]
       },
       {
         category: '问题排查',
         items: [
           'ESM/CJS 兼容性问题怎么解决？',
-          'Nuxt Layer 与 Reka UI 的 SSR 异常',
-          'Vercel 部署 LLMs 异常怎么排查？'
+          'Nuxt Layer 与 Reka UI 的 SSR 500 怎么排查？',
+          'Vercel 部署 llms-full.txt 500 错误怎么解决？',
+          'Nuxt UI 组件主题样式未生成怎么排查？'
         ]
       }
     ]
