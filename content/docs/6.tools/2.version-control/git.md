@@ -236,24 +236,39 @@ killall gpg-agent
 | `git branch -m <old_branch> <new_branch>`            | 重命名本地分支                                   |
 | `git push origin --delete <branch_name>`             | 删除远程分支                                     |
 
+## 清理远端已删除的本地分支
+
+`git branch | grep -v "^\*" | xargs git branch -D` 会删除**所有**本地分支（除当前分支），包括尚未推送的本地分支，存在误删风险。
+
+更精准的方式是只删除远端已删除（`[gone]`）的分支：
+
+```sh [sh]
+git fetch --prune
+git branch -vv | grep ': gone]' | awk '{print $1}' | xargs git branch -D
+```
+
+`git branch -vv` 会在分支列表中标注远端跟踪状态，远端已删除的分支显示为 `[origin/xxx: gone]`，用 `grep` 精确筛选后再批量删除。
+
+配置为 git alias 更方便：
+
+```sh [sh]
+git config --global alias.cleanup '!git fetch --prune && git branch -vv | grep ": gone]" | awk "{print \$1}" | xargs git branch -D'
+```
+
+之后直接运行 `git cleanup` 即可。
+
 ## 常见问题
 
 ::code-preview
-
 ::accordion
-
-  :::accordion-item{label="RPC failed; HTTP 500 curl 22 The requested URL returned error: 500" icon="i-lucide-circle-help"}
-
-  原因：使用 http 协议进行传输的缓存区太小
-  ```sh [sh]
-  git config --global http.postBuffer 524288000
-  ```
-  ::tip
-  将缓存区提高到500MB或者更高，看自己的项目需要。
-  ::
-
+    :::accordion-item{label="RPC failed; HTTP 500 curl 22 The requested URL returned error: 500" icon="i-lucide-circle-help"}
+    原因：使用 http 协议进行传输的缓存区太小
+    ```sh [sh]
+    git config --global http.postBuffer 524288000
+    ```
+    ::tip
+    将缓存区提高到500MB或者更高，看自己的项目需要。
+    ::
   :::
-
 ::
-
 ::

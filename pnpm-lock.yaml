@@ -18,8 +18,8 @@ importers:
         specifier: ^1.2.45
         version: 1.2.45
       '@movk/nuxt-docs':
-        specifier: ^1.16.2
-        version: 1.16.2(2c94091170bec57efc42a2eaf267fd65)
+        specifier: ^1.16.3
+        version: 1.16.3(2c94091170bec57efc42a2eaf267fd65)
       '@nuxt/content':
         specifier: ^3.12.0
         version: 3.12.0(better-sqlite3@12.8.0)(magicast@0.5.2)
@@ -763,8 +763,8 @@ packages:
     peerDependencies:
       vue: ^3.5.25
 
-  '@movk/nuxt-docs@1.16.2':
-    resolution: {integrity: sha512-DcnoY55wDA7o9x/uFjpS0RHypoyG4aVUPMiOu33C9Q7AWNfzov81iMR/TebnSBUQ1hNGCXhdRe2NS1uby3svyg==}
+  '@movk/nuxt-docs@1.16.3':
+    resolution: {integrity: sha512-Ub9zfNlPzPlrEGeL6YDjTTIByeDLowfFEt7/40hXQo065tIe8yfm5tWaDFAoz2pj4o/eVGk0kOZT4ytrnk9ZAw==}
     peerDependencies:
       better-sqlite3: 12.x
       dompurify: 3.x
@@ -7526,7 +7526,7 @@ snapshots:
       tinyglobby: 0.2.15
       vue: 3.5.30(typescript@5.9.3)
 
-  '@movk/nuxt-docs@1.16.2(2c94091170bec57efc42a2eaf267fd65)':
+  '@movk/nuxt-docs@1.16.3(2c94091170bec57efc42a2eaf267fd65)':
     dependencies:
       '@ai-sdk/gateway': 3.0.83(zod@4.3.6)
       '@ai-sdk/mcp': 1.0.30(zod@4.3.6)
