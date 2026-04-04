@@ -7,11 +7,16 @@ description: pnpm 的配置和使用指南。
 
 ::code-group
 
+```sh [corepack (推荐)]
+corepack enable pnpm
+corepack use pnpm@latest
+```
+
 ```sh [npm]
 npm install -g pnpm
 ```
 
-```sh [sh]
+```sh [brew]
 brew install pnpm
 ```
 

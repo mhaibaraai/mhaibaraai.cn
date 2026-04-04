@@ -1,6 +1,6 @@
 ---
 title: 踩坑笔记
-description: 常见问题及其解决方案。
+description: 记录 Vue 与 Vite 相关的打包异常、运行时错误等常见问题及详细的解决方案，持续更新前端工程化最佳实践经验。
 ---
 
 ## 打包失败 Missing "./preload-helper" export in "vite" package

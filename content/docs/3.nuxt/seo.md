@@ -1,6 +1,6 @@
 ---
 title: Nuxt SEO
-description: Nuxt SEO 实战配置指南
+description: Nuxt 搜索引擎优化 (SEO) 入门与进阶配置指南，涵盖 Meta 标签、站点地图、Robots，以及社交平台分享信息优化配置以提升曝光率。
 ---
 
 ## 安装 Nuxt SEO

@@ -1,7 +1,7 @@
 ---
 seo:
   title: YiXuan - 开发随笔
-  description: 一个专注于技术分享与知识沉淀的个人网站，从代码片段到架构思考，这里是我在成为更优秀全栈工程师路上的所有笔记。
+  description: YiXuan 的技术博客——分享 Vue、Nuxt、TypeScript、Java 全栈开发经验，从代码片段到架构思考，记录成长为优秀工程师路上的每一步。
 ---
 
 ::u-page-hero{class="dark:bg-gradient-to-b from-neutral-900 to-neutral-950"}

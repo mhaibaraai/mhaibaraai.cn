@@ -1,6 +1,6 @@
 ---
 title: 浙政钉开发
-description: 浙政钉开发实用技巧
+description: 浙政钉 H5 应用开发实用技巧，涵盖 VConsole 调试工具集成、企业级应用路由权限管理等常见场景的解决方案以及开发踩坑经验。
 ---
 
 ## H5 应用 Console 调试功能

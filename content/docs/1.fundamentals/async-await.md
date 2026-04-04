@@ -15,7 +15,7 @@ description: 深入理解 Promise 和 async/await 异步编程模式
 `Promise` 的状态一旦从 `Pending` 变为 `Fulfilled` 或 `Rejected`，就不可再改变。这确保了异步结果的稳定性和一致性。
 ::
 
-```ts
+```ts [example.ts]
 // 创建一个 Promise，模拟一个耗时 1 秒的异步操作
 const myPromise = new Promise((resolve, reject) => {
   console.log('Promise 开始执行')
@@ -50,7 +50,7 @@ myPromise
 - **`async` 函数**: `async` 关键字用于声明一个异步函数。该函数会隐式地返回一个 `Promise`。
 - **`await` 操作符**: `await` 关键字只能在 `async` 函数内部使用，它会暂停函数的执行，等待一个 `Promise` 被 `resolve`，然后返回 `Promise` 的结果。如果 `Promise` 被 `reject`，它会抛出异常。
 
-```ts
+```ts [example.ts]
 // 定义一个返回 Promise 的函数
 function delayedMessage(message, delay) {
   return new Promise(resolve => setTimeout(() => resolve(message), delay))
@@ -86,7 +86,7 @@ greet()
 
 使用 `await` 可以轻松实现异步操作的串行执行，即一个操作完成后再开始下一个。
 
-```ts
+```ts [example.ts]
 async function serialTasks() {
   console.time('serialTasks')
   console.log('开始执行串行任务')
@@ -108,7 +108,7 @@ serialTasks()
 
 当多个异步操作互不依赖时，使用 `Promise.all()` 可以让它们并行执行，从而提高效率。`Promise.all()` 接收一个 `Promise` 数组，当所有 `Promise` 都成功时，它会返回一个包含所有结果的数组。
 
-```ts
+```ts [example.ts]
 async function parallelTasks() {
   console.time('parallelTasks')
   console.log('开始执行并行任务')

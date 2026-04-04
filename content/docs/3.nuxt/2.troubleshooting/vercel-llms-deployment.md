@@ -13,7 +13,7 @@ description: 解决 Vercel 平台上 llms-full.txt 动态路由导致 500 错误
 官方已修复 bug，推荐使用 **ISR** 方案：
 ::
 
-```typescript
+```ts
 // nuxt.config.ts
 export default defineNuxtConfig({
   compatibilityDate: 'latest',

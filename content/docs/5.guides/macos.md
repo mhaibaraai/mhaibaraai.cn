@@ -1,6 +1,6 @@
 ---
 title: macOS
-description: 记录一次 Mac 环境配置
+description: macOS 环境重装必看指南，记录从零配置系统环境、安装常用工具包及修改关键系统设置的完整步骤，帮助高效进入开发状态。
 ---
 
 ::note{ to="https://brew.sh/zh-cn/"}

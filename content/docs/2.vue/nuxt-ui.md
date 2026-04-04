@@ -140,7 +140,7 @@ app.mount('#app')
 
 使用 `<UApp>` 包裹应用内容，提供 Nuxt UI 的全局配置上下文：
 
-```vue [App.vue]
+```vue [Component.vue] [App.vue]
 <template>
   <UApp>
     <router-view />
@@ -225,7 +225,7 @@ import './nuxt-ui/main.scss'
 
 Nuxt UI 组件通过自动导入直接在模板中使用，所有组件以 `U` 为前缀：
 
-```vue
+```vue [Component.vue]
 <template>
   <UButton variant="soft" color="primary">
     提交
