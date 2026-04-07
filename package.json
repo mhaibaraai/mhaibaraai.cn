@@ -27,7 +27,7 @@
     "@iconify-json/vscode-icons": "^1.2.45",
     "@iconify-json/ri": "^1.2.10",
     "@iconify-json/tabler": "^1.2.33",
-    "@movk/nuxt-docs": "^1.17.2",
+    "@movk/nuxt-docs": "^1.17.4",
     "@nuxt/content": "^3.12.0",
     "@nuxt/ui": "^4.6.1",
     "better-sqlite3": "^12.8.0",
@@ -35,7 +35,7 @@
     "tailwindcss": "^4.2.2"
   },
   "devDependencies": {
-    "@movk/core": "^1.2.2",
+    "@movk/core": "^1.2.3",
     "@nuxt/eslint": "^1.15.2",
     "eslint": "^10.2.0",
     "typescript": "^6.0.2",
