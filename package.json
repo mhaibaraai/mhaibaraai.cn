@@ -24,9 +24,9 @@
     "clean": "movk-clean"
   },
   "dependencies": {
-    "@iconify-json/vscode-icons": "^1.2.45",
+    "@iconify-json/vscode-icons": "^1.2.50",
     "@iconify-json/ri": "^1.2.10",
-    "@iconify-json/tabler": "^1.2.33",
+    "@iconify-json/tabler": "^1.2.35",
     "@movk/nuxt-docs": "^1.17.7",
     "@nuxt/content": "^3.12.0",
     "@nuxt/ui": "^4.6.1",
