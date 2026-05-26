@@ -4,46 +4,10 @@
   ],
   "timezone": "Asia/Shanghai",
   "schedule": ["* 6-9 * * 1"],
-  "lockFileMaintenance": {
-    "enabled": true
-  },
   "packageRules": [
     {
-      "groupName": "iconify",
-      "matchPackageNames": [
-        "@iconify-json/*"
-      ]
-    },
-    {
-      "groupName": "nuxt",
-      "matchPackageNames": [
-        "nuxt",
-        "@nuxt/content",
-        "@nuxt/ui",
-        "@nuxt/eslint"
-      ]
-    },
-    {
-      "groupName": "movk",
-      "matchPackageNames": [
-        "@movk/nuxt-docs",
-        "@movk/core"
-      ]
-    },
-    {
-      "matchDepTypes": [
-        "peerDependencies"
-      ],
-      "enabled": false
-    },
-    {
-      "matchDepTypes": [
-        "resolutions"
-      ],
+      "matchDepTypes": ["peerDependencies", "resolutions"],
       "enabled": false
     }
-  ],
-  "postUpdateOptions": [
-    "pnpmDedupe"
   ]
 }

@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@10.33.0",
+  "packageManager": "pnpm@11.3.0",
   "description": "一个专注于技术分享与知识沉淀的个人网站。",
   "author": "Yixuan <mhaibaraai@gmail.com>",
   "license": "MIT",
@@ -24,21 +24,21 @@
     "clean": "movk-clean"
   },
   "dependencies": {
-    "@iconify-json/vscode-icons": "^1.2.45",
     "@iconify-json/ri": "^1.2.10",
-    "@iconify-json/tabler": "^1.2.33",
-    "@movk/nuxt-docs": "^1.17.7",
-    "@nuxt/content": "^3.12.0",
-    "@nuxt/ui": "^4.6.1",
-    "better-sqlite3": "^12.9.0",
-    "nuxt": "^4.4.2",
-    "tailwindcss": "^4.2.2"
+    "@iconify-json/tabler": "^1.2.35",
+    "@iconify-json/vscode-icons": "^1.2.51",
+    "@movk/nuxt-docs": "^1.19.3",
+    "@nuxt/content": "^3.14.0",
+    "@nuxt/ui": "^4.8.0",
+    "better-sqlite3": "^12.10.0",
+    "nuxt": "^4.4.6",
+    "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
-    "@movk/core": "^1.2.3",
+    "@movk/core": "^1.2.5",
     "@nuxt/eslint": "^1.15.2",
-    "eslint": "^10.2.0",
-    "typescript": "^6.0.2",
-    "vue-tsc": "^3.2.6"
+    "eslint": "^10.4.0",
+    "typescript": "^6.0.3",
+    "vue-tsc": "^3.3.2"
   }
 }
