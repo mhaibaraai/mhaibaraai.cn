@@ -5,3 +5,8 @@ allowBuilds:
   esbuild: false
   unrs-resolver: false
   vue-demi: false
+minimumReleaseAgeExclude:
+  - '@iconify-json/vscode-icons@1.2.51'
+  - '@movk/nuxt-docs@1.19.3'
+  - '@vue/language-core@3.3.2'
+  - vue-tsc@3.3.2
