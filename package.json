@@ -1,7 +1,7 @@
 {
   "name": "mhaibaraai.cn",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "packageManager": "pnpm@11.5.2",
   "description": "一个专注于技术分享与知识沉淀的个人网站。",
@@ -27,7 +27,7 @@
     "@iconify-json/ri": "^1.2.10",
     "@iconify-json/tabler": "^1.2.35",
     "@iconify-json/vscode-icons": "^1.2.55",
-    "@movk/nuxt-docs": "^1.20.0",
+    "@movk/nuxt-docs": "^1.19.8",
     "@nuxt/content": "^3.14.0",
     "@nuxt/ui": "^4.8.2",
     "better-sqlite3": "^12.10.0",
