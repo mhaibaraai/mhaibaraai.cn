@@ -45,6 +45,14 @@ export default defineNuxtConfig({
 
   compatibilityDate: 'latest',
 
+  vite: {
+    optimizeDeps: {
+      include: [
+        '@unhead/schema-org/vue'
+      ]
+    }
+  },
+
   aiChat: {
     model: 'alibaba/deepseek-v3.2',
     models: [
