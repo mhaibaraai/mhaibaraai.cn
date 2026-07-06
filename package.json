@@ -1,7 +1,7 @@
 {
   "name": "mhaibaraai.cn",
   "type": "module",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "packageManager": "pnpm@11.9.0",
   "description": "一个专注于技术分享与知识沉淀的个人网站。",
@@ -26,13 +26,13 @@
   "dependencies": {
     "@iconify-json/ri": "^1.2.10",
     "@iconify-json/tabler": "^1.2.35",
-    "@iconify-json/vscode-icons": "^1.2.62",
-    "@movk/nuxt-docs": "^1.19.10",
+    "@iconify-json/vscode-icons": "^1.2.63",
+    "@movk/nuxt-docs": "^2.0.1",
     "@nuxt/content": "^3.14.0",
     "@nuxt/ui": "^4.9.0",
     "better-sqlite3": "^12.11.1",
     "nuxt": "^4.4.8",
-    "tailwindcss": "^4.3.1"
+    "tailwindcss": "^4.3.2"
   },
   "devDependencies": {
     "@movk/core": "^1.3.1",
