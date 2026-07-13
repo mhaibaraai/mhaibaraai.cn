@@ -95,45 +95,51 @@ trustPolicyExclude:
 ### 自举失败(integrity in undefined)
 
 ::callout{type="warning"}
-pnpm 10 起 `managePackageManagerVersions` 默认开启。当本机 pnpm 版本与 `package.json` 中 `packageManager` 声明的版本不一致时，pnpm 会先自下载目标版本再执行命令。这条自下载路径依赖本地的注册表元数据缓存，缓存陈旧时会直接崩溃。
+pnpm 10 起 `managePackageManagerVersions` 默认开启。当当前 pnpm 版本与 `package.json` 中 `packageManager` 声明的版本不一致时，pnpm 会先把目标版本装到全局目录再执行命令。这条自更新路径在 pnpm 11.12.0 上存在缺陷，会直接崩溃。
 ::
 
 **典型错误信息**：
 
 ```text
 [ERROR] Cannot use 'in' operator to search for 'integrity' in undefined
+
+pnpm: Cannot use 'in' operator to search for 'integrity' in undefined
+    at createFullPkgId (.../pnpm/dist/pnpm.mjs)
+    at lockfileToDepGraph (.../pnpm/dist/pnpm.mjs)
+    at headlessInstall (.../pnpm/dist/pnpm.mjs)
+    at async installPnpmToGlobalDir (.../pnpm/dist/pnpm.mjs)
 ```
 
-**关键判据**：执行 `pnpm -v` 也报同样的错。这说明失败发生在 pnpm 自举阶段，与项目的依赖树、lockfile 完全无关，不要浪费时间去删 `node_modules` 或重新生成 lockfile。
+**关键判据**：调用栈里出现 `installPnpmToGlobalDir`，本地执行 `pnpm -v` 也报同样的错。这说明失败发生在 pnpm 自举阶段，与项目的依赖树、lockfile 完全无关，不要浪费时间去删 `node_modules` 或重新生成 lockfile。
 
 **问题原因**：
 
-1. Renovate 之类的工具把 `packageManager` 从 `pnpm@11.10.0` 升到 `pnpm@11.12.0`，而本机（如 Homebrew 安装的）仍是 11.10.0，版本不匹配触发自下载。
-2. 自下载时读取本地元数据缓存 `~/Library/Caches/pnpm/metadata-v1.3/registry.npmjs.org/pnpm.json`。这份缓存可能停留在几个月前，`dist-tags.latest` 还是旧版本，根本不含 11.12.0。
-3. pnpm 访问 `versions['11.12.0'].dist.integrity`，左侧是 `undefined`，`in` 运算符抛出 TypeError。
+自更新时 pnpm 会用全局环境 lockfile 重建一份依赖图，`buildLockfileFromEnvLockfile` 对带 peer 依赖的快照（形如 `fdir@6.5.0(picomatch@4.0.5)`）取不到对应的 `packages[depPath]` 条目，又没有回退到基础包，导致合并出的包对象缺少 `resolution` 块；随后 headless install 读取 `resolution.integrity`，`in` 运算符在 `undefined` 上抛出 TypeError。
 
-真正的触发点是陈旧的元数据缓存，而非 `packageManager` 里的版本号写错了。
+上游追踪：[pnpm/pnpm#12959](https://github.com/pnpm/pnpm/issues/12959)（根因，修复 PR [#12960](https://github.com/pnpm/pnpm/pull/12960) 待合并）、[pnpm/action-setup#276](https://github.com/pnpm/action-setup/issues/276)（CI 场景）。
+
+触发条件只有一个：**当前运行的 pnpm 版本 ≠ `packageManager` 声明的目标版本**。常见于两个场景：
+
+1. 本地：Renovate 把 `packageManager` 从 `pnpm@11.10.0` 升到 `pnpm@11.12.0`，而本机（如 Homebrew 安装的）仍是旧版本。
+2. CI：`pnpm/action-setup@v6` 会先装一个固定的 bootstrap pnpm（v11.7.0），再无条件执行 `pnpm self-update <目标版本>`。因此在 v6 上即使显式写 `with: version:` 也绕不开这条路径。
 
 **解决方案**：
 
 ::code-group
 
-```sh [升级本机 pnpm (推荐)]
-# 让本机版本与 packageManager 对齐，直接跳过自下载路径
+```sh [本地：升级 pnpm]
+# 让本机版本与 packageManager 对齐，直接跳过自更新路径
 brew upgrade pnpm
 pnpm -v   # 确认输出与 packageManager 一致
 ```
 
-```sh [清理元数据缓存]
-# 强制 pnpm 重新拉取注册表元数据
-rm ~/Library/Caches/pnpm/metadata-v1.3/registry.npmjs.org/pnpm.json
-
-# 担心其他包元数据也陈旧时，可整体清掉（只是缓存，会自动重建）
-rm -rf ~/Library/Caches/pnpm/metadata-v1.3/
+```yaml [CI：改用 action-setup@v5]
+# v5 直接用 npm 安装目标版本，不走 self-update
+- uses: pnpm/action-setup@v5
 ```
 
 ::
 
 ::callout{color="info"}
-不要为规避此问题去改 `package.json` 或加 `.npmrc` 关闭 `managePackageManagerVersions`，保持默认行为对 CI 与本地的版本一致性更有利。Renovate 每次 bump `packageManager` 都会让本机版本落后一次，因此这个坑会周期性复现，`brew upgrade pnpm` 是常规应对。
+不要为规避此问题去改 `package.json` 或加 `.npmrc` 关闭 `managePackageManagerVersions`，保持默认行为对 CI 与本地的版本一致性更有利。Renovate 每次 bump `packageManager` 都会让本机版本落后一次，因此这个坑会周期性复现，版本对齐是常规应对。CI 侧若用 Renovate 自动升级 Actions，需要临时锁住 `pnpm/action-setup` 的 major 版本，否则会被重新顶回 v6。
 ::
