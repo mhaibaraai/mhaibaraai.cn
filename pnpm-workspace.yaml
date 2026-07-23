@@ -8,6 +8,3 @@ allowBuilds:
 
 ignoreWorkspaceRootCheck: true
 minimumReleaseAge: 0
-
-overrides:
-  vue-tsc: 3.3.5
