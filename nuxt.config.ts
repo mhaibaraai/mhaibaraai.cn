@@ -4,7 +4,9 @@ export default defineNuxtConfig({
   extends: ['@movk/nuxt-docs'],
 
   modules: [
-    '@nuxt/eslint'
+    '@nuxt/eslint',
+    '@vercel/analytics',
+    '@vercel/speed-insights'
   ],
 
   $development: {

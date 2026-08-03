@@ -60,14 +60,6 @@ content/
 - 导航排序：目录和文件名的数字前缀决定导航顺序
 - **新增分类时**：在 `content/docs/` 下创建目录后，**必须同步**在 `nuxt.config.ts` 的 `routeRules` 中添加对应的重定向规则，否则访问分类根路径会返回 404
 
-### 部署
-
-推送到 `main` 分支后，GitHub Actions 自动构建 Docker 镜像并推送到 GHCR（`ghcr.io/mhaibaraai/mhaibaraai.cn`）。
-
-构建时需要两个 secret：
-- `NUXT_GITHUB_TOKEN`：用于获取 GitHub 仓库信息
-- `AI_GATEWAY_API_KEY`：用于 AI Chat 功能
-
 ### 关键配置位置
 
 | 配置项 | 位置 |
