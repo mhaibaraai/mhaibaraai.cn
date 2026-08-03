@@ -45,7 +45,7 @@ export default defineNuxtConfig({
     '/docs/work-summary': { redirect: '/docs/work-summary/2025', prerender: false }
   },
 
-  compatibilityDate: 'latest',
+  compatibilityDate: '2026-06-30',
 
   vite: {
     optimizeDeps: {
