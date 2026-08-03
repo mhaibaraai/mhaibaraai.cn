@@ -1,9 +1,9 @@
 {
   "name": "mhaibaraai.cn",
   "type": "module",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "private": true,
-  "packageManager": "pnpm@11.17.0",
+  "packageManager": "pnpm@11.18.0",
   "description": "一个专注于技术分享与知识沉淀的个人网站。",
   "author": "Yixuan <mhaibaraai@gmail.com>",
   "license": "MIT",
@@ -25,20 +25,22 @@
   },
   "dependencies": {
     "@iconify-json/ri": "^1.2.10",
-    "@iconify-json/tabler": "^1.2.37",
-    "@iconify-json/vscode-icons": "^1.2.67",
-    "@movk/nuxt-docs": "^2.0.6",
+    "@iconify-json/tabler": "^1.2.38",
+    "@iconify-json/vscode-icons": "^1.2.68",
+    "@movk/nuxt-docs": "^2.1.0",
     "@nuxt/content": "^3.15.2",
     "@nuxt/ui": "^4.10.0",
-    "better-sqlite3": "^13.0.1",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
+    "better-sqlite3": "^13.0.2",
     "nuxt": "^4.5.1",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
-    "@movk/core": "^1.4.0",
+    "@movk/core": "^1.4.1",
     "@nuxt/eslint": "^1.16.0",
     "eslint": "^10.8.0",
     "typescript": "^6.0.3",
-    "vue-tsc": "^3.3.8"
+    "vue-tsc": "^3.3.9"
   }
 }

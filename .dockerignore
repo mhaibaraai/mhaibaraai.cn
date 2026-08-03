@@ -1,4 +1,0 @@
-# Build happens on the CI runner; the image only packages .output.
-# Ignore everything except that runtime payload to keep the build context tiny.
-*
-!.output
