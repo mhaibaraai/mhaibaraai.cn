@@ -56,11 +56,10 @@ export default defineNuxtConfig({
   },
 
   aiChat: {
-    model: 'alibaba/deepseek-v3.2',
+    model: 'alibaba/qwen3.8-27b',
     models: [
-      'alibaba/qwen3.7-plus',
-      'alibaba/glm-5.1',
-      'alibaba/deepseek-v3.2'
+      'alibaba/qwen3.8-27b',
+      'deepseek/deepseek-v4-pro-0813'
     ]
   },
 
