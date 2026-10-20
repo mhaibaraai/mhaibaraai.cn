@@ -1,0 +1,17 @@
+title: 娱乐
+icon: i-lucide-popcorn
+order: 6
+description: 下班后
+items:
+  - title: Bilibili
+    url: https://www.bilibili.com
+    tags: [video]
+  - title: YouTube
+    url: https://www.youtube.com
+    tags: [video]
+  - title: 豆瓣
+    url: https://www.douban.com
+    tags: [书影音]
+  - title: 网易云音乐
+    url: https://music.163.com
+    tags: [music]

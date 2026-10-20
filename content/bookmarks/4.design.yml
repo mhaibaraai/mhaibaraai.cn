@@ -1,0 +1,15 @@
+title: 设计
+icon: i-lucide-palette
+order: 4
+description: 灵感、图标与配色
+items:
+  - title: Dribbble
+    url: https://dribbble.com
+  - title: Awwwards
+    url: https://www.awwwards.com
+    description: 网站设计灵感
+  - title: Icônes
+    url: https://icones.js.org
+    description: Iconify 图标检索
+  - title: Figma
+    url: https://www.figma.com
