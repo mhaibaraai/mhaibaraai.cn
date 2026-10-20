@@ -42,11 +42,15 @@ function listFiles(dir: string): string[] {
   })
 }
 
-function main(): void {
-  const roots = ['../public/proxy', '../server/assets/rules'].map(dir => fileURLToPath(new URL(dir, import.meta.url)))
-  const findings = roots.flatMap(listFiles).flatMap(file =>
+export function scanDirectories(roots: readonly string[]): Array<SecretFinding & { file: string }> {
+  return roots.flatMap(listFiles).flatMap(file =>
     findSecrets(readFileSync(file, 'utf8')).map(finding => ({ ...finding, file: relative(process.cwd(), file) }))
   )
+}
+
+function main(): void {
+  const roots = ['../public/proxy', '../server/assets/rules'].map(dir => fileURLToPath(new URL(dir, import.meta.url)))
+  const findings = scanDirectories(roots)
 
   if (!findings.length) {
     console.info(`[proxy] 已检查 ${roots.length} 个目录，未发现敏感信息`)

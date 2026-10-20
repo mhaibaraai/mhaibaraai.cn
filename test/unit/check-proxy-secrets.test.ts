@@ -1,5 +1,8 @@
+import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { findSecrets } from '~~/scripts/check-proxy-secrets'
+import { findSecrets, scanDirectories } from '~~/scripts/check-proxy-secrets'
 
 const surgeTemplate = `
 [General]
@@ -51,5 +54,22 @@ describe('findSecrets', () => {
   it('同一行中占位符不会掩盖真实凭据', () => {
     expect(findSecrets('HK = ss, hk1.airport.net, 443, password=<password>').map(f => f.rule)).toContain('proxy-node')
     expect(findSecrets('tag=YOUR_TAG, password=realpass123').map(f => f.rule)).toContain('credential')
+  })
+})
+
+describe('scanDirectories', () => {
+  it('递归扫描目录并标注文件', () => {
+    const root = mkdtempSync(join(tmpdir(), 'proxy-'))
+    mkdirSync(join(root, 'surge'))
+    writeFileSync(join(root, 'surge', 'clean.conf'), surgeTemplate)
+    writeFileSync(join(root, 'surge', 'leak.conf'), '[Proxy]\nJP = trojan, jp.node.io, 443, password=secret1')
+
+    const findings = scanDirectories([root])
+    expect(findings.length).toBeGreaterThan(0)
+    expect(findings.every(f => f.file.endsWith('leak.conf'))).toBe(true)
+  })
+
+  it('仓库中的模板与规则集保持干净', () => {
+    expect(scanDirectories(['public/proxy', 'server/assets/rules'])).toEqual([])
   })
 })

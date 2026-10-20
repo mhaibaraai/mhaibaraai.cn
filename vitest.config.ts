@@ -10,6 +10,7 @@ export default defineConfig({
   },
   test: {
     include: ['test/unit/**/*.test.ts'],
+    exclude: ['test/e2e/**'],
     coverage: {
       provider: 'v8',
       include: ['app/utils/**', 'shared/**', 'scripts/**'],
