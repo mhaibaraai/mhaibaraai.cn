@@ -1,0 +1,44 @@
+items:
+  - name: Movk Nuxt Docs
+    repo: mhaibaraai/movk-nuxt-docs
+    url: https://docs.mhaibaraai.cn
+    icon: i-lucide-book-open-text
+    description: 由 Nuxt UI 与 Nuxt Content 驱动的文档主题，内置组件文档自动生成、AI 聊天、MCP Server、SEO 与全文搜索。
+    tags: [Nuxt, Docs, AI]
+    featured: true
+  - name: Movk Nuxt
+    repo: mhaibaraai/movk-nuxt
+    url: https://nuxt.mhaibaraai.cn
+    icon: i-lucide-blocks
+    description: 构建在 Nuxt UI 之上的 UI 工程套件：Schema 驱动的 AutoForm（Zod v4）、功能完备的 DataTable 与 Composables。
+    tags: [Nuxt UI, Form, Table]
+    featured: true
+  - name: Movk MapLibre
+    repo: mhaibaraai/movk-maplibre
+    url: https://maplibre.mhaibaraai.cn
+    icon: i-lucide-map
+    description: 声明式 MapLibre GL 封装：组件 + Composables，内置 3D 建筑、动态效果、绘制与多坐标系本土化支持。
+    tags: [GIS, Vue, Nuxt]
+    featured: true
+  - name: Movk Sigma.js
+    repo: mhaibaraai/movk-sigmajs
+    url: https://sigma.mhaibaraai.cn
+    icon: i-lucide-waypoints
+    description: 基于 sigma v4 的知识图谱可视化库，提供 Nuxt 模块与 Vue 3 / Vite 插件。
+    tags: [Graph, Visualization]
+  - name: Movk Core
+    repo: mhaibaraai/movk-core
+    url: https://core.mhaibaraai.cn
+    icon: i-lucide-cpu
+    description: 为现代 Vue.js 应用打造的高性能工具函数与组合式函数集合。
+    tags: [Vue, Utils]
+  - name: Search Enhancer
+    repo: mhaibaraai/search-enhancer
+    icon: i-lucide-search-check
+    description: 搜索引擎增强用户脚本：无缝翻页、去广告、跳转直达、域名屏蔽。
+    tags: [UserScript]
+  - name: Git Daily Report
+    repo: mhaibaraai/git-daily-report
+    icon: i-lucide-calendar-check
+    description: 从 Gitee 工作项与 GitLab 提交汇总每日工作点，本地审核、改写、导出。
+    tags: [Tooling]
