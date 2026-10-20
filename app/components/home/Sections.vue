@@ -33,17 +33,17 @@ watch([elementX, elementY], ([nx, ny]) => {
         </div>
 
         <div ref="list" class="relative lg:col-span-8" @mouseleave="hovered = undefined">
-          <ul class="border-t border-highlighted">
+          <ul class="border-t border-inverted">
             <li v-for="(section, index) in sections" :key="section.path" class="border-b border-default">
               <NuxtLink
                 :to="section.firstPath ?? section.path"
                 class="group relative flex items-center gap-6 py-5 overflow-hidden"
                 @mouseenter="hovered = section"
               >
-                <span class="absolute inset-0 origin-bottom scale-y-0 bg-elevated transition-transform duration-500 ease-(--ease-editorial) group-hover:scale-y-100" />
+                <span class="absolute inset-0 origin-bottom scale-y-0 bg-elevated transition-transform duration-500 ease-editorial group-hover:scale-y-100" />
                 <span class="relative font-mono text-xs text-muted w-8 ps-2">{{ String(index + 1).padStart(2, '0') }}</span>
                 <span class="relative flex-1">
-                  <span class="block font-display text-2xl sm:text-4xl font-semibold text-highlighted transition-transform duration-500 ease-(--ease-editorial) group-hover:translate-x-3">
+                  <span class="block font-display text-2xl sm:text-4xl font-semibold text-highlighted transition-transform duration-500 ease-editorial group-hover:translate-x-3">
                     {{ section.title }}
                   </span>
                   <span class="block text-sm text-muted mt-1 max-h-0 opacity-0 overflow-hidden transition-all duration-500 group-hover:max-h-10 group-hover:opacity-100 group-hover:translate-x-3">

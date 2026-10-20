@@ -11,6 +11,8 @@
 @theme static {
   --font-sans: "Inter Variable", "Alibaba PuHuiTi", "PingFang SC", "Microsoft YaHei", sans-serif;
   --font-serif: "Fraunces Variable", "Noto Serif SC", "Songti SC", serif;
+  --font-display: var(--font-serif);
+  --font-display--font-variation-settings: "SOFT" 30, "WONK" 0;
   --font-mono: "JetBrains Mono Variable", ui-monospace, "SFMono-Regular", monospace;
 
   --color-vermilion-50: #fdf3f1;
@@ -86,69 +88,60 @@ body::before {
   mix-blend-mode: screen;
 }
 
-@layer components {
-  .font-display {
-    font-family: var(--font-serif);
-    font-optical-sizing: auto;
-    font-variation-settings: "SOFT" 30, "WONK" 0;
-    letter-spacing: -0.02em;
-  }
+@utility kicker {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ui-text-muted);
+}
 
-  .kicker {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--ui-text-muted);
-  }
+@utility rule {
+  border-top: 1px solid var(--ui-text-highlighted);
+}
 
-  .rule {
-    border-top: 1px solid var(--ui-text-highlighted);
-  }
+@utility rule-double {
+  border-top: 3px double var(--ui-text-highlighted);
+}
 
-  .rule-double {
-    border-top: 3px double var(--ui-text-highlighted);
-  }
+/* 下划线擦除动效 */
+@utility link-wipe {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 100% 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.5s var(--ease-editorial);
 
-  /* 下划线擦除动效 */
-  .link-wipe {
-    background-image: linear-gradient(currentColor, currentColor);
-    background-size: 0% 1px;
-    background-position: 100% 100%;
-    background-repeat: no-repeat;
-    transition: background-size 0.5s var(--ease-editorial);
-  }
-
-  .link-wipe:hover,
-  .link-wipe:focus-visible {
+  &:hover,
+  &:focus-visible {
     background-size: 100% 1px;
     background-position: 0% 100%;
   }
 }
 
 /* 文章正文：衬线标题，以段落开篇时首字下沉 */
-.prose-editorial :where(h2, h3) {
-  font-family: var(--font-serif);
-  letter-spacing: -0.01em;
-}
+@utility prose-editorial {
+  & :where(h2, h3) {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
 
-.prose-editorial > p:first-child::first-letter {
-  float: left;
-  font-family: var(--font-serif);
-  font-weight: 900;
-  font-size: 3.6em;
-  line-height: 0.85;
-  padding: 0.08em 0.12em 0 0;
-  color: var(--ui-primary);
+  & > p:first-child::first-letter {
+    float: left;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 3.6em;
+    line-height: 0.85;
+    padding: 0.08em 0.12em 0 0;
+    color: var(--ui-primary);
+  }
 }
 
 /* 阅读进度：滚动驱动动画，不支持的浏览器直接隐藏 */
-.reading-progress {
+@utility reading-progress {
   display: none;
-}
 
-@supports (animation-timeline: scroll()) {
-  .reading-progress {
+  @supports (animation-timeline: scroll()) {
     display: block;
     transform-origin: 0 50%;
     animation: reading-progress linear both;

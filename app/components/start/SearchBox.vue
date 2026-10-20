@@ -23,7 +23,7 @@ onMounted(() => input.value?.inputRef.focus())
 
 <template>
   <form class="w-full" role="search" @submit.prevent="submit">
-    <div class="flex items-center gap-3 border-b-2 border-highlighted pb-2">
+    <div class="flex items-center gap-3 border-b-2 border-inverted pb-2">
       <UDropdownMenu
         :items="SEARCH_ENGINES.map(e => ({ label: e.label, icon: e.icon, onSelect: () => { engineId = e.id } }))"
         :content="{ align: 'start' }"

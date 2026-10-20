@@ -18,11 +18,11 @@ useSeoMeta({ title: '项目', description: 'Movk 系列开源项目与日常小�
       </UButton>
     </PageMasthead>
 
-    <MotionReveal v-if="contributions" class="border-t border-highlighted py-10">
+    <MotionReveal v-if="contributions" class="border-t border-inverted py-10">
       <ProjectsHeatmap :data="contributions" />
     </MotionReveal>
 
-    <ol class="border-t border-highlighted">
+    <ol class="border-t border-inverted">
       <MotionReveal
         v-for="(item, index) in data?.items"
         :key="item.repo"

@@ -26,13 +26,13 @@ useSeoMeta({
       </UButton>
     </PageMasthead>
 
-    <div class="sticky top-(--ui-header-height) md:top-[calc(var(--ui-header-height)+2rem)] z-10 -mx-4 px-4 py-4 bg-default/90 backdrop-blur border-b border-default flex flex-col gap-4 md:flex-row md:items-center">
+    <div class="sticky top-(--ui-header-height) md:top-[calc(var(--ui-header-height)+2rem)] z-10 -mx-4 p-4 bg-default/90 backdrop-blur-sm border-b border-default flex flex-col gap-4 md:flex-row md:items-center">
       <UInput
         v-model="query"
         icon="i-lucide-search"
         placeholder="搜索标题、域名或标签…"
         variant="none"
-        class="md:w-72 border-b border-highlighted"
+        class="md:w-72 border-b border-inverted"
         aria-label="搜索书签"
       />
       <div class="flex gap-2 overflow-x-auto" role="tablist" aria-label="书签分类">
@@ -64,7 +64,7 @@ useSeoMeta({
 
     <TransitionGroup tag="div" name="list" class="mt-4">
       <section v-for="(category, index) in visible" :key="category.title" class="pt-12">
-        <header class="flex items-baseline gap-4 border-b border-highlighted pb-3">
+        <header class="flex items-baseline gap-4 border-b border-inverted pb-3">
           <span class="font-mono text-xs text-primary">{{ String(index + 1).padStart(2, '0') }}</span>
           <h2 class="font-display text-3xl font-black text-highlighted">
             {{ category.title }}

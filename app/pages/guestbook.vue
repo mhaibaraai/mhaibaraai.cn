@@ -12,7 +12,7 @@ useSeoMeta({ title: '留言板', description: '留下一句话、一个问题，
   <UContainer class="py-12 lg:py-16">
     <PageMasthead kicker="Guestbook / 留言板" title="留言板" description="留下一句话、一个问题，或交换友链。评论基于 GitHub Discussions。" />
 
-    <div class="border-t border-highlighted pt-10 max-w-3xl">
+    <div class="border-t border-inverted pt-10 max-w-3xl">
       <ClientOnly v-if="ready">
         <Giscus
           :repo="giscus.repo as `${string}/${string}`"

@@ -43,7 +43,7 @@ const shown = { y: '0%', rotate: 0 }
     <span
       v-for="(char, index) in chars"
       :key="index"
-      class="inline-block overflow-hidden align-bottom pb-[0.08em] -mb-[0.08em]"
+      class="inline-block overflow-hidden align-bottom pb-[0.08em] mb-[-0.08em]"
       aria-hidden="true"
     >
       <Motion

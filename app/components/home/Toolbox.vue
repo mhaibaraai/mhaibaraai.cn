@@ -18,7 +18,7 @@ const cards = [
           <p class="kicker">
             Now / 此刻
           </p>
-          <p class="font-display mt-4 text-3xl italic leading-snug text-highlighted">
+          <p class="font-display mt-4 text-3xl/snug italic text-highlighted">
             “{{ now?.description ?? '最近在做什么、在想什么。' }}”
           </p>
           <p class="mt-6 kicker">

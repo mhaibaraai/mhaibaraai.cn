@@ -61,7 +61,7 @@ useSeoMeta({ title: '起始页', robots: 'noindex, nofollow' })
         </div>
       </section>
 
-      <section class="mt-16 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-6 border-t border-highlighted pt-8">
+      <section class="mt-16 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-6 border-t border-inverted pt-8">
         <MotionReveal
           v-for="(category, index) in visible"
           :key="category.title"

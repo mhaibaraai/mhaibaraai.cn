@@ -25,7 +25,7 @@ async function copyUrl() {
 </script>
 
 <template>
-  <div class="not-prose my-8 grid gap-px border border-default bg-(--ui-border) sm:grid-cols-3">
+  <div class="my-8 grid gap-px border border-default bg-border sm:grid-cols-3">
     <a :href="installUrl" class="group flex flex-col gap-2 bg-default p-5 transition-colors hover:bg-inverted hover:text-inverted">
       <UIcon name="i-lucide-download" class="size-5 text-primary" />
       <span class="font-display text-lg font-bold">{{ client === 'surge' ? '一键安装配置' : '一键添加规则集' }}</span>

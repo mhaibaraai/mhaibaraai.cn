@@ -8,7 +8,7 @@ useSeoMeta({ title: 'Uses', description: '日常在用的硬件、软件、浏�
   <UContainer class="py-12 lg:py-16">
     <PageMasthead kicker="Uses / 装备与软件" title="Uses" description="日常在用的硬件、软件与工具。好用的东西值得被记录。" />
 
-    <section v-for="(group, index) in data?.groups" :key="group.title" class="grid gap-6 border-t border-highlighted py-10 lg:grid-cols-12">
+    <section v-for="(group, index) in data?.groups" :key="group.title" class="grid gap-6 border-t border-inverted py-10 lg:grid-cols-12">
       <MotionReveal class="lg:col-span-3">
         <span class="font-mono text-xs text-primary">{{ String(index + 1).padStart(2, '0') }}</span>
         <h2 class="font-display mt-2 flex items-center gap-3 text-3xl font-black text-highlighted">

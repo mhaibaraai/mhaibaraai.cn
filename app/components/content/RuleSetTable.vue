@@ -15,7 +15,7 @@ const rows = computed(() => RULE_SETS.map(set => ({
 </script>
 
 <template>
-  <div class="not-prose my-6 border-t border-highlighted">
+  <div class="my-6 border-t border-inverted">
     <div v-for="row in rows" :key="row.name" class="grid gap-2 border-b border-default py-4 sm:grid-cols-[8rem_1fr_auto] sm:items-center">
       <span class="font-display text-xl font-bold text-highlighted">{{ row.title }}</span>
       <span>

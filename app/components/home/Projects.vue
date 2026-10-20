@@ -48,7 +48,7 @@ const { data: stats } = useFetch('/api/github/repos', { key: 'github-repos', def
             <h3 class="font-display mt-6 text-2xl font-bold text-highlighted">
               <span class="link-wipe">{{ item.name }}</span>
             </h3>
-            <p class="mt-3 text-sm text-muted leading-relaxed">
+            <p class="mt-3 text-sm/relaxed text-muted">
               {{ item.description }}
             </p>
             <p class="mt-4 kicker">

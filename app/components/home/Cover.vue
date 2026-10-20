@@ -16,7 +16,7 @@ const season = computed(() => ['冬', '冬', '春', '春', '春', '夏', '夏', 
 <template>
   <section class="relative overflow-hidden border-b border-default">
     <ClientOnly>
-      <HomeCoverCanvas class="absolute inset-0 -z-0" />
+      <HomeCoverCanvas class="absolute inset-0 z-0" />
     </ClientOnly>
 
     <UContainer class="relative pt-10 pb-14 lg:pt-14 lg:pb-20">
@@ -47,7 +47,7 @@ const season = computed(() => ['冬', '冬', '春', '春', '春', '夏', '夏', 
 
       <div class="mt-10 grid gap-10 lg:grid-cols-12">
         <MotionReveal :delay="0.5" class="lg:col-span-5">
-          <p class="font-display text-2xl sm:text-3xl italic leading-snug text-toned text-pretty">
+          <p class="font-display text-2xl/snug italic sm:text-3xl/snug text-toned text-pretty">
             从代码片段到架构思考，这里是我在成为更优秀全栈工程师路上的所有笔记。
           </p>
           <div class="mt-8 flex flex-wrap gap-3">
@@ -64,7 +64,7 @@ const season = computed(() => ['冬', '冬', '春', '春', '春', '夏', '夏', 
           <p class="kicker mb-3">
             本期要目 / In This Issue
           </p>
-          <ol class="border-t border-highlighted">
+          <ol class="border-t border-inverted">
             <li v-for="(line, index) in lines" :key="line.path" class="border-b border-default">
               <NuxtLink :to="line.path" class="group flex items-baseline gap-4 py-3">
                 <span class="font-mono text-xs text-primary w-6">{{ String(index + 1).padStart(2, '0') }}</span>

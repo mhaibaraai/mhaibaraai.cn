@@ -41,7 +41,7 @@ const transitionName = (stem: string) => `title-${stem.replaceAll('/', '-').repl
             >
               <span class="link-wipe">{{ lead.title }}</span>
             </h3>
-            <p class="mt-6 text-lg text-toned leading-relaxed text-pretty">
+            <p class="mt-6 text-lg/relaxed text-toned text-pretty">
               {{ lead.description }}
             </p>
             <span class="mt-8 inline-flex items-center gap-2 text-sm font-medium text-highlighted">
