@@ -9,6 +9,13 @@ export default defineAppConfig({
       branch: 'main'
     }
   },
+  giscus: {
+    repo: 'mhaibaraai/mhaibaraai.cn',
+    repoId: 'R_kgDOPjxlnw',
+    category: 'Guestbook',
+    /** 开启仓库 Discussions 并安装 giscus app 后，从 https://giscus.app 获取 */
+    categoryId: ''
+  },
   nav: [
     { label: '笔记', to: '/docs', icon: 'i-lucide-notebook-pen' },
     { label: '书签', to: '/bookmarks', icon: 'i-lucide-bookmark' },
