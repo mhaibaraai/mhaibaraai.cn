@@ -48,6 +48,8 @@ export default defineNuxtConfig({
   },
 
   content: {
+    // llms.txt 由 server/plugins/llms.ts 生成
+    llms: false,
     experimental: { sqliteConnector: 'native' },
     build: {
       markdown: {
@@ -142,10 +144,6 @@ export default defineNuxtConfig({
     domain: SITE_URL,
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
-    sections: [
-      { title: '笔记', contentCollection: 'docs' },
-      { title: '配置', contentCollection: 'config' }
-    ],
     full: {
       title: SITE_NAME,
       description: '一个专注于技术分享与知识沉淀的个人网站。从代码片段到架构思考，这里是我在成为更优秀全栈工程师路上的所有笔记。'

@@ -35,6 +35,7 @@ export default defineContentConfig({
       source: 'config/**',
       schema: z.object({
         sitemap,
+        rawbody: z.string(),
         icon: z.string().optional(),
         date: z.string().optional()
       })
