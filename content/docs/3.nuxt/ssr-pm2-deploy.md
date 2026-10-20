@@ -23,7 +23,7 @@ description: 在 Ubuntu 上使用 PM2 集群模式部署 Nuxt SSR，并通过 Ng
 
 ### 安装 PM2
 
-::tip{to="/docs/guides/runtime/node#直接下载安装"}
+::tip{to="/docs/guides/node#直接下载安装"}
 在 Linux 上安装 Node 22、pnpm 请参考 Node.js 安装指南
 ::
 
