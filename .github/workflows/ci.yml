@@ -8,6 +8,13 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 24
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,7 +25,7 @@ jobs:
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
-          node-version: lts/*
+          node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
 
       - name: Install dependencies
@@ -34,9 +41,12 @@ jobs:
         run: pnpm run test:coverage
 
       - name: Build
-        run: pnpm run build
+        run: pnpm run build 2>&1 | tee build.log
         env:
           NUXT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check prerender errors
+        run: "! grep '\\[request error\\]' build.log"
 
       - name: Install Playwright
         run: pnpm exec playwright install --with-deps chromium
