@@ -56,3 +56,30 @@ test('起始页允许被扩展内嵌', async ({ request }) => {
   const response = await request.get('/start')
   expect(response.headers()['content-security-policy']).toContain('chrome-extension:')
 })
+
+test('笔记提供 Markdown 原文', async ({ request }) => {
+  const response = await request.get('/raw/docs/nuxt/seo.md')
+  expect(response.ok()).toBe(true)
+  expect(response.headers()['content-type']).toContain('text/markdown')
+  expect(await response.text()).toContain('# Nuxt SEO')
+})
+
+test('llms.txt 列出笔记与配置页', async ({ request }) => {
+  const body = await (await request.get('/llms.txt')).text()
+  expect(body).toContain('/raw/docs/nuxt/seo.md')
+  expect(body).toContain('/raw/config/surge.md')
+})
+
+test('RSS 输出最近的笔记', async ({ request }) => {
+  const response = await request.get('/rss.xml')
+  expect(response.headers()['content-type']).toContain('application/rss+xml')
+  const body = await response.text()
+  expect(body).toContain('<title>YiXuan 的开发随笔</title>')
+  expect(body.match(/<item>/g)?.length).toBeGreaterThan(0)
+})
+
+test('未知路径显示 404 页面', async ({ page }) => {
+  const response = await page.goto('/not-exist-page')
+  expect(response?.status()).toBe(404)
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('此页已被撕去')
+})
