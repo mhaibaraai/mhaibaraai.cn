@@ -3,19 +3,23 @@ import type { NuxtError } from '#app'
 
 const props = defineProps<{ error: NuxtError }>()
 
+const { nuxtUiLocale, rootNavigation, files } = await useDocsShell()
+
 const is404 = computed(() => props.error.status === 404)
 
 useSeoMeta({ title: is404.value ? '页面不存在' : '出错了' })
 </script>
 
 <template>
-  <UApp>
-    <NuxtLayout>
+  <UApp :locale="nuxtUiLocale">
+    <Header />
+
+    <UMain as="main">
       <UContainer class="py-32">
         <p class="kicker">
           Erratum · {{ error.status }}
         </p>
-        <h1 class="font-display mt-4 text-6xl sm:text-8xl font-black text-highlighted">
+        <h1 class="mt-4 font-display text-6xl font-black text-highlighted sm:text-8xl">
           {{ is404 ? '此页已被撕去' : '印刷事故' }}<span class="text-primary">.</span>
         </h1>
         <p class="mt-6 max-w-xl text-lg text-muted">
@@ -30,6 +34,12 @@ useSeoMeta({ title: is404.value ? '页面不存在' : '出错了' })
           回到首页
         </UButton>
       </UContainer>
-    </NuxtLayout>
+    </UMain>
+
+    <Footer />
+
+    <ClientOnly>
+      <UContentSearch :files="files" :navigation="rootNavigation" />
+    </ClientOnly>
   </UApp>
 </template>

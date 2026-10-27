@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ layout: 'blank' })
+definePageMeta({ header: false, footer: false })
 
 const appConfig = useAppConfig()
 const { data: categories } = await useBookmarks()
