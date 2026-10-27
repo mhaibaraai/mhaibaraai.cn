@@ -1,41 +1,15 @@
 import { defineCollection, defineContentConfig } from '@nuxt/content'
-import { defineSitemapSchema } from '@nuxtjs/sitemap/content'
 import { z } from 'zod'
 import { bookmarkCategorySchema } from './shared/schemas/bookmarks'
 import { friendsSchema, projectsSchema, shelfSchema, usesSchema } from './shared/schemas/profile'
 
-const sitemap = defineSitemapSchema({ z })
-
-const pageLink = z.object({
-  label: z.string(),
-  icon: z.string().optional(),
-  to: z.string(),
-  target: z.enum(['_blank', '_self']).optional()
-})
-
+// docs 集合由 @movk/nuxt-docs 定义，这里只声明站点独有的集合
 export default defineContentConfig({
   collections: {
-    docs: defineCollection({
-      type: 'page',
-      source: 'docs/**',
-      schema: z.object({
-        sitemap,
-        rawbody: z.string(),
-        links: z.array(pageLink).optional(),
-        /** 构建时由 git 提交时间注入，可在 frontmatter 中手动覆盖 */
-        date: z.string().optional(),
-        navigation: z.union([
-          z.boolean(),
-          z.object({ title: z.string().optional(), icon: z.string().optional() })
-        ]).optional()
-      })
-    }),
     config: defineCollection({
       type: 'page',
       source: 'config/**',
       schema: z.object({
-        sitemap,
-        rawbody: z.string(),
         icon: z.string().optional(),
         date: z.string().optional()
       })

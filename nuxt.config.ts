@@ -5,16 +5,10 @@ const SITE_NAME = 'YiXuan 的开发随笔'
 const SITE_DESCRIPTION = '一个专注于技术分享与知识沉淀的个人网站。'
 
 export default defineNuxtConfig({
+  extends: ['@movk/nuxt-docs'],
+
   modules: [
     '@nuxt/eslint',
-    '@nuxt/ui',
-    '@nuxt/content',
-    '@nuxt/image',
-    '@vueuse/nuxt',
-    'motion-v/nuxt',
-    '@nuxtjs/robots',
-    '@nuxtjs/sitemap',
-    'nuxt-llms',
     '@vercel/analytics',
     '@vercel/speed-insights'
   ],
@@ -26,9 +20,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   app: {
-    rootAttrs: { 'data-vaul-drawer-wrapper': '' },
     head: {
-      htmlAttrs: { lang: 'zh-CN' },
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/icon.svg' },
         { rel: 'alternate', type: 'application/rss+xml', title: SITE_NAME, href: '/rss.xml' },
@@ -38,8 +30,6 @@ export default defineNuxtConfig({
     }
   },
 
-  css: ['~/assets/css/main.css'],
-
   site: {
     url: SITE_URL,
     name: SITE_NAME,
@@ -48,32 +38,17 @@ export default defineNuxtConfig({
   },
 
   content: {
-    // llms.txt 由 server/plugins/llms.ts 生成
-    llms: false,
-    experimental: { sqliteConnector: 'native' },
     build: {
       markdown: {
         toc: { depth: 3 },
         highlight: {
-          theme: { default: 'github-light', dark: 'github-dark' },
           langs: ['bash', 'sh', 'shell', 'diff', 'json', 'jsonc', 'js', 'ts', 'tsx', 'html', 'css', 'scss', 'vue', 'mdc', 'md', 'yaml', 'toml', 'ini', 'java', 'xml', 'sql', 'dockerfile', 'nginx', 'properties']
-        },
-        remarkPlugins: {
-          'remark-mdc': { options: { autoUnwrap: true } }
         }
       }
     }
   },
 
-  ui: {
-    fonts: false,
-    theme: {
-      colors: ['primary', 'secondary', 'info', 'success', 'warning', 'error', 'neutral']
-    }
-  },
-
   runtimeConfig: {
-    githubToken: '',
     public: {
       version: pkg.version,
       siteUrl: SITE_URL
@@ -100,30 +75,17 @@ export default defineNuxtConfig({
     '/config': { redirect: '/config/surge', prerender: false }
   },
 
-  experimental: {
-    viewTransition: true,
-    defaults: {
-      nuxtLink: { externalRelAttribute: 'noopener' }
-    }
-  },
-
   compatibilityDate: '2026-06-30',
 
   nitro: {
-    sourceMap: false,
     prerender: {
-      routes: ['/', '/rss.xml', '/api/bookmarks.json'],
-      crawlLinks: true,
-      failOnError: false,
-      autoSubfolderIndex: false
+      routes: ['/rss.xml', '/api/bookmarks.json']
     }
   },
 
-  vite: {
-    build: { sourcemap: false }
+  aiChat: {
+    enabled: false
   },
-
-  telemetry: false,
 
   eslint: {
     config: {
@@ -131,12 +93,6 @@ export default defineNuxtConfig({
         commaDangle: 'never',
         braceStyle: '1tbs'
       }
-    }
-  },
-
-  icon: {
-    clientBundle: {
-      scan: { globInclude: ['**/*.{vue,ts,md,yml}'] }
     }
   },
 
@@ -151,8 +107,12 @@ export default defineNuxtConfig({
     notes: ['技术分享', '知识沉淀', '开发随笔']
   },
 
+  mcp: {
+    name: 'mhaibaraai.cn'
+  },
+
   robots: {
-    disallow: ['/api/', '/start']
+    disallow: ['/start']
   },
 
   sitemap: {

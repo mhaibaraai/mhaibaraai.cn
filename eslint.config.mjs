@@ -8,7 +8,7 @@ export default withNuxt(
   {
     settings: {
       'better-tailwindcss': {
-        entryPoint: 'app/assets/css/main.css',
+        entryPoint: '.nuxt/movk-nuxt-docs.css',
         selectors: [
           ...getDefaultSelectors(),
           { kind: 'attribute', name: '^v-bind:ui$', match: [{ type: 'objectValues' }] }
