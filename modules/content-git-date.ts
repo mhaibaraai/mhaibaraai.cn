@@ -16,13 +16,23 @@ function resolveDate(rootDir: string, filePath: string): string {
   return statSync(file).mtime.toISOString()
 }
 
-/** 为笔记注入最后更新时间（frontmatter 中的 date 优先） */
+/**
+ * 为笔记注入最后更新时间（frontmatter 中的 date 优先）。
+ * docs 集合的 schema 由 layer 定义、不含 date 字段，写入 meta.date
+ */
 export default defineNuxtModule({
   meta: { name: 'content-git-date' },
   setup(_, nuxt) {
     nuxt.hook('content:file:afterParse', ({ file, content, collection }) => {
-      if (!DATED_COLLECTIONS.has(collection.name) || content.date) return
-      content.date = resolveDate(nuxt.options.rootDir, file.path)
+      if (!DATED_COLLECTIONS.has(collection.name)) return
+
+      if ('date' in collection.fields) {
+        if (!content.date) content.date = resolveDate(nuxt.options.rootDir, file.path)
+        return
+      }
+
+      const meta = (content.meta ?? {}) as Record<string, unknown>
+      if (!meta.date) content.meta = { ...meta, date: resolveDate(nuxt.options.rootDir, file.path) }
     })
   }
 })

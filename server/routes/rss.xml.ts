@@ -6,10 +6,9 @@ const SITE_URL = 'https://mhaibaraai.cn'
 export default defineEventHandler(async (event) => {
   const notes = await queryCollection(event, 'docs')
     .where('path', 'NOT LIKE', '%/.navigation')
-    .select('path', 'title', 'description', 'date')
-    .order('date', 'DESC')
-    .limit(30)
+    .select('path', 'title', 'description', 'meta')
     .all()
+    .then(data => sortNotesByDate(data).slice(0, 30))
 
   const feed = new Feed({
     id: SITE_URL,
@@ -28,7 +27,7 @@ export default defineEventHandler(async (event) => {
       link: `${SITE_URL}${note.path}`,
       title: note.title,
       description: note.description,
-      date: note.date ? new Date(note.date) : new Date()
+      date: new Date(noteDate(note) ?? Date.now())
     })
   }
 
