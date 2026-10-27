@@ -18,42 +18,49 @@ pnpm test:e2e     # Playwright E2E（需先 pnpm build）
 pnpm check:proxy  # 单独运行敏感信息扫描
 ```
 
-运行要求：Node.js >= 22.x（Content 使用 native sqlite），pnpm >= 10.x。
+运行要求：Node.js >= 22.5（Content 使用 node:sqlite），pnpm >= 10.x。
 
 ## 架构概述
 
-自研的杂志编辑风个人站，基于 Nuxt 4 + Nuxt UI 4 + Nuxt Content 3，不再继承任何 docs layer。
+杂志编辑风个人站，基于 Nuxt 4 + Nuxt UI 4 + Nuxt Content 3，通过 `extends: ['@movk/nuxt-docs']` 继承 v3 Layer。
+
+### Layer 与站点的分工
+
+- **Layer 提供**：`/docs/**` 文档页与 `docs` 集合、页头外壳（搜索、主题面板、颜色模式、文档栏目条）、文档侧栏与目录、⌘K 搜索、SEO 与 OG 图片、sitemap / robots、`llms.txt` / `llms-full.txt`、`/raw/**.md`、MCP Server、`/.well-known/*` 代理发现，以及字体、vermilion / paper 配色与 `kicker`、`rule`、`link-wipe` 等工具类
+- **站点自有**：首页（`app/pages/index.vue` 覆盖 layer 首页）、书签、起始页、配置中心、项目、Now / Uses / 书影音 / 友链 / 留言板（Giscus）、RSS、代理规则集与模板
+- 覆盖 layer 组件只使用其[覆盖契约](https://docs.mhaibaraai.cn/docs/guide/customization)中列出的组件；当前覆盖 `HeaderCenter`（主导航 + 更多）与 `Footer`
+- AI Chat 已显式关闭（`aiChat.enabled: false`），开启需安装其可选依赖
 
 ### 目录结构
 
 ```text
 app/
-  app.vue                 # UApp、MotionConfig、全站 ⌘K 搜索、注入 docs 导航（provide('navigation')）
-  app.config.ts           # 站点信息、导航（nav/navMore）、社交链接、Giscus、主题色
-  assets/css/main.css     # 设计 token（纸张底色、朱红主色、字体）、首字下沉、阅读进度、reduced-motion
-  layouts/                # default（页头页脚）、docs（左侧目录）、blank（起始页）
+  app.config.ts           # layer 配置（header.nav、seo、toc、github）与站点配置（nav/navMore、socials、Giscus）
+  assets/css/main.css     # 并入 layer 的 Tailwind 根：仅放中文衬线字体与站点独有样式，不要 @import "tailwindcss"
+  error.vue               # 自定义 404，复用 layer 的 useDocsShell
+  plugins/og-image.ts     # 非文档页回退到 /og-image.png
   components/
-    site/                 # 页头、页脚
+    HeaderCenter.vue      # 覆盖 layer 主导航
+    Footer.vue            # 覆盖 layer 页脚
     home/                 # 首页各区块与 Canvas 背景
     motion/               # RevealText（逐字遮罩）、Reveal（滚动入场）
     page/Masthead.vue     # 各页统一刊头
     content/              # Markdown 中可用的组件：ProxyImport、RuleSetTable
-  pages/                  # 首页、docs、bookmarks、start、config、projects、uses、now、shelf、friends、guestbook
-  utils/                  # 纯函数（issue、reading、navigation、search-engines、proxy-links、rule-sets）
+  pages/                  # 首页、bookmarks、start、config、projects、uses、now、shelf、friends、guestbook
+  utils/                  # 纯函数（issue、navigation、search-engines、proxy-links、rule-sets）
 shared/
-  schemas/                # 内容集合的 zod schema
-  utils/                  # 前后端共用：书签过滤、规则集转换、llms 文档生成
+  schemas/                # 站点集合的 zod schema
+  utils/                  # 前后端共用：书签过滤、规则集转换、笔记日期排序
 server/
   api/github/             # 仓库 star、贡献热力图（需 NUXT_GITHUB_TOKEN）
   routes/                 # rss.xml、api/bookmarks.json、proxy/rules/[client]/[file]
-  plugins/llms.ts         # 生成 llms.txt / llms-full.txt（取代 Content 内置集成）
   assets/rules/*.list     # 规则集唯一来源（Surge 语法）
-modules/content-git-date.ts # 构建时为 docs/config 注入 git 最后更新时间
+modules/content-git-date.ts # 构建时注入 git 最后更新时间：config 写入 date，docs 写入 meta.date
 public/proxy/             # Surge / Quantumult X 脱敏模板
 extensions/newtab/        # Chrome 新标签页扩展（内嵌 /start，离线兜底）
 scripts/check-proxy-secrets.ts
 content/
-  docs/                   # 技术笔记，数字前缀决定导航顺序
+  docs/                   # 技术笔记（layer 的 docs 集合），数字前缀决定导航顺序
   config/                 # 配置中心页面
   bookmarks/*.yml         # 书签，一个文件一个分类
   now.md、uses.yml、projects.yml、shelf.yml、friends.yml
@@ -69,7 +76,8 @@ content/
 
 ### 关键约束
 
-- `@nuxt/content` 的 `llms` 集成已关闭（其 stringifyMarkdown 在部分笔记上栈溢出），由 `server/plugins/llms.ts` 用 `rawbody` 生成
+- `docs` 集合由 layer 定义，不要在 `content.config.ts` 中重复声明；笔记更新时间读 `meta.date`（`shared/utils/notes.ts`），无法在查询中按日期排序
+- 页面标题模板来自 `app.config.ts` → `seo.titleTemplate`；首页以 `titleTemplate: '%s'` 只显示站点名
 - `/start` 响应头允许 `chrome-extension:` 内嵌，且 noindex
 - 模板中 `:to` 等绑定避免直接写含 `${}` 的模板字符串，vue-tsc 会丢失 v-for 作用域，改用函数
 - 所有动效需兼容 `prefers-reduced-motion`
@@ -78,8 +86,8 @@ content/
 
 | 配置项 | 位置 |
 |--------|------|
-| 导航、社交链接、Giscus | `app/app.config.ts` |
-| 主题色与字体 | `app/assets/css/main.css`、`app/app.config.ts` → `ui.colors` |
-| 内容集合 schema | `content.config.ts`、`shared/schemas/` |
+| 导航、社交链接、Giscus、SEO 标题 | `app/app.config.ts` |
+| 主题色与字体 | 沿用 layer 默认；如需调整用 `app/app.config.ts` → `ui.colors` / `theme` |
+| 站点集合 schema | `content.config.ts`、`shared/schemas/` |
 | LLMs.txt 标题描述 | `nuxt.config.ts` → `llms` |
 | 分类默认重定向 | `nuxt.config.ts` → `routeRules` |

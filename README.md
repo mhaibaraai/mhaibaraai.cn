@@ -21,11 +21,11 @@
 
 ## 技术栈
 
-Nuxt 4 · Nuxt UI 4 · Nuxt Content 3 · Tailwind CSS 4 · motion-v
+Nuxt 4 · [@movk/nuxt-docs](https://github.com/mhaibaraai/movk-nuxt-docs) v3 · Nuxt UI 4 · Nuxt Content 3 · Tailwind CSS 4 · motion-v
 
 ## 本地开发
 
-需要 Node.js >= 22.x 和 pnpm >= 10.x：
+需要 Node.js >= 22.5 和 pnpm >= 10.x：
 
 ```bash
 pnpm install
