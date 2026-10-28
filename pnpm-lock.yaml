@@ -192,8 +192,8 @@ importers:
         specifier: ^1.2.93
         version: 1.2.94
       '@movk/nuxt-docs':
-        specifier: ^3.0.1
-        version: 3.0.1(8147e4b21f3d933ecd850488e40b1681)
+        specifier: ^3.0.2
+        version: 3.0.2(8147e4b21f3d933ecd850488e40b1681)
       '@nuxt/content':
         specifier: ^3.16.2
         version: 3.16.2(@nuxt/schema@4.6.3)(@oxc-project/types@0.154.0)(@valibot/to-json-schema@1.8.0(valibot@1.5.0(typescript@6.0.3)))(better-sqlite3@13.0.3)(confbox@0.2.4)(dotenv@17.4.2)(esbuild@0.28.2)(giget@3.3.1)(magic-string@1.4.3)(magicast@0.5.5)(mlly@1.8.2)(oxc-parser@0.139.0)(rolldown@1.2.14)(rollup@4.65.1)(supports-color@10.2.2)(valibot@1.5.0(typescript@6.0.3))(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
@@ -1216,8 +1216,8 @@ packages:
     peerDependencies:
       vue: ^3.5.25
 
-  '@movk/nuxt-docs@3.0.1':
-    resolution: {integrity: sha512-lyUIVpCxQmX6l8nAvyx2m4yqXIp/3uZfdsUm5JEBrJQp3Dob32vDFQxbonDZB+Oq2F1OBOH1a90epcFJ67vuKQ==}
+  '@movk/nuxt-docs@3.0.2':
+    resolution: {integrity: sha512-jVClupVThfBq4FqhJX0WvUj3Sd6c01Au0oh+q9s51V4OArEWy7FXCxQQKfIJl/QFjurjbRfsXsKV/9UiM1cQyA==}
     engines: {node: '>=22.5'}
     peerDependencies:
       '@ai-sdk/openai': ^4.0.89
@@ -8543,7 +8543,7 @@ snapshots:
       '@vueuse/core': 15.0.0(vue@3.5.44(typescript@6.0.3))
       vue: 3.5.44(typescript@6.0.3)
 
-  '@movk/nuxt-docs@3.0.1(8147e4b21f3d933ecd850488e40b1681)':
+  '@movk/nuxt-docs@3.0.2(8147e4b21f3d933ecd850488e40b1681)':
     dependencies:
       '@fontsource-variable/fraunces': 5.3.0
       '@fontsource-variable/inter': 5.3.0
