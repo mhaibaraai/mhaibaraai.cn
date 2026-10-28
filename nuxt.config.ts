@@ -23,9 +23,7 @@ export default defineNuxtConfig({
     head: {
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/icon.svg' },
-        { rel: 'alternate', type: 'application/rss+xml', title: SITE_NAME, href: '/rss.xml' },
-        { rel: 'preconnect', href: 'https://cdn.mhaibaraai.cn', crossorigin: '' },
-        { rel: 'stylesheet', href: 'https://cdn.mhaibaraai.cn/fonts/alibaba-puhuiti.css' }
+        { rel: 'alternate', type: 'application/rss+xml', title: SITE_NAME, href: '/rss.xml' }
       ]
     }
   },
