@@ -1,0 +1,17 @@
+# 强制直连：国内常用服务与局域网开发地址
+DOMAIN-SUFFIX,mhaibaraai.cn
+DOMAIN-SUFFIX,bilibili.com
+DOMAIN-SUFFIX,hdslb.com
+DOMAIN-SUFFIX,douban.com
+DOMAIN-SUFFIX,juejin.cn
+DOMAIN-SUFFIX,gitee.com
+DOMAIN-SUFFIX,aliyun.com
+DOMAIN-SUFFIX,alipay.com
+DOMAIN-SUFFIX,qq.com
+DOMAIN-SUFFIX,weixin.qq.com
+DOMAIN-SUFFIX,music.163.com
+DOMAIN-SUFFIX,apple.com.cn
+DOMAIN-SUFFIX,icloud.com.cn
+IP-CIDR,192.168.0.0/16,no-resolve
+IP-CIDR,10.0.0.0/8,no-resolve
+IP-CIDR,172.16.0.0/12,no-resolve

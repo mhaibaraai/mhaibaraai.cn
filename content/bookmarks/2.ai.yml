@@ -1,0 +1,16 @@
+title: AI
+icon: i-lucide-sparkles
+order: 2
+description: 大模型与 AI 工具
+items:
+  - title: Claude
+    url: https://claude.ai
+  - title: ChatGPT
+    url: https://chatgpt.com
+  - title: Gemini
+    url: https://gemini.google.com
+  - title: OpenRouter
+    url: https://openrouter.ai
+    description: 多模型 API 聚合
+  - title: Hugging Face
+    url: https://huggingface.co

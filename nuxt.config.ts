@@ -1,5 +1,9 @@
 import pkg from './package.json'
 
+const SITE_URL = 'https://mhaibaraai.cn'
+const SITE_NAME = 'YiXuan 的开发随笔'
+const SITE_DESCRIPTION = '一个专注于技术分享与知识沉淀的个人网站。'
+
 export default defineNuxtConfig({
   extends: ['@movk/nuxt-docs'],
 
@@ -10,24 +14,47 @@ export default defineNuxtConfig({
   ],
 
   $development: {
-    site: {
-      url: 'http://localhost:3000'
+    site: { url: 'http://localhost:3000' }
+  },
+
+  devtools: { enabled: true },
+
+  app: {
+    head: {
+      link: [
+        { rel: 'icon', type: 'image/svg+xml', href: '/icon.svg' },
+        { rel: 'alternate', type: 'application/rss+xml', title: SITE_NAME, href: '/rss.xml' }
+      ]
     }
   },
 
-  $production: {
-    site: {
-      url: 'https://mhaibaraai.cn'
+  site: {
+    url: SITE_URL,
+    name: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    defaultLocale: 'zh-CN'
+  },
+
+  content: {
+    build: {
+      markdown: {
+        toc: { depth: 3 },
+        highlight: {
+          langs: ['bash', 'sh', 'shell', 'diff', 'json', 'jsonc', 'js', 'ts', 'tsx', 'html', 'css', 'scss', 'vue', 'mdc', 'md', 'yaml', 'toml', 'ini', 'java', 'xml', 'sql', 'dockerfile', 'nginx', 'properties']
+        }
+      }
     }
   },
 
   runtimeConfig: {
     public: {
-      version: pkg.version
+      version: pkg.version,
+      siteUrl: SITE_URL
     }
   },
 
   routeRules: {
+    '/start': { headers: { 'Content-Security-Policy': 'frame-ancestors \'self\' chrome-extension:' }, robots: false },
     // redirects - default root pages
     '/docs': { redirect: '/docs/fundamentals', prerender: false },
     '/docs/fundamentals': { redirect: '/docs/fundamentals/async-await', prerender: false },
@@ -42,25 +69,20 @@ export default defineNuxtConfig({
     '/docs/tools': { redirect: '/docs/tools/managers', prerender: false },
     '/docs/tools/managers': { redirect: '/docs/tools/managers/homebrew', prerender: false },
     '/docs/tools/version-control': { redirect: '/docs/tools/version-control/fnm', prerender: false },
-    '/docs/work-summary': { redirect: '/docs/work-summary/2025', prerender: false }
+    '/docs/work-summary': { redirect: '/docs/work-summary/2025', prerender: false },
+    '/config': { redirect: '/config/surge', prerender: false }
   },
 
   compatibilityDate: '2026-06-30',
 
-  vite: {
-    optimizeDeps: {
-      include: [
-        '@unhead/schema-org/vue'
-      ]
+  nitro: {
+    prerender: {
+      routes: ['/rss.xml', '/api/bookmarks.json']
     }
   },
 
   aiChat: {
-    model: 'alibaba/qwen3.8-27b',
-    models: [
-      'alibaba/qwen3.8-27b',
-      'deepseek/deepseek-v4-pro-0813'
-    ]
+    enabled: false
   },
 
   eslint: {
@@ -73,11 +95,11 @@ export default defineNuxtConfig({
   },
 
   llms: {
-    domain: 'https://mhaibaraai.cn',
-    title: 'YiXuan 的开发随笔',
-    description: '一个专注于技术分享与知识沉淀的个人网站。',
+    domain: SITE_URL,
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
     full: {
-      title: 'YiXuan 的开发随笔',
+      title: SITE_NAME,
       description: '一个专注于技术分享与知识沉淀的个人网站。从代码片段到架构思考，这里是我在成为更优秀全栈工程师路上的所有笔记。'
     },
     notes: ['技术分享', '知识沉淀', '开发随笔']
@@ -85,5 +107,13 @@ export default defineNuxtConfig({
 
   mcp: {
     name: 'mhaibaraai.cn'
+  },
+
+  robots: {
+    disallow: ['/start']
+  },
+
+  sitemap: {
+    exclude: ['/start']
   }
 })

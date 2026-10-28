@@ -1,0 +1,32 @@
+title: 开发
+icon: i-lucide-code-xml
+order: 1
+description: 每天都会打开的开发站点
+items:
+  - title: GitHub
+    url: https://github.com
+    tags: [code]
+  - title: Nuxt
+    url: https://nuxt.com/docs
+    description: Nuxt 官方文档
+    tags: [docs, vue]
+  - title: Nuxt UI
+    url: https://ui.nuxt.com
+    tags: [docs, ui]
+  - title: Vue.js
+    url: https://cn.vuejs.org
+    tags: [docs]
+  - title: MDN
+    url: https://developer.mozilla.org/zh-CN
+    description: Web 技术权威文档
+    tags: [docs]
+  - title: npm
+    url: https://www.npmjs.com
+    tags: [package]
+  - title: Can I use
+    url: https://caniuse.com
+    description: 浏览器兼容性查询
+  - title: Vercel
+    url: https://vercel.com/dashboard
+    description: 部署控制台
+    tags: [deploy]

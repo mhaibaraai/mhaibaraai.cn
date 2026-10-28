@@ -1,57 +1,69 @@
+const nav = [
+  { label: '笔记', to: '/docs', icon: 'i-lucide-notebook-pen' },
+  { label: '书签', to: '/bookmarks', icon: 'i-lucide-bookmark' },
+  { label: '配置', to: '/config', icon: 'i-lucide-sliders-horizontal' },
+  { label: '项目', to: '/projects', icon: 'i-lucide-folder-git-2' }
+]
+
+const navMore = [
+  { label: 'Now', to: '/now', icon: 'i-lucide-radio', description: '最近在做什么' },
+  { label: 'Uses', to: '/uses', icon: 'i-lucide-laptop', description: '装备与软件' },
+  { label: '书影音', to: '/shelf', icon: 'i-lucide-library', description: '读过、看过、听过' },
+  { label: '友链', to: '/friends', icon: 'i-lucide-link', description: '朋友们的站点' },
+  { label: '留言板', to: '/guestbook', icon: 'i-lucide-message-square-quote', description: '留下点什么' }
+]
+
 export default defineAppConfig({
-  aiChat: {
-    faqQuestions: [
-      {
-        category: 'Nuxt 实践',
-        items: [
-          'Nuxt SSR 模式怎么用 PM2 部署？',
-          'Nuxt SEO 有哪些配置方案？',
-          'LLMs.txt 如何在 Nuxt 中集成？'
-        ]
-      },
-      {
-        category: 'Vue 开发',
-        items: [
-          'Vue 3 自动导入怎么配置？',
-          'Vue + UnoCSS 项目怎么集成 Nuxt UI？',
-          'Vite 中怎么导入静态资源？'
-        ]
-      },
-      {
-        category: 'AI 工具',
-        items: [
-          'Claude Code Router 如何配置？',
-          'OpenRouter API 怎么接入？',
-          'Claude Code 个人配置有哪些推荐？'
-        ]
-      },
-      {
-        category: '部署运维',
-        items: [
-          '如何用 Docker 容器化部署项目？',
-          'GitHub Actions + Watchtower 如何实现自动部署？',
-          'GitLab CI/CD 怎么配置完整流水线？',
-          'SSL 证书如何申请和配置？'
-        ]
-      },
-      {
-        category: '问题排查',
-        items: [
-          'ESM/CJS 兼容性问题怎么解决？',
-          'Nuxt Layer 与 Reka UI 的 SSR 500 怎么排查？',
-          'Vercel 部署 llms-full.txt 500 错误怎么解决？',
-          'Nuxt UI 组件主题样式未生成怎么排查？'
-        ]
-      }
-    ]
+  site: {
+    author: 'YiXuan',
+    tagline: '开发随笔',
+    since: 2024
+  },
+  giscus: {
+    repo: 'mhaibaraai/mhaibaraai.cn',
+    repoId: 'R_kgDOPjxlnw',
+    category: 'Guestbook',
+    /** 开启仓库 Discussions 并安装 giscus app 后，从 https://giscus.app 获取 */
+    categoryId: ''
+  },
+  nav,
+  navMore,
+  socials: [
+    { label: 'GitHub', icon: 'i-simple-icons-github', to: 'https://github.com/mhaibaraai' },
+    { label: 'Email', icon: 'i-lucide-mail', to: 'mailto:mhaibaraai@gmail.com' },
+    { label: 'RSS', icon: 'i-lucide-rss', to: '/rss.xml' },
+    { label: 'LLMs', icon: 'i-lucide-bot', to: '/llms.txt' }
+  ],
+  seo: {
+    titleTemplate: '%s · YiXuan 的开发随笔',
+    title: 'YiXuan 的开发随笔',
+    description: '一个专注于技术分享与知识沉淀的个人网站。'
   },
   header: {
-    title: 'YiXuan'
+    title: 'YiXuan',
+    nav: nav.map(link => ({ ...link, activeMatch: link.to })),
+    mobileNav: [...nav, ...navMore].map(({ label, to, icon }) => ({ label, to, icon }))
+  },
+  github: {
+    dateFormat: {
+      options: {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        timeZone: 'Asia/Shanghai'
+      }
+    }
+  },
+  toc: {
+    title: '本文目录',
+    bottom: {
+      links: [
+        { icon: 'i-lucide-rss', to: '/rss.xml', target: '_blank', label: 'RSS 订阅' },
+        { icon: 'i-lucide-message-circle-code', to: '/llms.txt', target: '_blank', label: 'Open LLMs' }
+      ]
+    }
   },
   ui: {
-    colors: {
-      primary: 'sky'
-    },
     prose: {
       codeIcon: {
         sh: 'i-lucide:square-terminal',
@@ -59,34 +71,5 @@ export default defineAppConfig({
         dockerfile: 'i-vscode-icons:file-type-docker2'
       }
     }
-  },
-  toc: {
-    bottom: {
-      links: [
-        {
-          icon: 'i-lucide-message-circle-code',
-          to: 'https://mhaibaraai.cn/llms.txt',
-          target: '_blank',
-          label: 'Open LLMs'
-        }
-      ]
-    }
-  },
-  footer: {
-    credits: `Copyright © 2024 - ${new Date().getFullYear()} YiXuan - <span class="text-highlighted">MIT License</span>`,
-    socials: [
-      {
-        'icon': 'i-simple-icons-nuxt',
-        'to': 'https://nuxt.com/',
-        'target': '_blank',
-        'aria-label': 'Nuxt Website'
-      },
-      {
-        'icon': 'i-lucide-mail',
-        'to': 'mailto:mhaibaraai@gmail.com',
-        'target': '_blank',
-        'aria-label': 'YiXuan\'s Gmail'
-      }
-    ]
   }
 })

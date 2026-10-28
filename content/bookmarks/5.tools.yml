@@ -1,0 +1,17 @@
+title: 工具
+icon: i-lucide-wrench
+order: 5
+description: 在线小工具
+items:
+  - title: Regex101
+    url: https://regex101.com
+    description: 正则调试
+  - title: Squoosh
+    url: https://squoosh.app
+    description: 图片压缩
+  - title: Excalidraw
+    url: https://excalidraw.com
+    description: 手绘风白板
+  - title: Transform
+    url: https://transform.tools
+    description: JSON / TS / Zod 等格式互转

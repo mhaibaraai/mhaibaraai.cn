@@ -1,0 +1,38 @@
+# 待补充：按分组填写实际在用的硬件与软件
+groups:
+  - title: 硬件
+    icon: i-lucide-laptop
+    items:
+      - name: MacBook Pro
+        description: 主力开发机
+  - title: 开发
+    icon: i-lucide-code-xml
+    items:
+      - name: Visual Studio Code
+        description: 主力编辑器，搭配 Prettier 与 ESLint
+        url: https://code.visualstudio.com
+        icon: i-simple-icons-visualstudiocode
+      - name: Claude Code
+        description: AI 编程助手
+        url: https://claude.com/claude-code
+        icon: i-simple-icons-claude
+  - title: 浏览器
+    icon: i-lucide-globe
+    items:
+      - name: Chrome
+        description: 开发调试，新标签页换成了自己的起始页
+        url: https://www.google.com/chrome
+        icon: i-simple-icons-googlechrome
+      - name: Safari
+        description: 日常浏览
+        url: https://www.apple.com/safari
+        icon: i-simple-icons-safari
+  - title: 网络
+    icon: i-lucide-route
+    items:
+      - name: Surge
+        description: macOS / iOS 网络调试与代理
+        url: https://nssurge.com
+      - name: Quantumult X
+        description: iOS 代理与脚本
+        url: https://apps.apple.com/app/id1443988620

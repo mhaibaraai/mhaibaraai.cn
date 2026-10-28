@@ -45,6 +45,6 @@ async function copyPage() {
 - 站内引用原文时，优先使用 `/raw... .md`，提升跨工具可读性。
 - 若需禁止被搜索引擎索引，请结合 Robots 策略按需处理。
 
-::tip{to="/docs/ecosystem/nuxt-llms"}
+::tip{to="/docs/nuxt/llms"}
 结合 LLM 链接规范化使用。
 ::

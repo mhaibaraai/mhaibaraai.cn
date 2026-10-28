@@ -1,0 +1,7 @@
+# 待补充：读过、看过、听过的作品
+items:
+  - title: 重构：改善既有代码的设计
+    type: book
+    status: doing
+    date: 2026-10
+    creator: Martin Fowler

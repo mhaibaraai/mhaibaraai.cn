@@ -8,17 +8,24 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 24
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
-          node-version: lts/*
+          node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
 
       - name: Install dependencies
@@ -29,3 +36,20 @@ jobs:
 
       - name: Typecheck
         run: pnpm run typecheck
+
+      - name: Unit tests
+        run: pnpm run test:coverage
+
+      - name: Build
+        run: pnpm run build 2>&1 | tee build.log
+        env:
+          NUXT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check prerender errors
+        run: "! grep '\\[request error\\]' build.log"
+
+      - name: Install Playwright
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: E2E tests
+        run: pnpm run test:e2e

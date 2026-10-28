@@ -1,0 +1,29 @@
+/* 由 @movk/nuxt-docs 并入 layer 的 Tailwind 编译根：不要在此 @import "tailwindcss"。
+   字体、配色、kicker / rule / link-wipe / reading-progress 等工具类均由 layer 提供 */
+
+/* 中文衬线标题 */
+@import "@fontsource/noto-serif-sc/600.css";
+@import "@fontsource/noto-serif-sc/900.css";
+
+/* 文章正文：衬线标题，以段落开篇时首字下沉 */
+@utility prose-editorial {
+  & :where(h2, h3) {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  & > p:first-child::first-letter {
+    float: left;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 3.6em;
+    line-height: 0.85;
+    padding: 0.08em 0.12em 0 0;
+    color: var(--ui-primary);
+  }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
