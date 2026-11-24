@@ -41,12 +41,16 @@ jobs:
         run: pnpm run test:coverage
 
       - name: Build
+        shell: bash
         run: pnpm run build 2>&1 | tee build.log
         env:
           NUXT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check prerender errors
         run: "! grep '\\[request error\\]' build.log"
+
+      - name: Validate Worker bundle
+        run: pnpm exec wrangler deploy --dry-run
 
       - name: Install Playwright
         run: pnpm exec playwright install --with-deps chromium

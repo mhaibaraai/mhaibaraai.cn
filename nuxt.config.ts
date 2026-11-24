@@ -3,18 +3,54 @@ import pkg from './package.json'
 const SITE_URL = 'https://mhaibaraai.cn'
 const SITE_NAME = 'YiXuan 的开发随笔'
 const SITE_DESCRIPTION = '一个专注于技术分享与知识沉淀的个人网站。'
+const localD1Id = '00000000-0000-0000-0000-000000000000'
+const databaseId = process.env.CLOUDFLARE_D1_DATABASE_ID || localD1Id
 
 export default defineNuxtConfig({
   extends: ['@movk/nuxt-docs'],
 
   modules: [
-    '@nuxt/eslint',
-    '@vercel/analytics',
-    '@vercel/speed-insights'
+    '@nuxt/eslint'
   ],
 
   $development: {
     site: { url: 'http://localhost:3000' }
+  },
+
+  $production: {
+    content: {
+      database: { type: 'd1', bindingName: 'DB' }
+    },
+    nitro: {
+      preset: 'cloudflare_module',
+      cloudflare: {
+        deployConfig: true,
+        nodeCompat: true,
+        wrangler: {
+          d1_databases: [{
+            binding: 'DB',
+            database_name: 'mhaibaraai-cn-content',
+            database_id: databaseId
+          }]
+        }
+      },
+      // Cloudflare merges matching headers. Set these cache headers in public/_headers in override order.
+      routeRules: {
+        '/_nuxt/**': { cache: { maxAge: 0 } },
+        '/_nuxt/builds/**': { cache: { maxAge: 0 } },
+        '/_nuxt/builds/meta/**': { cache: { maxAge: 0 } }
+      }
+    },
+    hooks: {
+      'nitro:build:before'() {
+        if (process.env.WORKERS_CI === '1' && databaseId === localD1Id) {
+          throw new Error('Set CLOUDFLARE_D1_DATABASE_ID in Workers Builds before deploying.')
+        }
+      }
+    },
+    ogImage: {
+      buildCache: { base: 'node_modules/.cache/nuxt/og-image' }
+    }
   },
 
   devtools: { enabled: true },

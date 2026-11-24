@@ -13,7 +13,7 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: `PORT=${PORT} node .output/server/index.mjs`,
+    command: `pnpm exec wrangler dev --local --port ${PORT}`,
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI
   }

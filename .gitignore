@@ -20,12 +20,14 @@ dist
 .nuxt
 .output
 .data
-.vercel_build_output
 .build-*
 .netlify
+.wrangler
 
 # Env
 .env
+.dev.vars
+.dev.vars.*
 
 # Testing
 reports
