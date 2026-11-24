@@ -35,7 +35,7 @@ useSeoMeta({ title: '留言板', description: '留下一句话、一个问题，
         variant="outline"
         title="留言板即将开放"
         description="评论功能基于 GitHub Discussions，正在准备中。现在可以通过邮件联系我。"
-        :actions="[{ label: '发送邮件', to: 'mailto:mhaibaraai@gmail.com', icon: 'i-lucide-mail' }]"
+        :actions="[{ label: '发送邮件', to: 'mailto:hi@mhaibaraai.cn', icon: 'i-lucide-mail' }]"
       />
     </div>
   </UContainer>

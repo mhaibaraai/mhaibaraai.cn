@@ -30,7 +30,7 @@ export default defineAppConfig({
   navMore,
   socials: [
     { label: 'GitHub', icon: 'i-simple-icons-github', to: 'https://github.com/mhaibaraai' },
-    { label: 'Email', icon: 'i-lucide-mail', to: 'mailto:mhaibaraai@gmail.com' },
+    { label: 'Email', icon: 'i-lucide-mail', to: 'mailto:hi@mhaibaraai.cn' },
     { label: 'RSS', icon: 'i-lucide-rss', to: '/rss.xml' },
     { label: 'LLMs', icon: 'i-lucide-bot', to: '/llms.txt' }
   ],
