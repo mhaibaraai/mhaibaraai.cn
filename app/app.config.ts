@@ -16,14 +16,12 @@ const navMore = [
 export default defineAppConfig({
   site: {
     author: 'YiXuan',
-    tagline: '开发随笔',
     since: 2024
   },
   giscus: {
     repo: 'mhaibaraai/mhaibaraai.cn',
     repoId: 'R_kgDOPjxlnw',
     category: 'Guestbook',
-    /** 开启仓库 Discussions 并安装 giscus app 后，从 https://giscus.app 获取 */
     categoryId: ''
   },
   nav,
@@ -60,6 +58,14 @@ export default defineAppConfig({
       links: [
         { icon: 'i-lucide-rss', to: '/rss.xml', target: '_blank', label: 'RSS 订阅' },
         { icon: 'i-lucide-message-circle-code', to: '/llms.txt', target: '_blank', label: 'Open LLMs' }
+      ]
+    }
+  },
+  docs: {
+    categories: {
+      deployment: [
+        { id: 'infra', title: '基础设施', icon: 'i-lucide-server' },
+        { id: 'ci', title: '自动化发布', icon: 'i-lucide-workflow' }
       ]
     }
   },
